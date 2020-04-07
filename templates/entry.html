@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block description %}{{ content|before_show_text|nohtml }}{% endblock %}
+
+{% block head %}
+	{{ super() }}
+	{% if image %}
+		<meta property="og:image" content="{{ image }}">
+	{% endif %}
+
+	<script>
+document.addEventListener('DOMContentLoaded', () => {
+const articleEl = document.getElementsByTagName('article')[0]
+for (const anchor of document.getElementsByTagName('a')) {
+anchor.addEventListener('mouseover', () => {
+	if (!articleEl.contains(anchor)) return
+	const popupContainerEl = document.createElement('div')
+	const popupInnerEl = document.createElement('div')
+
+	const popupFaviconEl = document.createElement('img')
+	const popupTitleEl = document.createElement('p')
+	const popupContentEl = document.createElement('p')
+
+	popupContainerEl.classList.add('popupContainer')
+	popupInnerEl.classList.add('popupInner')
+	popupTitleEl.classList.add('popupTitle')
+	popupContentEl.classList.add('popupContent')
+	popupFaviconEl.classList.add('popupFavicon')
+	anchor.popupContainerEl = popupContainerEl
+
+	popupInnerEl.appendChild(popupTitleEl)
+	popupContainerEl.appendChild(popupInnerEl)
+
+	anchor.parentElement.insertBefore(popupContainerEl, anchor)
+
+	popupContainerEl.style.display = 'none'
+
+
+	fetch(`/api/website-title?url=${anchor.href}`).then(async(r) => {
+		resp = await r.json()
+		popupTitleEl.innerText = resp.title
+
+		if (resp.favicon) {
+			popupInnerEl.appendChild(popupFaviconEl)
+			popupFaviconEl.src = resp.favicon
+		}
+		if (resp.content) {
+			popupInnerEl.appendChild(popupContentEl)
+			popupContentEl.innerText = resp.content.substr(0, 200)
+		}
+		popupContainerEl.style.display = 'inline-block'
+
+
+	})
+
+
+})
+anchor.addEventListener('mouseout', () => {
+	anchor.popupContainerEl.remove()
+	anchor.popupContainerEl = undefined
+})
+}
+	
+})
+	</script>
+{% endblock %}
+
+{% block body %}
+  {% set top_editors = get_top_editors(history) %}
+
+  <p class="contributors">
+    Top entry contributors:
+    {% for editor_id in top_editors %}
+			{% if editor_id|personalentry %}
+				<a class="contributor" href="/entry/{{ editor_id|personalentry }}">
+					{{ editor_id|discordid }}
+				</a>
+			{% else %}
+				<span class="contributor">
+					{{ editor_id|discordid }}
+				</span>
+			{% endif %}
+    {% endfor %}
+  </p>
+
+	<h1 class="title">{{ title }}</h1>
+	{% if image %}
+		{{
+			lazyimage(
+				image,
+				is_preview=False,
+				alt=title
+			)|safe
+		}}
+	{% endif %}
+	{% if unlisted %}<i>This entry is unlisted and will not show up in search.</i>{% endif %}
+	<article class="content">
+		{{ content|before_show_text|safe }}
+	</article>
+	{% if is_editor %}
+		<a href="/edit?id={{ id }}" class="button">Edit entry</a>
+		<br><br>
+		<a href="/history/{{ id }}" class="button">View history</a>
+	{% endif %}
+{% endblock %}

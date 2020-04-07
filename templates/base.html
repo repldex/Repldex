@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% block head %}
+<title>{% block title %}Repldex{% endblock %}</title>
+<link rel="icon" type="image/png" href="/static/icon.png">
+<link rel="stylesheet" href="/static/main.css">
+<meta name="theme-color" content="#ff0000">
+<meta name="description" content="{% block description %}insert description here{% endblock %}">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="{{ self.title() }}">
+<meta property="og:description" content="{{ self.description() }}">
+<meta property="og:site_name" content="Repldex">
+<meta property="og:type" content="website"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<noscript>
+<style>
+.lazy {
+	display: none
+}
+</style>
+</noscript>
+<script>
+function checkLazyImages() {
+	for (const el of document.getElementsByClassName('lazy')) {
+		const imageUrl = el.getAttribute('data-src')
+		const imageAlt = el.alt
+		
+		el.style.height = '10em'
+		el.style.filter = 'blur(10px)'
+		const imageFullEl = document.createElement('img')
+		imageFullEl.style.overflow = 'hidden'
+		imageFullEl.style.width = '0'
+		imageFullEl.src = imageUrl
+		imageFullEl.alt = imageAlt
+		imageFullEl.addEventListener('load', () => {
+			for (const className of el.classList)
+				if (className != 'lazy')
+					imageFullEl.classList.add(className)
+			el.parentNode.insertBefore(imageFullEl, el.nextSibling)
+			el.remove()
+			imageFullEl.style.removeProperty('overflow')
+			imageFullEl.style.removeProperty('width')
+		})
+	}	
+}
+document.addEventListener('DOMContentLoaded', checkLazyImages)
+</script>
+{% endblock %}
+</head>
+<body>
+{% if back_location %}
+<nav>
+	<a href="{{ back_location }}">
+		<svg class="backArrow" height="43" width="23">
+			<path d="M 22 0 l -20 20 l 20 20" stroke-width="3" fill="none"></path>
+		</svg>
+	</a>
+</nav>
+{% endif %}
+<main>
+{% block body %}
+	There's nothing here yet.
+{% endblock %}
+</main>
+</html>
