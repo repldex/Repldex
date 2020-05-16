@@ -14,7 +14,7 @@ class Context():  # very unfinished but its fine probably
 			await message.add_reaction(utils.x_emoji)
 			utils.commands_ran_by[message.id] = self.author.id
 			# print(dir(message.guild))
-			for _ in range(20):
+			for _ in range(10):
 				print('waiting for message')
 				await discordbot.client.wait_for('message', check=lambda m:m.channel == message.channel)
 			await message.delete()

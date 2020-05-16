@@ -155,7 +155,7 @@ async def search_entries(query, limit=10, search_id=True, page=0):
 		}},
 		{'$addFields': {
       'score': {
-				'$meta': "searchScore"
+				'$meta': 'searchScore'
 			}
     }},
 		{'$sort': {
@@ -169,7 +169,13 @@ async def search_entries(query, limit=10, search_id=True, page=0):
 	if len(found) == 0 and search_id:
 		found = await get_entry(query)
 		if found: return [found]
-		else: return []
+		if found is None: found = []
+	if len(found) == 0:
+		searched = await entries_coll.find_one({
+			'title': query
+		})
+		if searched:
+			found = [searched]
 	return found
 
 # Query is only if sort == relevant

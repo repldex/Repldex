@@ -183,7 +183,7 @@ async def edit_entry_post(request):
 
 		image=image_url
 	)
-	return web.HTTPFound('/entry?id=' + entry_id)
+	return web.HTTPFound(f'/entry/{entry_id}')
 
 
 
@@ -237,7 +237,7 @@ async def loggedin_redirect(request):
 
 @routes.get('/entry/{entry}')
 async def view_entry(request):
-	entry_name = utils.url_title(request.match_info.get('entry'))
+	entry_name = request.match_info.get('entry')
 	entry_data = await database.get_entry(name=entry_name)
 
 	if entry_data:
@@ -248,11 +248,13 @@ async def view_entry(request):
 		history = entry_data.get('history', [])
 		image = entry_data.get('image')
 	else:
+		print(entry_name, 'not found')
 		return web.HTTPNotFound()
 
 	url_title = utils.url_title(title)
 
 	if url_title != entry_name:
+		print('Redirected', entry_name, 'to', url_title)
 		return web.HTTPFound('/entry/' + url_title)
 	
 	return Template(
@@ -277,7 +279,6 @@ async def random_entry(request):
 async def api_website_title(request):
 	url = request.query['url']
 
-	print(url)
 	if url.startswith('//'):
 		url = 'https:' + url
 	elif url[0] == '/':

@@ -32,10 +32,8 @@ async def help(message, *args):
 
 async def create_entry_embed(entry_data, author_id=None):
 	html = entry_data['content']
-	print('html:', html)
 	# html = await utils.before_show_text(html)
 	content = utils.html_to_markdown(html)
-	print('content:', content)
 	content_ending = ''
 	# if author_id in EDITOR_IDS:
 	# 	entry_id = entry_data['_id']
@@ -44,9 +42,9 @@ async def create_entry_embed(entry_data, author_id=None):
 	if len(content) > 2048:
 		content = content[:2045 - len(content_ending)] + '...'
 	content += content_ending
-	title = entry_data['title']
+	title = utils.url_title(entry_data['title'])
 	view_url = f'{BASE_URL}/entry/{title}'
-	view_url = view_url.replace(' ', '%20')
+	view_url = view_url
 	embed = discord.Embed(
 		title=entry_data['title'],
 		description=content,
@@ -113,8 +111,9 @@ async def show_entry(message, *args):
 		embed = discord.Embed(
 			title="This entry doesn't exist"
 		)
-		edit_url = f'{BASE_URL}/edit?title={search_query}'
-		edit_url = edit_url.replace(' ', '%20')
+		search_query_url_encoded = utils.url_title(search_query)
+		edit_url = f'{BASE_URL}/edit?title={search_query_url_encoded}'
+		edit_url = edit_url
 		if message.author.id in EDITOR_IDS:
 			embed.description = f'[Click here to write it!]({edit_url})'
 		await message.send(embed=embed)

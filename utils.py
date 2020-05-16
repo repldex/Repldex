@@ -145,6 +145,7 @@ def remove_html(inputted, prev=None):
 	else: return remove_html(new_string, prev=inputted)
 
 def html_to_markdown(inputted, prev=None):
+	print('html_to_markdown')
 	new_string = str(inputted)
 	if prev is None:
 		new_string = new_string.replace('\n', ' ')
@@ -152,7 +153,10 @@ def html_to_markdown(inputted, prev=None):
 	new_string = re.sub(r'<(div|p|br)>', '', new_string)
 	new_string = re.sub(r'<\/(div|p|br|h1|h2|h3)>', r'</\1>\n', new_string)
 	new_string = re.sub(r'<(?:\s{0,}?)(b|strong|h1|h2|h3)(?:\s{0,}?)(?:[\S\s]*)>(.{1,}?)<\/?(?:\s*)\1(?:\s*)>', r'**\2**', new_string)
-	new_string = re.sub(r'<(?:\s*)(i|em)(?:\s*)(?:[\S\s]*)>(.+)<(?:\s*)\/\1>>', r'*\1*', new_string)
+	new_string = re.sub(r'<(?:\s*)(i|em)(?:\s*)(?:[\S\s]*)>(.+?)<(?:\s*)\/\1>>', r'*\1*', new_string)
+	new_string = re.sub(r'<li>(.+?)</li>', r'• \1\n', new_string)
+
+	
 
 	for found in list(re.finditer(r'<\s*a[\s\S]{1,}?href="(.{0,}?)"[\s\S]{0,}?>(.{0,}?)<\s*\/a\s*>', new_string))[::-1]:
 		span_start, span_end = found.span()
@@ -162,6 +166,7 @@ def html_to_markdown(inputted, prev=None):
 			href = BASE_URL + href
 		new_string = new_string[:span_start] + f'[{href_text}]({href})' + new_string[span_end:]
 
+	# replace all the remaining tags with spaces
 	new_string = re.sub(r'<[\S\s]{1,}?>', ' ', new_string)
 	new_string = html.unescape(new_string)
 	new_string = new_string.strip()
