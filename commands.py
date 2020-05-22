@@ -13,10 +13,12 @@ import utils
 async def help(message, *args):
 	commands = {
 		'search <query>': 'Finds entries that match the query',
-		'entry <name>': 'Shows the matching entry'
+		'entry <name>': 'Shows the matching entry',
+		'random': 'Gets a random entry'
 	}
 	if message.author.id in EDITOR_IDS:
-		commands['selfentry <name>'] = 'Links you to an entry (editor only)'
+		commands['selfentry <name>'] = 'Links you to your entry (editor only)'
+		commands['newentry <name>'] = 'Sends link to write new entry (editor only)'
 	content = []
 	prefix = message.prefix
 	for command in commands:
@@ -139,7 +141,24 @@ async def personal_entry(message, *args):
 		await message.send(f'Set your personal entry to `{title}`')
 	else:
 		await message.send('Invalid entry')
-
+		
+@betterbot.command(name='newentry')
+async def new_entry(message, *args):
+	search_query = ' '.join(args)
+	search_query_url_encoded = utils.url_title(search_query)
+	edit_url = f'{BASE_URL}/edit?title={search_query_url_encoded}'
+	edit_url = edit_url
+	if message.author.id in EDITOR_IDS:
+			embed = discord.Embed(
+			title="Write "+search_query,
+			description=f'[Click here to write it!]({edit_url})'
+			)
+	else:
+			embed = discord.Embed(
+			title="This command is editor only"
+			)
+	await message.send(embed=embed)
+		
 @betterbot.command(name='random')
 async def random_entry(message, *args):
 	entry = await database.get_random_entry()
