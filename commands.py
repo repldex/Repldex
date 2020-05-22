@@ -153,6 +153,9 @@ async def new_entry(message, *args):
 			title="Write "+search_query,
 			description=f'[Click here to write it!]({edit_url})'
 			)
+			found = await database.search_entries(search_query, limit=1)
+			if found:
+				embed.set_footer('Alert: There may be an entry with the same/similar name or topic.') 
 	else:
 			embed = discord.Embed(
 			title="This command is editor only"
