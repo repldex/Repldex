@@ -172,10 +172,25 @@ async def search_entries(query, limit=10, search_id=True, page=0):
 		if found is None: found = []
 	if len(found) == 0:
 		searched = await entries_coll.find_one({
-			'title': query
+			'title': query,
+			'unlisted': {'$ne': True}
 		})
 		if searched:
 			found = [searched]
+	if len(found) == 0:
+		if query.startswith('<@') and query.endswith('>'):
+			entry_owner_id = query[2:-1]
+			if entry_owner_id[0] == '!':
+				entry_owner_id = entry_owner_id[1:]
+			entry_owner_id = int(entry_owner_id)
+			print(entry_owner_id)
+			owned_entry = await entries_coll.find_one({
+				'owner_id': entry_owner_id
+			})
+			print(owned_entry)
+			if entry_owner_id:
+				found = [owned_entry]
+
 	return found
 
 # Query is only if sort == relevant

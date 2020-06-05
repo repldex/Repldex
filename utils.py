@@ -22,11 +22,18 @@ auto_delete_channels = {
 commands_ran_by = {}
 
 def get_channel_members(channel_id):
-	return client.get_channel(channel_id).members
+	try:
+		return client.get_channel(channel_id).members
+	except:
+		return [client.get_channel(channel_id).recipient]
 
 def check_user_id(ctx, arg):
 	try:
-		member = ctx.guild.get_member(int(arg))
+		print(ctx, type(ctx))
+		if ctx.guild:
+			member = ctx.guild.get_member(int(arg))
+		else:
+			member = ctx.client.get_user(int(arg))
 		if member is not None:
 			return member
 	except ValueError:

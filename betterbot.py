@@ -6,7 +6,7 @@ import utils
 
 
 class Context():  # very unfinished but its fine probably
-	__slots__ = ('message', 'channel', 'guild', 'author', 'prefix')
+	__slots__ = ('message', 'channel', 'guild', 'author', 'prefix', 'client')
 
 	async def send(self, *args, embed=None, **kwargs):
 		message = await self.message.channel.send(*args, **kwargs, embed=embed)
@@ -27,6 +27,7 @@ class Context():  # very unfinished but its fine probably
 		self.author = message.author
 
 		self.prefix = prefix
+		self.client = discordbot.client
 
 
 class NothingFound(BaseException): pass
