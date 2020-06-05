@@ -155,7 +155,7 @@ async def new_entry(message, *args):
 			)
 			found = await database.search_entries(search_query, limit=1)
 			if found:
-				embed.set_footer('Alert: There may be an entry with the same/similar name or topic.') 
+				embed.set_footer(text='Alert: There may be an entry with the same/similar name or topic.') 
 	else:
 			embed = discord.Embed(
 			title="This command is editor only"
