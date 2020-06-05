@@ -19,8 +19,8 @@ async def help(message, *args):
 	if message.author.id in EDITOR_IDS:
 		commands['selfentry <name>'] = 'Links you to your entry (editor only)'
 		commands['newentry <name>'] = 'Sends link to write new entry (editor only)'
-        if message.author.id in ADMIN_IDS:
-		commands['link <user mention> <article>'] = 'Manually link non-editors to entries (admin only)'
+		if message.author.id in ADMIN_IDS:
+			commands['link <user mention> <article>'] = 'Manually link non-editors to entries (admin only)'
 	content = []
 	prefix = message.prefix
 	for command in commands:
@@ -145,24 +145,21 @@ async def personal_entry(message, *args):
 		await message.send('Invalid entry')
 		
 @betterbot.command(name='link')
-async def personal_entry(message, member: discord.Member,*args):
+async def personal_entry(message, member: utils.Member, entry_name: str):
 	if message.author.id not in ADMIN_IDS: return
-	try:
-		#if errored, should ignore. (Admin can manually link mentioned user and entry)
-		user_id = message.mentions[0].id
-		args = " ".join(args)
-		search_query = args.split(user_id+">")[1]
-		found = await database.search_entries(search_query, limit=1)
-	        if found:
-		  entry = found[0]
-		  title = entry['title']
-		  entry_id = entry['_id']
-		  await database.set_personal_entry(user_id, entry_id)
-		  await message.send(f'Set `{@}` personal entry to `{title}`')
-	        else:
-		  await message.send('Invalid entry')
-	except:
-		await message.send("Wrong syntax, or something.")
+	found = await database.search_entries(entry_name, limit=1)
+	if found:
+		entry = found[0]
+		title = entry['title']
+		entry_id = entry['_id']
+		await database.set_personal_entry(member.id, entry_id)
+		await message.send(
+			embed=discord.Embed(
+				description=f'Set `{member}` personal entry to `{title}`'
+			)
+		)
+	else:
+		await message.send('Invalid entry')
 		
 @betterbot.command(name='newentry')
 async def new_entry(message, *args):
@@ -171,17 +168,17 @@ async def new_entry(message, *args):
 	edit_url = f'{BASE_URL}/edit?title={search_query_url_encoded}'
 	edit_url = edit_url
 	if message.author.id in EDITOR_IDS:
-			embed = discord.Embed(
-			title="Write "+search_query,
-			description=f'[Click here to write it!]({edit_url})'
-			)
-			found = await database.search_entries(search_query, limit=1)
-			if found:
-				embed.set_footer(text='Alert: There may be an entry with the same/similar name or topic.') 
+		embed = discord.Embed(
+		title="Write "+search_query,
+		description=f'[Click here to write it!]({edit_url})'
+		)
+		found = await database.search_entries(search_query, limit=1)
+		if found:
+			embed.set_footer(text='Alert: There may be an entry with the same/similar name or topic.') 
 	else:
-			embed = discord.Embed(
+		embed = discord.Embed(
 			title="This command is editor only"
-			)
+		)
 	await message.send(embed=embed)
 		
 @betterbot.command(name='random')
