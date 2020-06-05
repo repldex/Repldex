@@ -3,7 +3,7 @@ from discordbot import betterbot, client
 from discord.ext import commands
 import random
 
-from config import EDITOR_IDS, BASE_URL
+from config import EDITOR_IDS, BASE_URL, ADMIN_IDS
 import database
 import utils
 
@@ -19,6 +19,8 @@ async def help(message, *args):
 	if message.author.id in EDITOR_IDS:
 		commands['selfentry <name>'] = 'Links you to your entry (editor only)'
 		commands['newentry <name>'] = 'Sends link to write new entry (editor only)'
+        if message.author.id in ADMIN_IDS:
+		commands['link <user mention> <article>'] = 'Manually link non-editors to entries (admin only)'
 	content = []
 	prefix = message.prefix
 	for command in commands:
@@ -141,6 +143,26 @@ async def personal_entry(message, *args):
 		await message.send(f'Set your personal entry to `{title}`')
 	else:
 		await message.send('Invalid entry')
+		
+@betterbot.command(name='link')
+async def personal_entry(message, member: discord.Member,*args):
+	if message.author.id not in ADMIN_IDS: return
+	try:
+		#if errored, should ignore. (Admin can manually link mentioned user and entry)
+		user_id = message.mentions[0].id
+		args = " ".join(args)
+		search_query = args.split(user_id+">")[1]
+		found = await database.search_entries(search_query, limit=1)
+	        if found:
+		  entry = found[0]
+		  title = entry['title']
+		  entry_id = entry['_id']
+		  await database.set_personal_entry(user_id, entry_id)
+		  await message.send(f'Set `{@}` personal entry to `{title}`')
+	        else:
+		  await message.send('Invalid entry')
+	except:
+		await message.send("Wrong syntax, or something.")
 		
 @betterbot.command(name='newentry')
 async def new_entry(message, *args):
