@@ -7,6 +7,22 @@
 	<link rel="stylesheet" href="/static/highlight.css">
 	<script src="/static/highlight.js"></script>
 	<script>hljs.initHighlightingOnLoad();</script>
+	<script>
+function revertEdit(editNumber) {
+	console.log('revertedit')
+	fetch(`/revert?id={{ id }}`, {
+		method: 'POST',
+		headers: {
+      'Content-Type': 'application/json'
+    },
+		body: JSON.stringify({
+			'editNumber': editNumber
+		})
+	}).then(() => {
+		location.href = '/entry/{{ id }}'
+	})
+}
+	</script>
 {% endblock %}
 
 {% block body %}
@@ -23,6 +39,9 @@
 			<div class="revision">
 				{{ revision.author|discordid }}
 				{{ revision.time|timeago }}
+				{% if not loop.first %}
+				<button href="/" class="button" onclick="revertEdit({{ loop.revindex0 }})">Revert</button>
+				{% endif %}
 
 				{% if loop.last %}
 					<pre><code class="rawContent" class="html">{{ revision.content|prettyhtml }}</code></pre>
@@ -34,6 +53,7 @@
 					{% endif %}
 					<pre><code class="rawContent" class="html">{{ current_revision|diff(prev_revision) }}</code></pre>
 				{% endif %}
+				
 			</div>
 		{% endif %}
 	{% endfor %}

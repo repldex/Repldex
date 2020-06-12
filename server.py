@@ -115,12 +115,24 @@ async def edit_entry(request):
 		title = request.query.get('title')
 		content = ''
 		unlisted = False
+
+	sid_cookie = request.cookies.get('sid')
+	if sid_cookie:
+		discord_id = await database.get_editor_session(sid_cookie)
+	else:
+		discord_id = None
+	is_editor = discord_id in EDITOR_IDS
+	if entry_data:
+		if discord_id:
+			if entry_data.get('owner_id') == int(discord_id):
+				is_editor = True
 	
 	return Template(
 		'edit.html',
 		title=title,
 		content=content,
 		unlisted=unlisted,
+		is_editor=is_editor
 	)
 
 @routes.get('/entry')
@@ -185,6 +197,46 @@ async def edit_entry_post(request):
 	)
 	return web.HTTPFound(f'/entry/{entry_id}')
 
+@routes.post('/revert')
+async def revert_edit(request):
+	'Reverts an entry to a former state'
+	if not request.is_editor:
+		return web.HTTPFound('/')
+	entry_id = request.query.get('id')
+	post_data = await request.json()
+
+	print(post_data)
+
+	entry_id = request.query.get('id')
+	reverting_to_history_number = post_data['editNumber']
+
+	entry_data = await database.get_entry(entry_id)
+
+	entry_history = entry_data['history']
+	
+	old_title = entry_data['title']
+	old_image = entry_data.get('image', {}).get('src')
+	old_content = entry_data['content']
+	unlisted = entry_data.get('unlisted', False)
+
+	history_data = entry_history[reverting_to_history_number]
+
+	new_title = history_data['title']
+	new_image = history_data.get('image', {}).get('src')
+	new_content = history_data['content']
+
+	
+
+	entry_id = await database.edit_entry(
+		title=new_title,
+		content=new_content,
+		entry_id=entry_id,
+		editor=request.discord_id,
+		unlisted=unlisted,
+
+		image=new_image
+	)
+	return web.HTTPFound(f'/entry/{entry_id}')
 
 
 CLIENT_ID = 662036612460445713
@@ -256,6 +308,16 @@ async def view_entry(request):
 	if url_title != entry_name:
 		print('Redirected', entry_name, 'to', url_title)
 		return web.HTTPFound('/entry/' + url_title)
+
+	sid_cookie = request.cookies.get('sid')
+	if sid_cookie:
+		discord_id = await database.get_editor_session(sid_cookie)
+	else:
+		discord_id = None
+	is_editor = discord_id in EDITOR_IDS
+	if discord_id:
+		if entry_data.get('owner_id') == int(discord_id):
+			is_editor = True
 	
 	return Template(
 		'entry.html',
@@ -265,7 +327,7 @@ async def view_entry(request):
 		unlisted=unlisted,
 		history=history,
 		image=image,
-
+		is_editor=is_editor,
 		back_location='/'
 	)
 
@@ -340,7 +402,8 @@ async def middleware(request, handler):
 		args = resp.args
 		sid_cookie = request.cookies.get('sid')
 		args['discord_id'] = discord_id
-		args['is_editor'] = is_editor
+		if 'is_editor' not in args:
+			args['is_editor'] = is_editor
 		args['is_admin'] = is_admin
 		resp = web.Response(
 			text=await load_template(

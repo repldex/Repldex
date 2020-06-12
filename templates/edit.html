@@ -19,6 +19,7 @@
             markdownShortcuts: {},
           }
         });
+				
         var quillEditorEl = editor.root
         var contentHiddenEl = document.getElementById('content-hidden')
         var formEl = document.getElementById('form')
@@ -27,6 +28,7 @@
           console.log(quillEditorEl.innerHTML)
           return false
         })
+				window.quillEditor = editor // only exists so i can do xss lol
       })
 		</script>
 
