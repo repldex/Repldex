@@ -187,3 +187,48 @@ async def random_entry(message, *args):
 
 	embed = await create_entry_embed(entry, author_id=message.author.id)
 	await message.send(embed=embed)
+
+@betterbot.command(name="neweditor")
+async def new_editor(message, member: utils.Member):
+	print('new editor command')
+	if message.author.id not in ADMIN_IDS: return
+
+	with open("editors.txt") as editors:
+		if str(member.id) in editors.read().split("\n"):
+			await message.send(embed=discord.Embed(
+				description="This user is already an editor!",
+				colour=discord.Colour.red()
+			))
+			return
+
+	with open("editors.txt","a") as editors:
+		editors.write("\n")
+		editors.write(str(member.id))
+		EDITOR_IDS.append(member.id)
+		await message.send(embed=discord.Embed(
+			description=f"Added {member.mention} as an editor!",
+			colour=discord.Colour.green()
+		))
+
+'''@betterbot.command(name="removeeditor")
+async def new_editor(message, member: utils.Member):
+	print('remove editor command')
+	if message.author.id not in ADMIN_IDS: return
+
+	with open("editors.txt") as editors:
+		editorlist=editors.read().split("\n")
+		if str(member.id) not in editorlist:
+			await message.send(embed=discord.Embed(
+				description="This user is not an editor!",
+				colour=discord.Colour.red()
+			))
+			return
+
+	editorlist.remove(str(member.id))
+	with open("editors.txt","w") as editors:
+		editors.write("\n".join(editorlist))
+		EDITOR_IDS.remove(member.id)
+		await message.send(embed=discord.Embed(
+			description=f"Removed {member.mention} from editors!",
+			colour=discord.Colour.green()
+		))'''

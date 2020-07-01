@@ -56,4 +56,7 @@ async def on_raw_reaction_add(payload):
 				if user.id == author:
 					author_reacted = True
 		if x_reactions >= 3 or author_reacted:
-			await message.delete()
+			try:
+				await message.delete()
+			except discord.errors.NotFound:
+				pass

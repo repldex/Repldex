@@ -1,6 +1,3 @@
-# why not
-# BASE_URL = "https://ReplDex.mat1.repl.co"
-# ?
 with open('baseurl.txt') as f:
 	BASE_URL = f.read()
 
