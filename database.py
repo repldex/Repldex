@@ -5,10 +5,10 @@ import uuid
 import images
 import utils
 
-dbuser = os.getenv('dbuser')
+# dbuser = os.getenv('dbuser')
 dbpassword = os.getenv('dbpassword')
 
-connection_uri = f'mongodb+srv://{dbuser}:{dbpassword}@cluster0-2ixzl.mongodb.net/?retryWrites=true&w=majority'
+connection_uri = os.getenv('dburi')
 
 client = motor.motor_asyncio.AsyncIOMotorClient(connection_uri)
 
