@@ -40,7 +40,9 @@ function revertEdit(editNumber) {
 				{{ revision.author|discordid }}
 				{{ revision.time|timeago }}
 				{% if not loop.first %}
-				<button href="/" class="button" onclick="revertEdit({{ loop.revindex0 }})">Revert</button>
+				{% if is_editor %}
+					<button href="/" class="button" onclick="revertEdit({{ loop.revindex0 }})">Revert</button>
+				{% endif %}
 				{% endif %}
 
 				{% if loop.last %}
