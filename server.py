@@ -310,7 +310,7 @@ async def view_entry(request):
 	    print('Redirected', entry_name, 'to', url_title)
 	    return web.HTTPFound('/entry/' + url_title)
 	  else:
-	    print(f'{url_title} ({entry_name}) is unlisted so it was not redirected')
+	    print(f'{entry_name} ({url_title}) is unlisted so it was not redirected')
 
 	sid_cookie = request.cookies.get('sid')
 	if sid_cookie:
