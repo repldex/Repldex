@@ -130,7 +130,7 @@ async def personal_entry(message, *args):
         entry_id = await database.get_personal_entry(message.author.id)
         if not entry_id:
             if message.author.id not in EDITOR_IDS: 
-                return await message.send("You don't have a personal entry set yet. An editor needs to set one for you")
+                return await message.send("You don't have a personal entry set yet. An admin needs to set one for you")
             else:
                     return await message.send("You haven't set a personal entry yet")
         entry = await database.get_entry(entry_id)
