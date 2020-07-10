@@ -51,6 +51,7 @@ def check_mention(ctx, arg):
 		except ValueError:
 			# doesnt happen i think
 			# but i dont want to break it
+			# yet there are plenty of other errors you're not bothered about? -minx
 			pass
 
 

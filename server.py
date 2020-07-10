@@ -121,6 +121,10 @@ async def edit_entry(request):
 		discord_id = await database.get_editor_session(sid_cookie)
 	else:
 		discord_id = None
+
+	if not(entry_id or discord_id in ADMIN_IDS):
+		return web.Response(text="New entries are temporarily disabled. If you want to write a new entry, contact minx.")
+
 	is_editor = discord_id in EDITOR_IDS
 	if entry_data:
 		if discord_id:
@@ -296,6 +300,7 @@ async def view_entry(request):
 		entry_id = entry_data['_id']
 		title = entry_data['title']
 		content = entry_data.get('content', '[no content]')
+		nohtml_content=entry_data.get("nohtml_content","")
 		unlisted = entry_data.get('unlisted', False)
 		history = entry_data.get('history', [])
 		image = entry_data.get('image')
@@ -323,6 +328,7 @@ async def view_entry(request):
 		'entry.html',
 		title=title,
 		content=content,
+		nohtml_content=nohtml_content,
 		id=entry_id,
 		unlisted=unlisted,
 		history=history,

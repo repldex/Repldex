@@ -62,6 +62,19 @@ anchor.addEventListener('mouseout', () => {
 }
 	
 })
+
+var idkwhyineedthis=true;
+
+function tts(){
+	var msg=new SpeechSynthesisUtterance();
+	var voices=speechSynthesis.getVoices();
+	var voice=document.getElementById("voice").value;
+	msg.voice=voices[voice];
+	msg.text="{{nohtml_content}}";
+	if(idkwhyineedthis){idkwhyineedthis=false;return;}
+	speechSynthesis.speak(msg);
+}
+
 	</script>
 {% endblock %}
 
@@ -97,6 +110,31 @@ anchor.addEventListener('mouseout', () => {
 	<article class="content">
 		{{ content|before_show_text|safe }}
 	</article>
+
+	<button onclick="tts()">Read it to me!</button>
+	<select id="voice">
+		<option value="5" selected>UK English Male</option>
+		<option value="4">UK English Female</option>
+		<option value="3">US English</option>
+		<option value="2">Deutsch</option>
+		<option value="6">Español</option>
+		<option value="7">Español de Estados Unidos</option>
+		<option value="8">Français</option>
+		<option value="9">हिन्दी</option>
+		<option value="10">Bahasa Indonesia</option>
+		<option value="11">Italiano</option>
+		<option value="12">日本語</option>
+		<option value="13">한국의</option>
+		<option value="14">Nederlands</option>
+		<option value="15">Polski</option>
+		<option value="16">Português do Brasil</option>
+		<option value="17">Русский</option>
+		<option value="18">普通话（中国大陆）</option>
+		<option value="19">粤語（香港）</option>
+		<option value="20">國語（臺灣）</option>
+	</select>
+<script>tts();</script>
+	<br><br>
 	{% if is_editor %}
 		<a href="/edit?id={{ id }}" class="button">Edit entry</a>
 		<br><br>
