@@ -311,8 +311,11 @@ async def view_entry(request):
 	url_title = utils.url_title(title)
 
 	if url_title != entry_name:
-		print('Redirected', entry_name, 'to', url_title)
-		return web.HTTPFound('/entry/' + url_title)
+	  if(not unlisted):
+	    print('Redirected', entry_name, 'to', url_title)
+	    return web.HTTPFound('/entry/' + url_title)
+	  else:
+	    print(f'{entry_name} ({url_title}) is unlisted so it was not redirected')
 
 	sid_cookie = request.cookies.get('sid')
 	if sid_cookie:
