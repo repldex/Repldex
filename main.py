@@ -2,6 +2,7 @@ import api
 import server
 import discordbot
 
+this is invalid syntax
 
 print('starting')
 
