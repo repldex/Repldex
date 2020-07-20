@@ -22,6 +22,7 @@ async def help(message, *args):
 		commands['newentry <name>'] = 'Sends link to write new entry (editor only)'
 		if message.author.id in ADMIN_IDS:
 			commands['link <user mention> <article>'] = 'Manually link non-editors to entries (admin only)'
+			commands['neweditor <user mention>'] = 'Make user editor (admin only)'
 	content = []
 	prefix = message.prefix
 	for command in commands:
@@ -126,16 +127,19 @@ async def show_entry(message, *args):
 
 @betterbot.command(name='selfentry')
 async def personal_entry(message, *args):
-	if message.author.id not in EDITOR_IDS: return
 	search_query = ' '.join(args)
 	if not search_query:
 		entry_id = await database.get_personal_entry(message.author.id)
 		if not entry_id:
-			return await message.send("You haven't set a personal entry yet")
-		entry = await database.get_entry(entry_id)
-		
-		embed = await create_entry_embed(entry, author_id=message.author.id)
-		return await message.send(embed=embed)
+			if message.author.id not in EDITOR_IDS: 
+				return await message.send("You don't have a personal entry set yet. An admin needs to set one for you")
+			else:
+				return await message.send("You haven't set a personal entry yet")
+			entry = await database.get_entry(entry_id)
+			embed = await create_entry_embed(entry, author_id=message.author.id)
+			return await message.send(embed=embed)
+	if message.author.id not in EDITOR_IDS: 
+		return await message.send("Only editors can set personal entries")
 	found = await database.search_entries(search_query, limit=1)
 	if found:
 		entry = found[0]
