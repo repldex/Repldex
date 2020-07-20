@@ -3,3 +3,5 @@
 poetry.lock
 pyproject.toml
 *.pyc
+__pycache__/
+_test_runner_.py
