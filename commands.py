@@ -135,9 +135,9 @@ async def personal_entry(message, *args):
 				return await message.send("You don't have a personal entry set yet. An admin needs to set one for you")
 			else:
 				return await message.send("You haven't set a personal entry yet")
-			entry = await database.get_entry(entry_id)
-			embed = await create_entry_embed(entry, author_id=message.author.id)
-			return await message.send(embed=embed)
+		entry = await database.get_entry(entry_id)
+		embed = await create_entry_embed(entry, author_id=message.author.id)
+		return await message.send(embed=embed)
 	if message.author.id not in EDITOR_IDS: 
 		return await message.send("Only editors can set personal entries")
 	found = await database.search_entries(search_query, limit=1)
