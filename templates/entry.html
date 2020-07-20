@@ -63,7 +63,7 @@ anchor.addEventListener('mouseout', () => {
 	
 })
 
-var idkwhyineedthis=true;
+var idkwhyineedthis=true; //dont even ask
 
 function tts(){
 	var msg=new SpeechSynthesisUtterance();
@@ -140,4 +140,5 @@ function tts(){
 		<br><br>
 		<a href="/history/{{ id }}" class="button">View history</a>
 	{% endif %}
+	{{thing|safe}}
 {% endblock %}

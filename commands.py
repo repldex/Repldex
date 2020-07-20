@@ -1,6 +1,7 @@
 import discord
 from discordbot import betterbot, client
 from discord.ext import commands
+import os
 import random
 
 from config import EDITOR_IDS, BASE_URL, ADMIN_IDS
@@ -38,6 +39,7 @@ async def create_entry_embed(entry_data, author_id=None):
 	html = entry_data['content']
 	# html = await utils.before_show_text(html)
 	content = utils.html_to_markdown(html)
+
 	content_ending = ''
 	# if author_id in EDITOR_IDS:
 	# 	entry_id = entry_data['_id']

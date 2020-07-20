@@ -334,7 +334,7 @@ async def view_entry(request):
 		history=history,
 		image=image,
 		is_editor=is_editor,
-		back_location='/'
+		back_location='/',
 	)
 
 @routes.get('/random')
