@@ -1,4 +1,5 @@
 .env
-.local
+.local/
 poetry.lock
 pyproject.toml
+*.pyc
