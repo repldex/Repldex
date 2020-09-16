@@ -18,8 +18,8 @@ async def upload(img):
 
 async def get_data(url):
 	data_url = url.replace('/image/', '/json/')
-	r = await s.get(data_url)
-	data = await r.json()
+	async with s.get(data_url) as r:
+		data = await r.json()
 	return {
 		'thumbnail_b64': data.get('thumbnail_b64'),
 		'src': url,
