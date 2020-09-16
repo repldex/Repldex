@@ -1,7 +1,6 @@
 import discord
 import utils
 import os
-
 from betterbot import BetterBot
 import database
 
@@ -19,6 +18,7 @@ async def on_ready():
 	await client.change_presence(
 		activity=discord.Game(name='^help')
 	)
+
 
 def discord_id_to_user(user_id):
 	user = client.get_user(user_id)

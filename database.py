@@ -1,5 +1,7 @@
+from config import ADMIN_IDS
 from datetime import datetime
 import motor.motor_asyncio
+import dns
 import os
 import uuid
 import images
@@ -40,7 +42,7 @@ async def fix_entry(data):
 		data['nohtml_content'] = utils.remove_html(data['content'])
 	return data
 
-async def edit_entry(title, content, editor=None, unlisted=False, entry_id=None, image=None):
+async def edit_entry(title, content, editor=None, unlisted=False, entry_id=None, image=None, editor_real=None, impersonate=None):
 	t = datetime.now()
 	title = title.strip()
 	content = utils.fix_html(content)
@@ -128,8 +130,11 @@ async def get_editor_session(sid):
 	if found is None: return
 	return found['discord']
 
-async def search_entries(query, limit=10, search_id=True, page=0):
+async def search_entries(query, limit=10, search_id=True, page=0,discord_id=None,unlisted=False):
 	found = []
+	match = {'$match': {'unlisted': {'$ne': True}}}
+	if(unlisted):
+		match = {'$match': {'unlisted': {'$eq': True}}}
 	async for doc in entries_coll.aggregate([
 		{'$searchBeta': {
 			'compound': {
@@ -150,9 +155,7 @@ async def search_entries(query, limit=10, search_id=True, page=0):
 				]
 			}
 		}},
-		{'$match': {
-			'unlisted': {'$ne': True}
-		}},
+		match,
 		{'$addFields': {
       'score': {
 				'$meta': 'searchScore'
@@ -194,9 +197,13 @@ async def search_entries(query, limit=10, search_id=True, page=0):
 	return found
 
 # Query is only if sort == relevant
-async def get_entries(sort, limit=20, page=0, query=None):
+async def get_entries(sort, limit=20, page=0, query=None, discord_id=None,unlisted=False):
+	match = {'$match': {'unlisted': {'$ne': True}}}
+	if(discord_id != None):
+	    if(discord_id in ADMIN_IDS):
+	        match = {}
 	if sort == 'relevant' and query:
-		found = await search_entries(query, limit=limit, page=page)
+		found = await search_entries(query, limit=limit, page=page,discord_id=discord_id,unlisted=unlisted)
 		return found
 	cursor = entries_coll.find({
 		'unlisted': {'$ne': True}

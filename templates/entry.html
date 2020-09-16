@@ -75,6 +75,19 @@ function tts(){
 	speechSynthesis.speak(msg);
 }
 
+function translate(){
+  var language=document.getElementById("language").value;
+  let language = {1:"english", 3:"pirate", 5: "shakespeare"};
+  <option value="1" selected>English</option>
+		<option value="2">Lolcat</option>
+		<option value="3">Pirate</option>
+    <option value="4">Morse Code</option>
+    <option value="5">Shakespeare</option>
+    <option value="6">Gungan</option>
+    <option value="7">Leet</option>
+    <option value="8">Pig Latin</option>
+}
+
 	</script>
 {% endblock %}
 
@@ -108,7 +121,11 @@ function tts(){
 	{% endif %}
 	{% if unlisted %}<i>This entry is unlisted and will not show up in search.</i>{% endif %}
 	<article class="content">
-		{{ content|before_show_text|safe }}
+    {% if translated %}
+      {{ article_text }}
+    {% else %}
+		  {{ content|before_show_text|safe }}
+    {% endif %}
 	</article>
 
 	<button onclick="tts()">Read it to me!</button>
@@ -116,7 +133,7 @@ function tts(){
 		<option value="5" selected>UK English Male</option>
 		<option value="4">UK English Female</option>
 		<option value="3">US English</option>
-		<option value="2">Deutsch</option>
+		<!--<option value="2">Deutsch</option>
 		<option value="6">Español</option>
 		<option value="7">Español de Estados Unidos</option>
 		<option value="8">Français</option>
@@ -131,14 +148,30 @@ function tts(){
 		<option value="17">Русский</option>
 		<option value="18">普通话（中国大陆）</option>
 		<option value="19">粤語（香港）</option>
-		<option value="20">國語（臺灣）</option>
+		<option value="20">國語（臺灣）</option>-->
 	</select>
+
 <script>tts();</script>
+
+  <!--
+  <button onclick="translate()">Translate</button>
+	<select id="language">
+		<option value="1" selected>English</option>
+		<option value="2">Lolcat</option>
+		<option value="3">Pirate</option>
+    <option value="4">Morse Code</option>
+    <option value="5">Shakespeare</option>
+    <option value="6">Gungan</option>
+    <option value="7">Leet</option>
+    <option value="8">Pig Latin</option>
+  </select>
+  -->
+
 	<br><br>
 	{% if is_editor %}
 		<a href="/edit?id={{ id }}" class="button">Edit entry</a>
-		<br><br>
 		<a href="/history/{{ id }}" class="button">View history</a>
 	{% endif %}
 	{{thing|safe}}
+	<comment message="id is: {{ id }}"></comment>
 {% endblock %}

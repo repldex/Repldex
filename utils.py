@@ -21,6 +21,11 @@ auto_delete_channels = {
 
 commands_ran_by = {}
 
+def embed_from_dict(dict,**kwargs):
+	embed = discord.Embed(**kwargs)
+	for i in dict:
+		embed.add_field(name=i,value=dict[i],inline=False)
+	return embed
 def get_channel_members(channel_id):
 	try:
 		return client.get_channel(channel_id).members

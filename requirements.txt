@@ -1,9 +1,0 @@
-motor
-aiohttp
-discord
-jinja2
-discord.py
-dnspython
-bs4
-jellyfish
-timeago

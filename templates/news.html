@@ -115,19 +115,15 @@ document.addEventListener('DOMContentLoaded', () => {
   <h1 class="title">Repldex</h1>
 	<p class="entryCount">{{ entry_count }} total entries</p>
 	<div class="editorStatus center">
-    {% if is_editor %}
+    {% if is_admin %}
       <p>
-        You are a verified editor.
+        You are a verified news reporter.
       </p>
-      {% if new_dissabled and not is_admin %}
-      <p>new entries currently dissabled due to abuse</p>
-      {% else %}
 	
-			<a href="/edit" class="button bigButton">Write a new entry</a>
-		{%endif%}
+			<a href="/news/new" class="button bigButton">Write a new article</a>
 		{% else %}
       <p>
-				You are not a verified editor!
+				You are not a verified news reporter!
 			</p>
 			{% if discord_id %}
 				You are logged in as {{ discord_id|discordid }}.

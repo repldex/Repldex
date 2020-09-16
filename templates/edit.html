@@ -3,6 +3,8 @@
 {% block body %}
 	{% if not is_editor %}
 		<p>You don't have permission to edit this entry</p>
+	{% elif new_dissabled and not is_admin %}
+	<p>new entries currently dissabled due to abuse</p>
 	{% else %}
 		<noscript>
 			enable javascript or it wont work you dumbo
@@ -46,7 +48,8 @@
 			<input id="content-hidden" name="content" hidden></input>
 			{% if is_admin %}
 				<div>
-					Unlisted: <input type="checkbox" name="unlisted"{% if unlisted %} checked {% endif %}>
+					Unlisted: <input type="checkbox" name="unlisted"{% if unlisted %} checked{% endif %}><br>
+					Impersonate (use discord id of who you want to impersonate, nothing means no impersonation): <input name="impersonate">
 				</div>
 			{% endif %}
       <br>

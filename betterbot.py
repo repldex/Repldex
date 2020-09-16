@@ -1,7 +1,9 @@
+import discord
 import discordbot
 import asyncio
 import utils
 
+from config import BLACKLISTED_IDS
 # this is just so i can customize command parsing more
 
 
@@ -11,7 +13,10 @@ class Context():  # very unfinished but its fine probably
 	async def send(self, *args, embed=None, **kwargs):
 		message = await self.message.channel.send(*args, **kwargs, embed=embed)
 		if embed:
-			await message.add_reaction(utils.x_emoji)
+			try:
+				await message.add_reaction(utils.x_emoji)
+			except discord.errors.Forbidden:
+				pass
 			utils.commands_ran_by[message.id] = self.author.id
 			# print(dir(message.guild))
 			for _ in range(10):
@@ -42,6 +47,7 @@ class BetterBot():
 			f'<@{bot_id}>',
 			f'<@!{bot_id}>'
 		]
+		self.allowed = {}
 
 	async def try_converter(self, ctx, string, converter):
 		if hasattr(converter, 'convert'):
@@ -92,6 +98,7 @@ class BetterBot():
 		command, parsing_left = (parsing_left + ' ').split(' ', 1)
 		command = command.lower()
 		if command in self.functions:
+			if(not self.allowed[command] and message.author.id in BLACKLISTED_IDS): return
 			func = self.functions[command]
 		else:
 			return
@@ -104,10 +111,13 @@ class BetterBot():
 		# 	all_arguments[annotation] = func.__annotations__[annotation]
 		return await func(ctx, *return_args)
 
-	def command(self, name, aliases=[]):
+	def command(self, name, aliases=[],allowed=False):
 		def decorator(func):
 			self.functions[name.lower()] = func
+			self.allowed[name.lower()] = allowed
 			for alias in aliases:
 				self.functions[alias.lower()] = func
+				self.allowed[alias.lower()] = allowed
+			
 			return func
 		return decorator

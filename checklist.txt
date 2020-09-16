@@ -12,6 +12,7 @@ Design
     Search
     Recent
     List
+    unlisted entry mode (admins only)
   Alphabetical
   Articles
 Pokémon Mode
