@@ -116,7 +116,6 @@ class Template:
 	def __init__(self, name, **args):
 		self.name = name
 		self.args = args
-
 	
 def admin_only(func):
     @functools.wraps(func)
@@ -524,16 +523,16 @@ async def api_website_title(request):
 	if url.startswith('//'):
 		url = 'https:' + url
 	elif url[0] == '/':
-		url = 'https://repldex.com' + url
+		url = config.BASE_URL + url
 
-	if url.startswith('https://repldex.com'):
-		url = url[len('https://repldex.com'):]
+	if url.startswith(config.BASE_URL):
+		url = url[len(config.BASE_URL):]
 		if url.startswith('/entry/'):
 			entry_name = url[len('/entry/'):]
 			entry = await database.get_entry(name=entry_name)
 			return web.json_response({
 				'title': entry['title'],
-				'favicon': 'https://repldex.com/static/icon.png',
+				'favicon': config.BASE_URL + '/static/icon.png',
 				'content': entry['nohtml_content']
 			})
 		else:
