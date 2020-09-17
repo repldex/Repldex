@@ -18,6 +18,9 @@ import utils
 from bs4 import BeautifulSoup
 import requests
 
+with open('config/config.json', 'r') as f:
+	config = json.loads(f.read())
+
 routes = web.RouteTableDef()
 
 ibm_token = os.getenv('IBM_TOKEN')
@@ -594,5 +597,6 @@ def start_server(loop, background_task, client):
 	)
 	web.run_app(
 		app,
-		port=8081
+		host=config.get('host', '0.0.0.0'),
+		port=config.get('port', 8081)
 	)
