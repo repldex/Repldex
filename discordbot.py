@@ -4,6 +4,7 @@ import os
 from betterbot import BetterBot
 import database
 import json
+import base64
 
 
 client = discord.Client()
@@ -11,10 +12,17 @@ client = discord.Client()
 with open('config/config.json', 'r') as f:
 	config = json.loads(f.read())
 
+bot_token = os.getenv('token')
+
+if not bot_token:
+	raise Exception('No token found')
+
+# first part of the token is always the bot id
+bot_id = int(base64.b64decode(bot_token.split('.')[0]))
 
 async def start_bot():
-	print('starting bot yeet')
-	await client.start(os.getenv('token'))
+	print('starting bot pog')
+	await client.start(bot_token)
 
 @client.event
 async def on_ready():
@@ -32,7 +40,7 @@ prefix = config.get('prefix', '^')
 
 betterbot = BetterBot(
 	prefix=prefix,
-	bot_id=662036612460445713
+	bot_id=bot_id
 )
 
 @client.event
