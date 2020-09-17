@@ -30,6 +30,7 @@ async def help(message, *args):
 			commands['view_selfentry <user mention>'] = 'View a users selfentry (admin only)'
 			commands['who_is_the_leader'] = 'tells you who the supreme leader is (admin only)'
 			commands['userinfo <user mention>'] = 'get info on the mentioned user (admin only)'
+			commands['unlist <article id>'] = 'Toggles unlisting of entry (admin only)'
 			#commands['neweditor <user mention>'] = 'Make user editor (admin only)'
 	content = []
 	prefix = message.prefix
