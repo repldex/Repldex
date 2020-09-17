@@ -17,6 +17,13 @@ with open(config_path+'admins.txt') as f:
 	ADMIN_IDS = [int(item.split()[0]) for item in f.read().splitlines()] # admins can now have names
 	# list(map(int, f.read().splitlines()))
 
+with open(config_path+'reporters.txt') as f:
+	REPORTER_IDS = [int(item.split()[0]) for item in f.read().splitlines()] 
+	for i in ADMIN_IDS:
+		if(i not in REPORTER_IDS):
+			REPORTER_IDS.append(i)
+
+
 with open(config_path+'blacklist.txt') as f:
 	BLACKLIST_IDS = [int(item.split()[0]) for item in f.read().splitlines()]
 	BLACKLISTED_IDS = BLACKLIST_IDS

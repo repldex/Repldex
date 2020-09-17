@@ -11,7 +11,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 import jinja2.ext
 
 import commands
-from config import EDITOR_IDS, ADMIN_IDS, APPROVAL_IDS, new_dissabled
+from config import EDITOR_IDS, ADMIN_IDS, APPROVAL_IDS, BLACKLISTED_IDS, REPORTER_IDS, new_dissabled
 import database
 import images
 import utils
@@ -102,33 +102,41 @@ class Template:
 		self.name = name
 		self.args = args
 
+async def adminOnly(request):
+		sid_cookie = request.cookies.get('sid')
+		if sid_cookie:
+			discord_id = await database.get_editor_session(sid_cookie)
+		else:
+			discord_id = None
+		if(not request.is_admin):
+			raise web.HTTPUnauthorized()
 @routes.get('/')
 async def index(request):
-    sid_cookie = request.cookies.get('sid')
-    if sid_cookie:
-        discord_id = await database.get_editor_session(sid_cookie)
-    else:
-    	discord_id = None
-    entries = await database.get_entries(sort='last_edited',discord_id=discord_id)
-    entry_count = await database.count_entries()
-    return Template(
+		sid_cookie = request.cookies.get('sid')
+		if sid_cookie:
+				discord_id = await database.get_editor_session(sid_cookie)
+		else:
+			discord_id = None
+		entries = await database.get_entries(sort='last_edited',discord_id=discord_id)
+		entry_count = await database.count_entries()
+		return Template(
 		'index.html',
 		entries=entries,
 		entry_count=entry_count
 	)
 
 @routes.get('/news')
-async def index(request):
-    sid_cookie = request.cookies.get('sid')
-    if sid_cookie:
-        discord_id = await database.get_editor_session(sid_cookie)
-    else:
-    	discord_id = None
-    if(not request.is_admin):
-    	raise web.HTTPUnauthorized()
-    entries = await database.get_entries(sort='last_edited',discord_id=discord_id)
-    entry_count = await database.count_entries()
-    return Template(
+async def news(request):
+	sid_cookie = request.cookies.get('sid')
+	if sid_cookie:
+		discord_id = await database.get_editor_session(sid_cookie)
+	else:
+		discord_id = None
+	if(not request.is_admin):
+		raise web.HTTPUnauthorized()
+	entries = await database.get_entries(sort='last_edited',discord_id=discord_id)
+	entry_count = await database.count_entries()
+	return Template(
 		'news.html',
 		entries=entries,
 		entry_count=entry_count
@@ -136,20 +144,30 @@ async def index(request):
 
 @routes.get('/admin')
 async def admin_panel(request):
-    sid_cookie = request.cookies.get('sid')
-    if sid_cookie:
-        discord_id = await database.get_editor_session(sid_cookie)
-    else:
-    	discord_id = None
-    if(not request.is_admin):
-    	raise web.HTTPUnauthorized()
-    entries = await database.get_entries(sort='last_edited',discord_id=discord_id,unlisted=True)
+    await adminOnly(request)
     entry_count = await database.count_entries()
     return Template(
-		'mod_panel.html',
-		entries=entries,
+		'admin/main.html',
 		entry_count=entry_count
 	)
+
+@routes.get('/admin/users')
+async def admin_users(request):
+	await adminOnly(request)
+	entry_count = await database.count_entries()
+	IDS = EDITOR_IDS + BLACKLISTED_IDS
+	return Template(
+		'admin/users.html',
+		entry_count=entry_count,
+		EDITOR_IDS=EDITOR_IDS,
+		ADMIN_IDS=ADMIN_IDS,
+		APPROVAL_IDS=APPROVAL_IDS,
+		BLACKLISTED_IDS=BLACKLISTED_IDS,
+		REPORTER_IDS=REPORTER_IDS,
+		IDS=IDS,
+		discord_id_to_user=discord_id_to_user
+	)
+
 @routes.get('/edit')
 async def edit_entry(request):
 	entry_id = request.query.get('id')
@@ -276,6 +294,8 @@ async def edit_entry_post(request):
 			author=f"<@{request.discord_id}>"
 		else:
 			author = f"<@{request.orig_id}> impersonating <@{request.discord_id}>"
+		if(len(content)>1020):
+			content = content[:1020] +'...'
 		requests.post(os.getenv("newentry_hook"),json={"embeds":[{
 			"title":"New entry!",
 			"url":"https://repldex.com/entry/"+entry_id,

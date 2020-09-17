@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block body %}
+<div class="center">
+  <h1 class="title">Repldex | Admin Panel (all users)</h1>
+	<p class="entryCount">{{ entry_count }} total entries</p>
+	<table style="width:100%">
+		<tr>
+			<td>discord id</td>
+			<td>discord tag</td>
+			<td>is editor</td>
+			<td>needs new entry aproval</td>
+			<td>is reporter</td>
+			<td>is admin</td>
+			<td> is blacklisted</td>
+		</tr>
+		{% for i in IDS%}
+			{% if i !=0 %}
+			<tr>
+				<th>{{i}}</th>
+				<th>{{discord_id_to_user(i)}}</th>
+				<th>{{i in EDITOR_IDS }}</th>
+				<th>{{i in APPROVAL_IDS }}</th>
+				<th>{{i in REPORTER_IDS }}</th>
+				<th>{{i in ADMIN_IDS }}</th>
+				<th>{{i in BLACKLISTED_IDS }}</th>
+			</tr>
+			{% endif %}
+		{% endfor %}
+	</table>
+	<!-- <div class="center"><a href="https://discord.gg/wku7886">Join the Discord</a></div> -->
+  <!-- <iframe src="https://discordapp.com/widget?id=662039537479843850&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0"></iframe> -->
+{% endblock %}
