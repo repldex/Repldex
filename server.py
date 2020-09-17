@@ -16,12 +16,14 @@ import database
 import images
 import utils
 from bs4 import BeautifulSoup
-import requests
 
 with open('config/config.json', 'r') as f:
 	config = json.loads(f.read())
 
 routes = web.RouteTableDef()
+
+s = aiohttp.ClientSession()
+
 
 ibm_token = os.getenv('IBM_TOKEN')
 ibm_url = os.getenv('IBM_URL')
@@ -298,28 +300,27 @@ async def edit_entry_post(request):
 	)
 
 	if not entry_data:
-		
 		if not impersonate:
 			author=f"<@{request.discord_id}>"
 		else:
 			author = f"<@{request.orig_id}> impersonating <@{request.discord_id}>"
 		if len(content) > 1020:
-			content = content[:1020] +'...'
-		# TODO: make this asynchronous using aiohttp rather than requests
-		requests.post(os.getenv("newentry_hook"), json={'embeds': [{
-			'title': 'New entry!',
-			'url': 'https://repldex.com/entry/' + entry_id,
-			'timestamp': datetime.now().isoformat(),
-			'color': 0x2ecc71,
-			'fields': [
-				{'name': 'Author', 'value': author, 'inline': False},
-				{'name': 'Title', 'value': title, 'inline': False},
-				{'name': 'Content', 'value': content, 'inline': False},
-				{'name': 'unlisted', 'value': str(unlisted), 'inline': False},
-				{'name': 'id', 'content': entry_id},
-				{'name': 'link', 'content': 'https://repldex.com/entry/' + entry_id}
-			]
-		}]})
+			content = content[:1020] + '...'
+		if os.getenv('newentry_hook'):
+			await s.post(os.getenv('newentry_hook'), json={'embeds': [{
+				'title': 'New entry!',
+				'url': 'https://repldex.com/entry/' + entry_id,
+				'timestamp': datetime.now().isoformat(),
+				'color': 0x2ecc71,
+				'fields': [
+					{'name': 'Author', 'value': author, 'inline': False},
+					{'name': 'Title', 'value': title, 'inline': False},
+					{'name': 'Content', 'value': content, 'inline': False},
+					{'name': 'unlisted', 'value': str(unlisted), 'inline': False},
+					{'name': 'id', 'content': entry_id},
+					{'name': 'link', 'content': 'https://repldex.com/entry/' + entry_id}
+				]
+			}]})
 
 	return web.HTTPFound(f'/entry/{entry_id}')
 
@@ -380,38 +381,37 @@ async def loggedin_redirect(request):
 	code = request.query.get('code')
 	if not code:
 		return web.HTTPFound('/login')
-	async with aiohttp.ClientSession() as s:
-		r = await s.post(
-			'https://discordapp.com/api/v6/oauth2/token',
-			data={
-				'client_id': CLIENT_ID,
-				'client_secret': CLIENT_SECRET,
-				'grant_type': 'authorization_code',
-				'code': code,
-				'redirect_uri': REDIRECT_URI,
-				'scope': 'identify',
-			}
-		)
-		data = await r.json()
-		if 'error' in data:
-			return web.HTTPFound('/login')
-		access_token = data['access_token']
-		r = await s.get(
-			'https://discordapp.com/api/users/@me',
-			headers={
-				'Authorization': 'Bearer ' + access_token
-			}
-		)
-		data = await r.json()
-		user_id = int(data['id'])
-		sid = await database.new_editor_session(user_id)
-		resp = web.HTTPFound('/')
-		resp.set_cookie(
-			'sid',
-			sid,
-			max_age=31557600 # a year
-		)
-		return resp
+	r = await s.post(
+		'https://discordapp.com/api/v6/oauth2/token',
+		data={
+			'client_id': CLIENT_ID,
+			'client_secret': CLIENT_SECRET,
+			'grant_type': 'authorization_code',
+			'code': code,
+			'redirect_uri': REDIRECT_URI,
+			'scope': 'identify',
+		}
+	)
+	data = await r.json()
+	if 'error' in data:
+		return web.HTTPFound('/login')
+	access_token = data['access_token']
+	r = await s.get(
+		'https://discordapp.com/api/users/@me',
+		headers={
+			'Authorization': 'Bearer ' + access_token
+		}
+	)
+	data = await r.json()
+	user_id = int(data['id'])
+	sid = await database.new_editor_session(user_id)
+	resp = web.HTTPFound('/')
+	resp.set_cookie(
+		'sid',
+		sid,
+		max_age=31557600 # a year
+	)
+	return resp
 
 
 @routes.get('/entry/{entry}')
@@ -529,11 +529,10 @@ async def api_website_title(request):
 			return web.json_response({})
 
 
-	async with aiohttp.ClientSession() as s:
-		async with s.get(url) as r:
-			soup = BeautifulSoup(await r.text(), 'html.parser')
-			title = soup.title.string
-			favicon_link = soup.find('link', rel='icon')
+	async with s.get(url) as r:
+		soup = BeautifulSoup(await r.text(), 'html.parser')
+		title = soup.title.string
+		favicon_link = soup.find('link', rel='icon')
 	if favicon_link:
 		favicon = favicon_link['href']
 		if favicon.startswith('//'):
