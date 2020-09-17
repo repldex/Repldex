@@ -3,9 +3,13 @@ import utils
 import os
 from betterbot import BetterBot
 import database
+import json
+
 
 client = discord.Client()
 
+with open('config/config.json', 'r') as f:
+	config = json.loads(f.read())
 
 
 async def start_bot():
@@ -24,7 +28,7 @@ def discord_id_to_user(user_id):
 	user = client.get_user(user_id)
 	return str(user)
 
-prefix = '^'
+prefix = config.get('prefix', '^')
 
 betterbot = BetterBot(
 	prefix=prefix,
