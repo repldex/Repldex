@@ -260,7 +260,7 @@ async def edit_entry_post(request):
 	entry_data = await database.get_entry(entry_id)
 	if not entry_data:
 		if new_disabled:
-			return 'sorry new entries dissabled due to abuse'
+			return 'New entries are currently disabled'
 	title = post_data.get('title') or entry_data.get('title')
 	image = post_data.get('image')
 	content = post_data['content']
