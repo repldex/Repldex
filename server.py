@@ -123,13 +123,13 @@ def admin_only(func):
     async def wrapper(request):
         sid_cookie = request.cookies.get('sid')
         if sid_cookie:
-		discord_id = await database.get_editor_session(sid_cookie)
-	else:
-		discord_id = None
-	if(not request.is_admin):
-		raise web.HTTPUnauthorized()
+            discord_id = await database.get_editor_session(sid_cookie)
+        else:
+            discord_id = None
+        if(not request.is_admin):
+            raise web.HTTPUnauthorized()
 	
-	return await func(request)
+        return await func(request)
 
     return wrapper
 
