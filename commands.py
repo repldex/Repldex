@@ -47,13 +47,9 @@ async def help(message, *args):
 async def create_entry_embed(entry_data, author_id=None,raw_entry=False):
 	if(not raw_entry):
 		html = entry_data['content']
-		# html = await utils.before_show_text(html)
 		content = utils.html_to_markdown(html)
 	
 		content_ending = ''
-		# if author_id in EDITOR_IDS:
-		# 	entry_id = entry_data['_id']
-		# 	content_ending = f'\n\n*[Click here to edit]({BASE_URL}/edit?id={entry_id})*'
 	
 		if len(content) > 2048:
 			content = content[:2045 - len(content_ending)] + '...'
