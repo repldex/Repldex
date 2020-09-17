@@ -38,7 +38,9 @@ if ibm_token:
 	language_translator.set_service_url(ibm_url)
 else:
 	print('no ibm translation token found, this is fine')
-	
+	language_translator = None
+
+language_codes = {'af', 'ar', 'az', 'ba', 'be', 'bg', 'bn', 'ca', 'cs', 'cv', 'cy', 'da', 'de', 'el', 'en', 'eo', 'es', 'et', 'eu', 'fa', 'fi', 'fr', 'ga', 'gu', 'he', 'hi', 'hr', 'ht', 'hu', 'hy', 'is', 'it', 'ja', 'ka', 'kk', 'km', 'ko', 'ku', 'ky', 'lo', 'lt', 'lv', 'ml', 'mn', 'mr', 'ms', 'mt', 'my', 'nb', 'ne', 'nl', 'nn', 'pa', 'pa-PK', 'pl', 'ps', 'pt', 'ro', 'ru', 'si', 'sk', 'sl', 'so', 'sq', 'sr', 'sv', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'zh', 'zh-TW'}
 	
 jinja_env = Environment(
 	loader=FileSystemLoader(searchpath='templates'),
@@ -459,21 +461,21 @@ async def view_entry(request):
 	lang = None
 	if_lang = request.query.get('lang',False) != False
 
-	if lang in ['af', 'ar', 'az', 'ba', 'be', 'bg', 'bn', 'ca', 'cs', 'cv', 'cy', 'da', 'de', 'el', 'en', 'eo', 'es', 'et', 'eu', 'fa', 'fi', 'fr', 'ga', 'gu', 'he', 'hi', 'hr', 'ht', 'hu', 'hy', 'is', 'it', 'ja', 'ka', 'kk', 'km', 'ko', 'ku', 'ky', 'lo', 'lt', 'lv', 'ml', 'mn', 'mr', 'ms', 'mt', 'my', 'nb', 'ne', 'nl', 'nn', 'pa', 'pa-PK', 'pl', 'ps', 'pt', 'ro', 'ru', 'si', 'sk', 'sl', 'so', 'sq', 'sr', 'sv', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'zh', 'zh-TW']:
+	if lang in language_codes:
 		try:
 			cached = entry_id in translated_cache
-			if(cached):
-				if(lang in translated_cache[entry_id]):
+			if cached:
+				if lang in translated_cache[entry_id]:
 					article_text=translated_cache[entry_id][lang]
 					translated=True
 					print('used lang translation cache')
 				else:
 					cached = False
-			if(not cached):
+			if not cached and language_translator:
 				translation = language_translator.translate(
 					text=nohtml_content,
 					model_id='en-{}'.format(lang)).get_result()
-				article_text = translation["translations"][0]["translation"]
+				article_text = translation['translations'][0]['translation']
 				try:
 					translated_cache[entry_id][lang]=article_text
 				except:
