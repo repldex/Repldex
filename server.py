@@ -118,16 +118,17 @@ class Template:
 		self.args = args
 
 	
-def adminOnly(func):
+def admin_only(func):
     @functools.wraps(func)
     async def wrapper(request):
         sid_cookie = request.cookies.get('sid')
-	if sid_cookie:
+        if sid_cookie:
 		discord_id = await database.get_editor_session(sid_cookie)
 	else:
 		discord_id = None
 	if(not request.is_admin):
 		raise web.HTTPUnauthorized()
+	
 	return await func(request)
 
     return wrapper
@@ -165,7 +166,7 @@ async def news(request):
 	)
 
 @routes.get('/admin')
-@adminOnly
+@admin_only
 async def admin_panel(request):
     entry_count = await database.count_entries()
     return Template(
@@ -174,7 +175,7 @@ async def admin_panel(request):
 	)
 
 @routes.get('/admin/users')
-@adminOnly
+@admin_only
 async def admin_users(request):
 	entry_count = await database.count_entries()
 	IDS = EDITOR_IDS + BLACKLISTED_IDS
