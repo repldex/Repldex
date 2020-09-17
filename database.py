@@ -272,12 +272,6 @@ async def count_entries():
 	return count
 
 async def get_random_entry():
-	# cursor = entries_coll.find({
-	# 	'unlisted': {'$ne': True}
-	# })
-	# cursor = cursor.sort(sort, -1)
-	# cursor = cursor.skip(page * limit)
-	# cursor = cursor.limit(limit)
 	cursor = entries_coll.aggregate([
 		{'$match': {
 			'unlisted': {'$ne': True}
