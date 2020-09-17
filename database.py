@@ -9,7 +9,6 @@ import utils
 
 
 connection_uri = os.getenv('dburi')
-print('connection_uri', connection_uri)
 
 client = motor.motor_asyncio.AsyncIOMotorClient(connection_uri)
 
