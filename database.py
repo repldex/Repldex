@@ -41,7 +41,16 @@ async def fix_entry(data):
 		data['nohtml_content'] = utils.remove_html(data['content'])
 	return data
 
-async def edit_entry(title, content, editor=None, unlisted=False, entry_id=None, image=None, editor_real=None, impersonate=None):
+async def edit_entry(
+	title,
+	content,
+	editor=None,
+	unlisted=False,
+	entry_id=None,
+	image=None,
+	editor_real=None,
+	impersonate=None
+):
 	t = datetime.now()
 	title = title.strip()
 	content = utils.fix_html(content)
@@ -84,6 +93,15 @@ async def edit_entry(title, content, editor=None, unlisted=False, entry_id=None,
 	)
 	return entry_id
 
+async def set_entry_translation(
+	entry_id,
+	language_code,
+	content
+):
+	content = utils.fix_html(content)
+	nohtml_content = utils.remove_html(content)
+	# TODO
+
 async def get_entry(entry_id=None, name=None, search_id=True, owner=None):
 	if not entry_id and name:
 		entries = await search_entries(
@@ -94,7 +112,6 @@ async def get_entry(entry_id=None, name=None, search_id=True, owner=None):
 		if not entries: return
 		return entries[0]
 	elif owner:
-		# print(type(owner), owner)
 		found = await entries_coll.find_one({
 			'owner_id': owner
 		})
