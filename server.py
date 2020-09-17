@@ -9,6 +9,7 @@ from aiohttp import web
 from discordbot import discord_id_to_user
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 import jinja2.ext
+import functools
 
 import commands
 from config import EDITOR_IDS, ADMIN_IDS, APPROVAL_IDS, BLACKLISTED_IDS, REPORTER_IDS, new_disabled
@@ -116,14 +117,22 @@ class Template:
 		self.name = name
 		self.args = args
 
-async def adminOnly(request):
-	sid_cookie = request.cookies.get('sid')
-	if sid_cookie:
-		discord_id = await database.get_editor_session(sid_cookie)
-	else:
-		discord_id = None
-	if(not request.is_admin):
-		raise web.HTTPUnauthorized()
+	
+def admin_only(func):
+    @functools.wraps(func)
+    async def wrapper(request):
+        sid_cookie = request.cookies.get('sid')
+        if sid_cookie:
+            discord_id = await database.get_editor_session(sid_cookie)
+        else:
+            discord_id = None
+        if(not request.is_admin):
+            raise web.HTTPUnauthorized()
+	
+        return await func(request)
+
+    return wrapper
+
 @routes.get('/')
 async def index(request):
 	sid_cookie = request.cookies.get('sid')
@@ -157,8 +166,8 @@ async def news(request):
 	)
 
 @routes.get('/admin')
+@admin_only
 async def admin_panel(request):
-    await adminOnly(request)
     entry_count = await database.count_entries()
     return Template(
 		'admin/main.html',
@@ -166,8 +175,8 @@ async def admin_panel(request):
 	)
 
 @routes.get('/admin/users')
+@admin_only
 async def admin_users(request):
-	await adminOnly(request)
 	entry_count = await database.count_entries()
 	IDS = EDITOR_IDS + BLACKLISTED_IDS
 	return Template(
