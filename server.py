@@ -11,7 +11,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 import jinja2.ext
 
 import commands
-from config import EDITOR_IDS, ADMIN_IDS, APPROVAL_IDS, BLACKLISTED_IDS, REPORTER_IDS, new_dissabled
+from config import EDITOR_IDS, ADMIN_IDS, APPROVAL_IDS, BLACKLISTED_IDS, REPORTER_IDS, new_disabled
 import database
 import images
 import utils
@@ -216,7 +216,7 @@ async def edit_entry(request):
 		content=content,
 		unlisted=unlisted,
 		is_editor=is_editor,
-		new_dissabled=new_dissabled
+		new_disabled=new_disabled
 	)
 
 @routes.get('/entry')
@@ -259,7 +259,7 @@ async def edit_entry_post(request):
 	entry_id = request.query.get('id')
 	entry_data = await database.get_entry(entry_id)
 	if not entry_data:
-		if new_dissabled:
+		if new_disabled:
 			return 'sorry new entries dissabled due to abuse'
 	title = post_data.get('title') or entry_data.get('title')
 	image = post_data.get('image')

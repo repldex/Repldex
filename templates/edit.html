@@ -3,8 +3,8 @@
 {% block body %}
 	{% if not is_editor %}
 		<p>You don't have permission to edit this entry</p>
-	{% elif new_dissabled and not is_admin %}
-	<p>new entries currently dissabled due to abuse</p>
+	{% elif new_disabled and not is_admin %}
+		<p>Creating new entries is currently disabled :(</p>
 	{% else %}
 		<noscript>
 			enable javascript or it wont work you dumbo
