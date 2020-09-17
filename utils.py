@@ -16,7 +16,7 @@ from discordbot import discord_id_to_user
 x_emoji = '❌'
 
 auto_delete_channels = {
-	437067256049172491 #oof-topic
+	437067256049172491 # oof-topic
 }
 
 commands_ran_by = {}
@@ -127,8 +127,6 @@ class Member(commands.Converter):
 			check_user_id, # Check user id
 			check_mention, # Check mention
 			check_name_with_discrim, # Name + discrim
-			# check_name_with_discrim was repeated for some reason
-			# i hope removing it doesnt break something
 			check_nickname, # Nickname
 			check_name_starts_with, # Name starts with
 			check_nickname_starts_with, # Nickname starts with
@@ -241,13 +239,6 @@ def fix_html(inputted, prev=None):
 	if new_string == prev: return new_string
 	else: return fix_html(new_string, prev=inputted)
 
-
-# def markdown_to_html(inputted):
-# 	inputted = str(inputted)
-# 	new_string = re.sub(r'\n', '<br>', inputted)
-# 	new_string = re.sub(r'**([\S\s]**', r'<b>\1</b>', new_string)
-# 	new_string = re.sub(r'*([\S\s]*', r'<i>\1</i>', new_string)
-# 	return new_string
 
 def prettify_html(inputted):
 	soup = bs(inputted.strip(), 'html.parser')
