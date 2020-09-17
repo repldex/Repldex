@@ -9,7 +9,7 @@ from aiohttp import web
 from discordbot import discord_id_to_user
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 import jinja2.ext
-import functooos
+import functools
 
 import commands
 from config import EDITOR_IDS, ADMIN_IDS, APPROVAL_IDS, BLACKLISTED_IDS, REPORTER_IDS, new_disabled
