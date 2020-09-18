@@ -18,6 +18,7 @@ db = client['repldex']
 entries_coll = db['entries']
 sessions_coll = db['sessions']
 users_coll = db['users']
+translations_coll = db['translations']
 
 async def fix_entry(data):
 	if data is None: return
