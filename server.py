@@ -12,7 +12,7 @@ import jinja2.ext
 import functools
 
 import commands
-from config import EDITOR_IDS, ADMIN_IDS, APPROVAL_IDS, BLACKLISTED_IDS, REPORTER_IDS, new_disabled
+from config import EDITOR_IDS, ADMIN_IDS, APPROVAL_IDS, BLACKLISTED_IDS, REPORTER_IDS, BASE_URL, CLIENT_ID, new_disabled
 import database
 import images
 import utils
@@ -120,11 +120,6 @@ class Template:
 def admin_only(func):
     @functools.wraps(func)
     async def wrapper(request):
-        sid_cookie = request.cookies.get('sid')
-        if sid_cookie:
-            discord_id = await database.get_editor_session(sid_cookie)
-        else:
-            discord_id = None
         if(not request.is_admin):
             raise web.HTTPUnauthorized()
 	
@@ -376,9 +371,8 @@ async def revert_edit(request):
 	return web.HTTPFound(f'/entry/{entry_id}')
 
 
-CLIENT_ID = 662036612460445713
 CLIENT_SECRET = os.getenv('client_secret')
-REDIRECT_URI = 'https://repldex.com/loggedin'
+REDIRECT_URI = BASE_URL+'/loggedin'
 
 @routes.get('/login')
 async def login_redirect(request):
