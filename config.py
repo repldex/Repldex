@@ -1,6 +1,10 @@
+import json
 config_path = 'config/'
 with open(config_path + 'baseurl.txt') as f:
 	BASE_URL = f.read()
+
+with open(config_path + 'config.json') as f:
+	CLIENT_ID = json.loads(f.read()).get('client_id',662036612460445713)
 
 # this kind of makes sense as a file i guess
 with open(config_path + 'editors.txt') as f:
