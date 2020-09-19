@@ -7,6 +7,23 @@ import uuid
 import images
 import utils
 
+from ibm_watson import LanguageTranslatorV3
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+
+ibm_token = os.getenv('IBM_TOKEN')
+ibm_url = os.getenv('IBM_URL')
+
+if ibm_token:
+	authenticator = IAMAuthenticator(ibm_token)
+	language_translator = LanguageTranslatorV3(
+			version='2018-05-01',
+			authenticator=authenticator
+	)
+
+	language_translator.set_service_url(ibm_url)
+else:
+	print('no ibm translation token found, this is fine')
+	language_translator = None
 
 connection_uri = os.getenv('dburi')
 print('connection_uri', connection_uri)
