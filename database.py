@@ -302,3 +302,15 @@ async def get_random_entry():
 	async for entry in cursor:
 		found.append(entry)
 	return found[0]
+"""code being written do not delete yet thanks
+#checks if translation exists in db or not, then calls add_translation to add if it doesn't, and get if it does.
+async def request_translation(entry_id=None, language=None):
+	async def add_translation(entry_id=None, language=None):
+		pass
+	async def get_translation(entry_id=None, language=None):
+		pass
+	#check if translation is in db
+#should be called on edit of entry
+async def delete_translation(entry_id=None):
+	pass
+"""
