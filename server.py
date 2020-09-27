@@ -12,7 +12,7 @@ import jinja2.ext
 import functools
 
 import commands
-from config import EDITOR_IDS, ADMIN_IDS, APPROVAL_IDS, BLACKLISTED_IDS, REPORTER_IDS, new_disabled
+from config import EDITOR_IDS, ADMIN_IDS, APPROVAL_IDS, BLACKLISTED_IDS, REPORTER_IDS, BASE_URL, CLIENT_ID, new_disabled
 import database
 import images
 import utils
@@ -120,11 +120,6 @@ class Template:
 def admin_only(func):
     @functools.wraps(func)
     async def wrapper(request):
-        sid_cookie = request.cookies.get('sid')
-        if sid_cookie:
-            discord_id = await database.get_editor_session(sid_cookie)
-        else:
-            discord_id = None
         if(not request.is_admin):
             raise web.HTTPUnauthorized()
 	
@@ -376,9 +371,8 @@ async def revert_edit(request):
 	return web.HTTPFound(f'/entry/{entry_id}')
 
 
-CLIENT_ID = 662036612460445713
 CLIENT_SECRET = os.getenv('client_secret')
-REDIRECT_URI = 'https://repldex.com/loggedin'
+REDIRECT_URI = BASE_URL+'/loggedin'
 
 @routes.get('/login')
 async def login_redirect(request):
@@ -463,10 +457,10 @@ async def view_entry(request):
 	article_text = None
 	translated = False
   
-	#ok you figure this out imma do templating
+	#translations temprorarily disabled
 	article_text = None
 	translated = False
-	lang = None
+	lang = None #request.query.get('lang')
 	if_lang = request.query.get('lang',False) != False
 
 	if lang in language_codes:
@@ -494,6 +488,25 @@ async def view_entry(request):
 	elif if_lang:
 		translated = True
 		article_text = 'Translations are currently disabled'
+	
+	#substitutions like in xkcd
+	sub = request.args.get('sub')
+	if_sub = request.query.get('lang',False) != False
+	if sub.lower() == "true":
+		substitutions = {
+				"witnesses":"these dudes I know",
+				"allegedly":"kinda probably",
+				"new study":"tumblr post",
+				"rebuild":"avenge",
+				"space":"spaaace",
+				"google glass":"virtual boy",
+				"smartphone":"pokedex",
+				"electric":"atomic",
+				"senator":"elf-lord",
+				"car":"cat"
+				}
+	else:
+		pass
 
 	return Template(
 		'entry.html',
