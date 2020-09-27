@@ -494,6 +494,7 @@ async def view_entry(request):
 	if_sub = request.query.get('lang',False) != False
 	if sub.lower() == "true":
 		substitutions = {
+				#substitutions
 				"witnesses":"these dudes I know",
 				"allegedly":"kinda probably",
 				"new study":"tumblr post",
@@ -503,7 +504,15 @@ async def view_entry(request):
 				"smartphone":"pokedex",
 				"electric":"atomic",
 				"senator":"elf-lord",
-				"car":"cat"
+				"car":"cat",
+				"election":"eating contest",
+				"congressional leaders":"river spirits",
+				"homeland security":"homestar runner",
+				"could not be reached for comment":"is guilty and everyone knows it",
+				#substitutions 2
+				"debate":"dance off",
+				"self driving":"uncontrollably swerving",
+				"poll":"psychic reading"
 				}
 	else:
 		pass
