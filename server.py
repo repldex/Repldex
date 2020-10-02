@@ -494,23 +494,45 @@ async def view_entry(request):
 	if_sub = request.query.get('lang',False) != False
 	if sub.lower() == "true":
 		substitutions = {
-			#substitutions
-			"witnesses":"these dudes I know","allegedly":"kinda probably","new study":"tumblr post","rebuild":"avenge","space":"spaaace","google glass":"virtual boy","smartphone":"pokedex","electric":"atomic","senator":"elf-lord","car":"cat","election":"eating contest","congressional leaders":"river spirits","homeland security":"homestar runner","could not be reached for comment":"is guilty and everyone knows it",
-			#substitutions 2
-			"debate":"dance off","self driving":"uncontrollably swerving","poll":"psychic reading","candidate":"airbender","drone":"dog","vows to":"probably won't","at large":"very large","succesfully":"suddenly","expands":"physically expands","first degree":"friggin' awful","second degree":"friggin' awful","third degree":"friggin' awful","an unknown number":"like hundreds","front runner":"blade runner","global":"spherical","years":"minutes","minutes":"years","no indication":"lots of signs","urged restraint by":"drunkenly egged on by","horsepower":"tons of horsemeat",
-			#substitutions 3
-			"gaffe":"magic spell","ancient":"haunted","star-studded":"blood-soaked","remains to be seen":"will never be known","silver bullet":"way to kill werewolves","subway system":"tunnels I found","suprising":"suprising (but not to me)","war of words":"interplanetary war","tension":"sexual tension","cautiously optomistic":"delusional","doctor who":"the big bang theory","win votes":"find pokemon","behind the headlines":"beyond the grave","email":"poem","facebook post":"poem","tweet":"poem","facebook ceo":"this guy","latest":"final","disrupt":"destroy","meeting":"menange a trois","scientists":"channing tautum and his friends","you won't believe":"I'm really sad about",
-			#horse
-			"force":"horse",
-			#five-minute comics: part 3
-			"coca-cola":"coke",
-			#batman
-			"batman":"a man dressed like a bat",
-			#s/keyboard/leopard
-			"keyboard":"leopard",
-			#my friend catherine
-			"cat":"my friend catherine"
+			# substitutions
+			"witnesses": "these dudes I know","allegedly": "kinda probably","new study": "tumblr post","rebuild": "avenge","space": "spaaace","google glass": "virtual boy","smartphone": "pokedex","electric": "atomic","senator": "elf-lord","car": "cat","election": "eating contest","congressional leaders": "river spirits","homeland security": "homestar runner","could not be reached for comment": "is guilty and everyone knows it",
+			# substitutions 2
+			"debate": "dance off","self driving": "uncontrollably swerving","poll": "psychic reading","candidate": "airbender","drone": "dog","vows to": "probably won't","at large": "very large","succesfully": "suddenly","expands": "physically expands","first degree": "friggin' awful","second degree": "friggin' awful","third degree": "friggin' awful","an unknown number": "like hundreds","front runner": "blade runner","global": "spherical","years": "minutes","minutes": "years","no indication": "lots of signs","urged restraint by": "drunkenly egged on by","horsepower": "tons of horsemeat",
+			# substitutions 3
+			"gaffe": "magic spell","ancient": "haunted","star-studded": "blood-soaked","remains to be seen": "will never be known","silver bullet": "way to kill werewolves","subway system": "tunnels I found","suprising": "suprising (but not to me)","war of words": "interplanetary war","tension": "sexual tension","cautiously optomistic": "delusional","doctor who":"the big bang theory","win votes":"find pokemon","behind the headlines":"beyond the grave","email":"poem","facebook post":"poem","tweet":"poem","facebook ceo": "this guy","latest": "final","disrupt": "destroy","meeting": "menange a trois","scientists": "channing tautum and his friends","you won't believe": "I'm really sad about",
+			# horse
+			"force": "horse",
+			# five-minute comics: part 3
+			"coca-cola": "coke",
+			# batman
+			"batman": "a man dressed like a bat",
+			# s/keyboard/leopard
+			"keyboard": "leopard",
+			# my friend catherine
+			"cat": "my friend catherine"
 		}
+		# time to do substitutions oh boi
+		lower_content = nohtml_content.lower()
+		
+		for count,to_sub in enumerate(substitutions.keys()):
+			lower_content.replace(to_sub,count+"axd328994akflskfifyouseethisinanentrypleasedeleteitimmediatlythankssldkf92340adf")
+		for count in range(len(substitutions)-1):
+			lower.content.replace(count+"axd328994akflskfifyouseethisinanentrypleasedeleteitimmediatlythankssldkf92340adf",substitutions[substitutions.keys()[count]])
+		return Template(
+			'entry.html',
+			title=title,
+			content=content,
+			nohtml_content=nohtml_content,
+			id=entry_id,
+			unlisted=unlisted,
+			history=history,
+			image=image,
+			is_editor=is_editor,
+			back_location='/',
+			article_text = article_text,
+			translated=translated,
+			subbed=True,
+		)
 		
 	else:
 		pass
@@ -528,6 +550,7 @@ async def view_entry(request):
 		back_location='/',
 		article_text = article_text,
 		translated=translated,
+		subbed=False,
 	)
 
 @routes.get('/random')
