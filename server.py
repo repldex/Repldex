@@ -1,7 +1,6 @@
 import asyncio
 from datetime import datetime
-import os
-import json
+import os, re, json
 from ibm_watson import LanguageTranslatorV3
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 import aiohttp
@@ -511,13 +510,11 @@ async def view_entry(request):
 			# my friend catherine
 			"cat": "my friend catherine"
 		}
-		# time to do substitutions oh boi
-		lower_content = nohtml_content.lower()
-		
+		# feel free to improve the ahead
 		for count,to_sub in enumerate(substitutions.keys()):
-			lower_content.replace(to_sub,count+"axd328994akflskfifyouseethisinanentrypleasedeleteitimmediatlythankssldkf92340adf")
+			nohtml_content = re.sub(r"(?i)"+to_sub, count+"ax28fifyouseethisinanentrypleasedeleteitldf", nohtml_content)
 		for count in range(len(substitutions)-1):
-			lower.content.replace(count+"axd328994akflskfifyouseethisinanentrypleasedeleteitimmediatlythankssldkf92340adf",substitutions[substitutions.keys()[count]])
+			nohtml_content = re.sub(count+"ax28fifyouseethisinanentrypleasedeleteitldf", substitutions[substitutions.keys()[count]])
 		return Template(
 			'entry.html',
 			title=title,
