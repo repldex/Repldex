@@ -454,11 +454,11 @@ async def view_entry(request):
 			is_editor = True
 
 	article_text = None
-	translated = False
   
 	#translations temprorarily disabled
 	article_text = None
 	translated = False
+	subbed = False
 	lang = None #request.query.get('lang')
 	if_lang = request.query.get('lang',False) != False
 
@@ -492,6 +492,7 @@ async def view_entry(request):
 	sub = request.args.get('sub')
 	if_sub = request.query.get('lang',False) != False
 	if sub.lower() == "true":
+		subbed = True
 		substitutions = {
 			# substitutions
 			"witnesses": "these dudes I know","allegedly": "kinda probably","new study": "tumblr post","rebuild": "avenge","space": "spaaace","google glass": "virtual boy","smartphone": "pokedex","electric": "atomic","senator": "elf-lord","car": "cat","election": "eating contest","congressional leaders": "river spirits","homeland security": "homestar runner","could not be reached for comment": "is guilty and everyone knows it",
@@ -515,21 +516,6 @@ async def view_entry(request):
 			nohtml_content = re.sub(r"(?i)"+to_sub, count+"ax28fifyouseethisinanentrypleasedeleteitldf", nohtml_content)
 		for count in range(len(substitutions)-1):
 			nohtml_content = re.sub(count+"ax28fifyouseethisinanentrypleasedeleteitldf", substitutions[substitutions.keys()[count]])
-		return Template(
-			'entry.html',
-			title=title,
-			content=content,
-			nohtml_content=nohtml_content,
-			id=entry_id,
-			unlisted=unlisted,
-			history=history,
-			image=image,
-			is_editor=is_editor,
-			back_location='/',
-			article_text = article_text,
-			translated=translated,
-			subbed=True,
-		)
 		
 	else:
 		pass
@@ -547,7 +533,7 @@ async def view_entry(request):
 		back_location='/',
 		article_text = article_text,
 		translated=translated,
-		subbed=False,
+		subbed=subbed,
 	)
 
 @routes.get('/random')
