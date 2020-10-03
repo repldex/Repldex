@@ -3,7 +3,7 @@ import json
 print('starting')
 
 with open('config/config.json', 'r') as f:
-	config = json.loads(f.read())
+	config = json.load(f)
 
 if config.get('dotenv', False):
 	__import__('dotenv').load_dotenv()
