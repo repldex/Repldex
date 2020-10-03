@@ -493,6 +493,7 @@ async def view_entry(request):
 	if_sub = request.query.get('lang',False) != False
 	if sub.lower() == "true":
 		subbed = True
+		substitutions = config.get("substitutions")
 		# feel free to improve the ahead
 		for count,to_sub in enumerate(substitutions.keys()):
 			nohtml_content = re.sub(r"(?i)"+to_sub, count+"ax28fifyouseethisinanentrypleasedeleteitldf", nohtml_content)
