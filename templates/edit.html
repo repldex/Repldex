@@ -37,10 +37,10 @@
 		<form method="post" id="form" enctype="multipart/form-data">
 			<input class="title" name="title" value="{{ title or '' }}" placeholder="Title"></input>
 			<div class="imageSelectContainer">
-				<label for="imageSelect">
-					<div id="uploadImageText">Upload Image</div>
-				</label>
-				<input type="file" name="image" accept="image/*" id="imageSelect" alt="Select an image to upload">
+        <label id="imageLabel" for="imageSelect">
+          <div id="uploadImageText">Upload Image</div>
+        </label>
+        <input type="file" name="image" accept="image/*" id="imageSelect" alt="Select an image to upload">
 			</div>
 
 			<div id="editor">{{ content|safe or '' }}</div>

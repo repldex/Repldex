@@ -207,6 +207,33 @@ entry:active {
   border: 1px solid #212428;
   padding: 10px;
 }
+
+#imageSelect {
+  display: none;
+}
+
+#imageLabel {
+  font-family: sans-serif;
+  display: inline-block;
+  padding: 8px 18px;
+  background: #1d51b1;
+  box-shadow: 0px 4px 0px #0f2e81;
+  border-radius: 6px;
+  color: #FFFFFF;
+  text-decoration: none;
+  line-height: 100%;
+  border: 0;
+  cursor: pointer;
+  font-size: inherit;
+  transition-property: transform, box-shadow;
+  transition-duration: 120ms;
+}
+
+#imageLabel:active {
+  box-shadow: none;
+  transform: translateY(4px);
+}
+
 #editor img[src$=".svg"] {
   height: 1em;
 }
