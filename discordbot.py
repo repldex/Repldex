@@ -7,7 +7,10 @@ import json
 import base64
 
 
-client = discord.Client()
+intents = discord.Intents.default()
+intents.members = True
+client = discord.Client(intents=intents)
+
 
 with open('config/config.json', 'r') as f:
 	config = json.loads(f.read())
