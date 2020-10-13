@@ -1,9 +1,13 @@
 from aiohttp import web
 from datetime import datetime
+from bs4 import BeautifulSoup
 import json
 
 import database
+import comfig
 import utils
+
+s = aiohttp.ClientSession()
 
 class CustomRouteDef(web.RouteTableDef):
 	def __init__(self, prepend="") -> None:
