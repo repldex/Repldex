@@ -12,6 +12,7 @@ import jinja2.ext
 import functools
 
 import commands
+from api import api
 from config import EDITOR_IDS, ADMIN_IDS, APPROVAL_IDS, BLACKLISTED_IDS, REPORTER_IDS, BASE_URL, CLIENT_ID, new_disabled
 import database
 import images
@@ -20,17 +21,8 @@ from bs4 import BeautifulSoup
 
 with open('config/config.json', 'r') as f:
 	config = json.loads(f.read())
-
-class CustomRouteDef(web.RouteTableDef):
-	def __init__(self, prepend="") -> None:
-		super().__init__()
-		self.prepend = prepend
-	def route(self, method: str, path: str, **kwargs):
-		path = self.prepend + path
-		return super().route(method, path, **kwargs)
 		
 routes = web.RouteTableDef()
-api = CustomRouteDef('/api')
 
 s = aiohttp.ClientSession()
 
@@ -518,47 +510,6 @@ async def random_entry(request):
 	entry = await database.get_random_entry()
 	
 	return web.HTTPFound('/entry/' +entry['_id'])
-
-@api.get('/website-title')
-async def api_website_title(request):
-	url = request.query['url']
-
-	if url.startswith('//'):
-		url = 'https:' + url
-	elif url[0] == '/':
-		url = config.BASE_URL + url
-
-	if url.startswith(config.BASE_URL):
-		url = url[len(config.BASE_URL):]
-		if url.startswith('/entry/'):
-			entry_name = url[len('/entry/'):]
-			entry = await database.get_entry(name=entry_name)
-			return web.json_response({
-				'title': entry['title'],
-				'favicon': config.BASE_URL + '/static/icon.png',
-				'content': entry['nohtml_content']
-			})
-		else:
-			return web.json_response({})
-
-
-	async with s.get(url) as r:
-		soup = BeautifulSoup(await r.text(), 'html.parser')
-		title = soup.title.string
-		favicon_link = soup.find('link', rel='icon')
-	if favicon_link:
-		favicon = favicon_link['href']
-		if favicon.startswith('//'):
-			favicon = 'https:' + favicon
-		if favicon[0] == '/':
-			base_url = url[:url.find('/', 9)]
-			favicon = base_url + favicon
-	else:
-		favicon = None
-	return web.json_response({
-		'title': title,
-		'favicon': favicon
-	})
 
 
 @web.middleware
