@@ -3,8 +3,16 @@ from datetime import datetime
 import json
 
 import database
-from server import routes
 import utils
+
+class CustomRouteDef(web.RouteTableDef):
+	def __init__(self, prepend="") -> None:
+		super().__init__()
+		self.prepend = prepend
+	def route(self, method: str, path: str, **kwargs):
+		path = self.prepend + path
+		return super().route(method, path, **kwargs)
+api = CustomRouteDef('/api')
 
 def json_serial(obj):
 	if isinstance(obj, (datetime)):
@@ -18,7 +26,7 @@ def json_response(d):
 
 
 
-@routes.get('/api/entries/{sort}')
+@api.get('/entries/{sort}')
 async def api_entries_new(request):
 	page = int(request.query.get('page', 0))
 	limit = int(request.query.get('limit', 20))
@@ -79,7 +87,7 @@ async def create_response(entry_data, preview=False):
 		}
 
 
-@routes.get('/api/entry/{entry}')
+@api.get('/entry/{entry}')
 async def api_entry(request):
 	entry_name = utils.url_title(request.match_info.get('entry'))
 	entry_data = await database.get_entry(name=entry_name)
@@ -92,7 +100,7 @@ async def api_entry(request):
 
 	return json_response(data)
 
-@routes.get('/api/selfentry/{owner_id}')
+@api.get('/selfentry/{owner_id}')
 async def api_selfentry(request):
 	owner_id = int(request.match_info['owner_id'])
 	entry_data = await database.get_entry(
@@ -100,3 +108,44 @@ async def api_selfentry(request):
 	)
 	data = await create_response(entry_data)
 	return json_response(data)
+
+@api.get('/website-title')
+async def api_website_title(request):
+	url = request.query['url']
+
+	if url.startswith('//'):
+		url = 'https:' + url
+	elif url[0] == '/':
+		url = config.BASE_URL + url
+
+	if url.startswith(config.BASE_URL):
+		url = url[len(config.BASE_URL):]
+		if url.startswith('/entry/'):
+			entry_name = url[len('/entry/'):]
+			entry = await database.get_entry(name=entry_name)
+			return web.json_response({
+				'title': entry['title'],
+				'favicon': config.BASE_URL + '/static/icon.png',
+				'content': entry['nohtml_content']
+			})
+		else:
+			return web.json_response({})
+
+
+	async with s.get(url) as r:
+		soup = BeautifulSoup(await r.text(), 'html.parser')
+		title = soup.title.string
+		favicon_link = soup.find('link', rel='icon')
+	if favicon_link:
+		favicon = favicon_link['href']
+		if favicon.startswith('//'):
+			favicon = 'https:' + favicon
+		if favicon[0] == '/':
+			base_url = url[:url.find('/', 9)]
+			favicon = base_url + favicon
+	else:
+		favicon = None
+	return web.json_response({
+		'title': title,
+		'favicon': favicon
+	})
