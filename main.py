@@ -8,7 +8,6 @@ with open('config/config.json', 'r') as f:
 if config.get('dotenv', False):
 	__import__('dotenv').load_dotenv()
 
-import api
 import server
 import discordbot
 
