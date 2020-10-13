@@ -21,7 +21,16 @@ from bs4 import BeautifulSoup
 with open('config/config.json', 'r') as f:
 	config = json.loads(f.read())
 
+class CustomRouteDef(web.RouteTableDef):
+	def __init__(self, prepend="") -> None:
+		super().__init__()
+		self.prepend = prepend
+	def route(self, method: str, path: str, **kwargs):
+		path = self.prepend + path
+		return super().route(method, path, **kwargs)
+		
 routes = web.RouteTableDef()
+api = CustomRouteDef('/api')
 
 s = aiohttp.ClientSession()
 
@@ -510,7 +519,7 @@ async def random_entry(request):
 	
 	return web.HTTPFound('/entry/' +entry['_id'])
 
-@routes.get('/api/website-title')
+@api.get('/website-title')
 async def api_website_title(request):
 	url = request.query['url']
 
@@ -594,6 +603,7 @@ def start_server(loop, background_task, client):
 	app.discord = client
 	app.add_routes([web.static('/static', 'static')])
 	app.add_routes(routes)
+	app.add_routes(api)
 	asyncio.ensure_future(
 		background_task,
 		loop=loop
