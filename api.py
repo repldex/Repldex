@@ -1,10 +1,11 @@
 from aiohttp import web
+import aiohttp
 from datetime import datetime
 from bs4 import BeautifulSoup
 import json
 
 import database
-import comfig
+import config
 import utils
 
 s = aiohttp.ClientSession()
