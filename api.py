@@ -15,7 +15,11 @@ class CustomRouteDef(web.RouteTableDef):
 		super().__init__()
 		self.prepend = prepend
 	def route(self, method: str, path: str, **kwargs):
-		path = self.prepend + path
+		prepend = 'prepend'
+		if(kwargs.get(prepend,true)==true):
+			path = self.prepend + path
+		if(prepend in list(kwargs.keys())): 
+			del kwargs[prepend]
 		return super().route(method, path, **kwargs)
 api = CustomRouteDef('/api')
 
