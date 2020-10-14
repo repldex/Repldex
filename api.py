@@ -10,18 +10,7 @@ import utils
 
 s = aiohttp.ClientSession()
 
-class CustomRouteDef(web.RouteTableDef):
-	def __init__(self, prepend="") -> None:
-		super().__init__()
-		self.prepend = prepend
-	def route(self, method: str, path: str, **kwargs):
-		prepend = 'prepend'
-		if(kwargs.get(prepend,True)==True):
-			path = self.prepend + path
-		if(prepend in list(kwargs.keys())): 
-			del kwargs[prepend]
-		return super().route(method, path, **kwargs)
-api = CustomRouteDef('/api')
+routes = web.RouteTableDef()
 
 def json_serial(obj):
 	if isinstance(obj, (datetime)):
@@ -35,7 +24,7 @@ def json_response(d):
 
 
 
-@api.get('/entries/{sort}')
+@routes.get('/entries/{sort}')
 async def api_entries_new(request):
 	page = int(request.query.get('page', 0))
 	limit = int(request.query.get('limit', 20))
@@ -96,7 +85,7 @@ async def create_response(entry_data, preview=False):
 		}
 
 
-@api.get('/entry/{entry}')
+@routes.get('/entry/{entry}')
 async def api_entry(request):
 	entry_name = utils.url_title(request.match_info.get('entry'))
 	entry_data = await database.get_entry(name=entry_name)
@@ -109,7 +98,7 @@ async def api_entry(request):
 
 	return json_response(data)
 
-@api.get('/selfentry/{owner_id}')
+@routes.get('/selfentry/{owner_id}')
 async def api_selfentry(request):
 	owner_id = int(request.match_info['owner_id'])
 	entry_data = await database.get_entry(
@@ -118,7 +107,7 @@ async def api_selfentry(request):
 	data = await create_response(entry_data)
 	return json_response(data)
 
-@api.get('/website-title')
+@routes.get('/website-title')
 async def api_website_title(request):
 	url = request.query['url']
 
@@ -158,3 +147,6 @@ async def api_website_title(request):
 		'title': title,
 		'favicon': favicon
 	})
+
+api = web.Application()
+api.add_routes(routes)
