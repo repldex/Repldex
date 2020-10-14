@@ -16,7 +16,7 @@ class CustomRouteDef(web.RouteTableDef):
 		self.prepend = prepend
 	def route(self, method: str, path: str, **kwargs):
 		prepend = 'prepend'
-		if(kwargs.get(prepend,true)==true):
+		if(kwargs.get(prepend,True)==True):
 			path = self.prepend + path
 		if(prepend in list(kwargs.keys())): 
 			del kwargs[prepend]
