@@ -21,7 +21,7 @@ from bs4 import BeautifulSoup
 
 with open('config/config.json', 'r') as f:
 	config = json.loads(f.read())
-		
+
 routes = web.RouteTableDef()
 
 s = aiohttp.ClientSession()
