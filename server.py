@@ -143,14 +143,13 @@ async def index(request):
 	)
 
 @routes.get('/news')
+@admin_only
 async def news(request):
 	sid_cookie = request.cookies.get('sid')
 	if sid_cookie:
 		discord_id = await database.get_editor_session(sid_cookie)
 	else:
 		discord_id = None
-	if(not request.is_admin):
-		raise web.HTTPUnauthorized()
 	entries = await database.get_entries(sort='last_edited',discord_id=discord_id)
 	entry_count = await database.count_entries()
 	return Template(
