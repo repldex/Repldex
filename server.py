@@ -554,7 +554,7 @@ def start_server(loop, background_task, client):
 	app.discord = client
 	app.add_routes([web.static('/static', 'static')])
 	app.add_routes(routes)
-	app.add_subapp(api)
+	app.add_subapp("/api/",api)
 	asyncio.ensure_future(
 		background_task,
 		loop=loop
