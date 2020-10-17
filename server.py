@@ -511,6 +511,15 @@ async def random_entry(request):
 	
 	return web.HTTPFound('/entry/' +entry['_id'])
 
+@routes.get('/wiki/{page}')
+async def view_wiki_entry(request):
+	page_name = request.match_info.get('page','Home')
+	url = "https://raw.githubusercontent.com/wiki/mat-1/ReplDex/"+page_name+".md"
+	async with s.get(url) as response:
+		return (await repsonse.text())
+	
+	
+
 
 @web.middleware
 async def middleware(request, handler):
