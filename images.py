@@ -2,12 +2,14 @@ import aiohttp
 
 s = aiohttp.ClientSession()
 
+
 async def upload(img):
 	data = aiohttp.FormData()
-	data.add_field('image',
-	  img.file,
+	data.add_field(
+		'image',
+		img.file,
 		content_type=img.content_type
-  )
+	)
 	async with s.post(
 		'https://i.matdoes.dev/api/upload',
 		data=data,
@@ -15,6 +17,7 @@ async def upload(img):
 		image_json = await r.json()
 		image_url = image_json['url']
 	return image_url
+
 
 async def get_data(url):
 	data_url = url.replace('/image/', '/json/')

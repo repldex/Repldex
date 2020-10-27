@@ -6,16 +6,17 @@ import database
 from server import routes
 import utils
 
+
 def json_serial(obj):
 	if isinstance(obj, (datetime)):
 		return obj.isoformat()
+
 
 def json_response(d):
 	return web.Response(
 		text=json.dumps(d, default=json_serial),
 		content_type='application/json'
 	)
-
 
 
 @routes.get('/api/entries/{sort}')
@@ -39,6 +40,7 @@ async def api_entries_new(request):
 		entry = await create_response(entry, preview=True)
 		entries.append(entry)
 	return json_response(entries)
+
 
 async def create_response(entry_data, preview=False):
 	if entry_data:
@@ -91,6 +93,7 @@ async def api_entry(request):
 		return web.HTTPFound('/api/entry/' + data['slug'])
 
 	return json_response(data)
+
 
 @routes.get('/api/selfentry/{owner_id}')
 async def api_selfentry(request):

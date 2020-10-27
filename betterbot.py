@@ -1,6 +1,5 @@
-import discord
 import discordbot
-import asyncio
+import discord
 import utils
 
 from config import BLACKLISTED_IDS
@@ -21,7 +20,7 @@ class Context():  # very unfinished but its fine probably
 			# print(dir(message.guild))
 			for _ in range(10):
 				print('waiting for message')
-				await discordbot.client.wait_for('message', check=lambda m:m.channel == message.channel)
+				await discordbot.client.wait_for('message', check=lambda m: m.channel == message.channel)
 			await message.delete()
 		return message
 
@@ -49,7 +48,7 @@ class BetterBot():
 		]
 		self.allowed = {}
 		self.command_settings = {}
-		
+
 	async def try_converter(self, ctx, string, converter):
 		if hasattr(converter, 'convert'):
 			return await converter.convert(converter, ctx, string)
@@ -99,7 +98,7 @@ class BetterBot():
 		if command in self.functions:
 			if(not self.allowed[command] and message.author.id in BLACKLISTED_IDS): return
 			func = self.functions[command]
-			bots_allowed = self.command_settings.get("allowed",False)
+			bots_allowed = self.command_settings.get('allowed', False)
 		else:
 			return
 		if message.author.bot and not bots_allowed:
@@ -113,18 +112,21 @@ class BetterBot():
 		# 	all_arguments[annotation] = func.__annotations__[annotation]
 		return await func(ctx, *return_args)
 
-	def command(self, name, aliases=[],allowed=False,bots_allowed=False):
+	def command(self, name, aliases=[], allowed=False, bots_allowed=False):
+		name = name.lower()
+
 		def decorator(func):
-			self.functions[name.lower()] = func
-			self.allowed[name.lower()] = allowed
-			if(self.command_settings.get(name.lower(),None)==None):
-				self.command_settings[name.lower()] = {}
-			self.command_settings[name.lower()]["allowed"] = bots_allowed
+			self.functions[name] = func
+			self.allowed[name] = allowed
+			if name not in self.command_settings:
+				self.command_settings[name] = {}
+			self.command_settings[name]['allowed'] = bots_allowed
 			for alias in aliases:
-				self.functions[alias.lower()] = func
-				self.allowed[alias.lower()] = allowed
-				if(self.command_settings.get(alias.lower(),None)==None):
-					self.command_settings[alias.lower()] = {}
-				self.command_settings[alias.lower()]["allowed"] = bots_allowed
+				alias = alias.lower()
+				self.functions[alias] = func
+				self.allowed[alias] = allowed
+				if alias not in self.command_settings:
+					self.command_settings[alias] = {}
+				self.command_settings[alias]['allowed'] = bots_allowed
 			return func
 		return decorator

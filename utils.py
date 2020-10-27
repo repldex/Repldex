@@ -1,40 +1,42 @@
-import re
-from discordbot import client
-import discord
-from discord.ext import commands
-import html
-from bs4 import BeautifulSoup as bs
-import difflib
-import timeago as timeagolib
-from datetime import datetime
-import jellyfish
-import time
-from config import BASE_URL, EDITOR_IDS
-import database
 from discordbot import discord_id_to_user
+from config import BASE_URL, EDITOR_IDS
+from bs4 import BeautifulSoup as bs
+from discord.ext import commands
+from discordbot import client
+from datetime import datetime
+import timeago as timeagolib
+import jellyfish
+import database
+import discord
+import difflib
+import html
+import re
 
 x_emoji = '❌'
 
 auto_delete_channels = {
-	437067256049172491 # oof-topic
+	437067256049172491  # oof-topic
 }
 
 commands_ran_by = {}
 
-def embed_from_dict(dict,**kwargs):
+
+def embed_from_dict(dict, **kwargs):
 	embed = discord.Embed(**kwargs)
 	for i in dict:
-		embed.add_field(name=i,value=dict[i],inline=False)
+		embed.add_field(name=i, value=dict[i], inline=False)
 	return embed
+
+
 def get_channel_members(channel_id):
 	try:
 		return client.get_channel(channel_id).members
-	except:
+	except AttributeError:
 		return [client.get_channel(channel_id).recipient]
+
 
 def check_user_id(ctx, arg):
 	try:
-		print(ctx, type(ctx))
 		if ctx.guild:
 			member = ctx.guild.get_member(int(arg))
 		else:
@@ -46,7 +48,7 @@ def check_user_id(ctx, arg):
 
 
 def check_mention(ctx, arg):
-	match = re.match("<@!?(\d+)>", arg)
+	match = re.match(r'<@!?(\d+)>', arg)
 	if match:
 		user_id = match.group(1)
 		try:
@@ -54,9 +56,6 @@ def check_mention(ctx, arg):
 			if member is not None:
 				return member
 		except ValueError:
-			# doesnt happen i think
-			# but i dont want to break it
-			# yet there are plenty of other errors you're not bothered about? -minx
 			pass
 
 
@@ -115,29 +114,30 @@ def check_nickname_contains(ctx, arg):
 	)
 	return member
 
+
 class Member(commands.Converter):
 	async def convert(self, ctx, arg):
 		if arg[0] == '@':
 			arg = arg[1:]
-		
+
 		# these comments suck but i dont really want to remove them
 		# also this should be a module-level constant
 		# but this module is too big already
 		CHECKERS = [
-			check_user_id, # Check user id
-			check_mention, # Check mention
-			check_name_with_discrim, # Name + discrim
-			check_nickname, # Nickname
-			check_name_starts_with, # Name starts with
-			check_nickname_starts_with, # Nickname starts with
-			check_name_contains, # Name contains
-			check_nickname_contains, # Nickname contains
+			check_user_id,  # Check user id
+			check_mention,  # Check mention
+			check_name_with_discrim,  # Name + discrim
+			check_nickname,  # Nickname
+			check_name_starts_with,  # Name starts with
+			check_nickname_starts_with,  # Nickname starts with
+			check_name_contains,  # Name contains
+			check_nickname_contains,  # Nickname contains
 		]
 		for checker in CHECKERS:
 			member = checker(ctx, arg)
 			if member is not None:
 				return member
-		
+
 		return None
 
 
@@ -155,6 +155,7 @@ def remove_html(inputted, prev=None):
 	if new_string == prev: return new_string
 	else: return remove_html(new_string, prev=inputted)
 
+
 def html_to_markdown(inputted, prev=None):
 	print('html_to_markdown')
 	new_string = str(inputted)
@@ -163,11 +164,13 @@ def html_to_markdown(inputted, prev=None):
 	new_string = re.sub(r'<(\s{0,}?)br(\s{0,}?)([\S\s]{0,}?)\/?>', '\n', inputted)
 	new_string = re.sub(r'<(div|p|br)>', '', new_string)
 	new_string = re.sub(r'<\/(div|p|br|h1|h2|h3)>', r'</\1>\n', new_string)
-	new_string = re.sub(r'<(?:\s{0,}?)(b|strong|h1|h2|h3)(?:\s{0,}?)(?:[\S\s]*)>(.{1,}?)<\/?(?:\s*)\1(?:\s*)>', r'**\2**', new_string)
+	new_string = re.sub(
+		r'<(?:\s{0,}?)(b|strong|h1|h2|h3)(?:\s{0,}?)(?:[\S\s]*)>(.{1,}?)<\/?(?:\s*)\1(?:\s*)>',
+		r'**\2**',
+		new_string
+	)
 	new_string = re.sub(r'<(?:\s*)(i|em)(?:\s*)(?:[\S\s]*)>(.+?)<(?:\s*)\/\1>>', r'*\1*', new_string)
 	new_string = re.sub(r'<li>(.+?)</li>', r'• \1\n', new_string)
-
-	
 
 	for found in list(re.finditer(r'<\s*a[\s\S]{1,}?href="(.{0,}?)"[\s\S]{0,}?>(.{0,}?)<\s*\/a\s*>', new_string))[::-1]:
 		span_start, span_end = found.span()
@@ -184,6 +187,7 @@ def html_to_markdown(inputted, prev=None):
 	if new_string == prev: return new_string
 	else: return html_to_markdown(new_string, prev=inputted)
 
+
 async def get_editor_list():
 	editor_list = []
 	for editor_id in EDITOR_IDS:
@@ -196,6 +200,7 @@ async def get_editor_list():
 		editor_html = f'<li>{editor_html}</li>'
 		editor_list.append(editor_html)
 	return '<ul>' + ('\n'.join(editor_list)) + '</ul>'
+
 
 async def before_show_text(inputted):
 	variables = {
@@ -215,6 +220,7 @@ async def before_show_text(inputted):
 			new_string = new_string[:span_start] + variable_output + new_string[span_end:]
 
 	return new_string
+
 
 def fix_html(inputted, prev=None):
 	new_string = str(inputted)
@@ -245,6 +251,7 @@ def prettify_html(inputted):
 	prettyHTML = soup.prettify()
 	return prettyHTML
 
+
 def compare_diff(a, b):
 	diff = difflib.unified_diff(
 		b.splitlines(),
@@ -254,15 +261,19 @@ def compare_diff(a, b):
 	)
 	return '\n'.join(list(diff)[3:])
 
+
 def timeago(date):
 	return timeagolib.format(date, datetime.now())
 
+
 def dictsort(d, reverse=True):
-	s = sorted(d, key=lambda i:d.get(i), reverse=reverse)
+	s = sorted(d, key=lambda i: d.get(i), reverse=reverse)
 	return s
+
 
 def levenshtein(a, b):
 	return jellyfish.levenshtein_distance(a, b)
+
 
 def url_title(title):
 	title = title.replace(' ', '+')
@@ -271,14 +282,15 @@ def url_title(title):
 	title = title.replace('/', '+')
 	return title
 
+
 def datetime_to_int(t):
-	return (t - datetime.datetime(1970,1,1)).total_seconds()
+	return (t - datetime.datetime(1970, 1, 1)).total_seconds()
+
 
 def get_top_editors(history, limit=5):
-	top_editors = {}
-	last_edits_editors = {}
 	revision_before = None
 	content_before = None
+	top_editors = {}
 	# levenshtein
 	for revision in history:
 		author = revision['author']
@@ -296,6 +308,7 @@ def get_top_editors(history, limit=5):
 		revision_before = revision
 		content_before = revision_before['content']
 	return {editor: top_editors[editor] for editor in dictsort(top_editors)[:limit] if top_editors[editor]}
+
 
 def html_image_with_thumbnail(data, is_preview=False, alt=''):
 	url = data['src']
