@@ -3,6 +3,9 @@ config_path = 'config/'
 with open(config_path + 'baseurl.txt') as f:
 	BASE_URL = f.read()
 
+with open(config_path + 'subs.json') as f:
+	SUBS = f.read()
+
 with open(config_path + 'config.json') as f:
 	CLIENT_ID = json.loads(f.read()).get('client_id',662036612460445713)
 
