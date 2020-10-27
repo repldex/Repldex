@@ -99,7 +99,7 @@ class BetterBot():
 		if command in self.functions:
 			if(not self.allowed[command] and message.author.id in BLACKLISTED_IDS): return
 			func = self.functions[command]
-			bots_allowed = self.command_settings["allowed"]
+			bots_allowed = self.command_settings.get("allowed",False)
 		else:
 			return
 		if message.author.bot and not bots_allowed:
