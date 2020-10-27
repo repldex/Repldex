@@ -29,15 +29,15 @@ async def start_bot():
 
 async def log_edit(editor,title,time):
   channel = client.get_channel(770468229410979881)
-  await channel.send(editor,"edited",title,"at",time)
+  await channel.send(time+": "+editor+" edited "+title)
 	
 async def log_delete(title,time):
   channel = client.get_channel(770468181486600253)
-  await channel.send(title,"has been deleted at",time)
+  await channel.send(title+" has been deleted at "+time)
 	
 async def log_view(title,time):
   channel = client.get_channel(770468271195553823)
-  await channel.send(title,"has been viewed at",time)
+  await channel.send(title+" has been viewed at "+time)
 	
 @client.event
 async def on_ready():
