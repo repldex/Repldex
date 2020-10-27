@@ -38,6 +38,11 @@ async def log_delete(title,time):
 async def log_view(title,time):
   channel = client.get_channel(770468271195553823)
   await channel.send(title+" has been viewed at "+time)
+
+async def log_view(title,time,newurl):
+  channel = client.get_channel(770498997428551680)
+  await channel.send(title+" has been unlisted at "+time+" new url is "+newurl)
+
 	
 @client.event
 async def on_ready():
