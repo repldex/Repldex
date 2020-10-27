@@ -6,7 +6,7 @@ import os
 import uuid
 import images
 import utils
-
+from discordbot import log_edit, log_delete, log_view
 
 connection_uri = os.getenv('dburi')
 
@@ -43,6 +43,7 @@ async def fix_entry(data):
 async def edit_entry(title, content, editor=None, unlisted=False, entry_id=None, image=None, editor_real=None, impersonate=None):
 	t = datetime.now()
 	title = title.strip()
+	log_edit(str(editor), str(title), str(t))
 	content = utils.fix_html(content)
 	nohtml_content = utils.remove_html(content)
 	new_data = {
