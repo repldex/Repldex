@@ -1,12 +1,12 @@
-from config import ADMIN_IDS
+from discordbot import log_edit, log_delete, log_view
 from datetime import datetime
+from config import ADMIN_IDS
 import motor.motor_asyncio
-import dns
-import os
-import uuid
 import images
 import utils
-from discordbot import log_edit, log_delete, log_view
+import uuid
+import dns
+import os
 
 connection_uri = os.getenv('dburi')
 
@@ -17,6 +17,7 @@ db = client['repldex']
 entries_coll = db['entries']
 sessions_coll = db['sessions']
 users_coll = db['users']
+
 
 async def fix_entry(data):
 	if data is None: return
@@ -40,7 +41,17 @@ async def fix_entry(data):
 		data['nohtml_content'] = utils.remove_html(data['content'])
 	return data
 
-async def edit_entry(title, content, editor=None, unlisted=False, entry_id=None, image=None, editor_real=None, impersonate=None):
+
+async def edit_entry(
+	title,
+	content,
+	editor=None,
+	unlisted=False,
+	entry_id=None,
+	image=None,
+	editor_real=None,
+	impersonate=None
+):
 	t = datetime.now()
 	title = title.strip()
 	content = utils.fix_html(content)
@@ -83,6 +94,7 @@ async def edit_entry(title, content, editor=None, unlisted=False, entry_id=None,
 	)
 	return entry_id
 
+
 async def get_entry(entry_id=None, name=None, search_id=True, owner=None):
 	if not entry_id and name:
 		entries = await search_entries(
@@ -104,6 +116,7 @@ async def get_entry(entry_id=None, name=None, search_id=True, owner=None):
 	found = await fix_entry(found)
 	return found
 
+
 async def new_editor_session(discord_id):
 	sid = str(uuid.uuid4())
 	await sessions_coll.insert_one(
@@ -114,6 +127,7 @@ async def new_editor_session(discord_id):
 		}
 	)
 	return sid
+
 
 async def get_editor_session(sid):
 	if not hasattr(get_editor_session, 'cache'):
@@ -128,7 +142,8 @@ async def get_editor_session(sid):
 	if found is None: return
 	return found['discord']
 
-async def search_entries(query, limit=10, search_id=True, page=0,discord_id=None,unlisted=False):
+
+async def search_entries(query, limit=10, search_id=True, page=0, discord_id=None, unlisted=False):
 	found = []
 	match = {'$match': {'unlisted': {'$ne': True}}}
 	if(unlisted):
@@ -155,10 +170,10 @@ async def search_entries(query, limit=10, search_id=True, page=0,discord_id=None
 		}},
 		match,
 		{'$addFields': {
-      'score': {
+			'score': {
 				'$meta': 'searchScore'
 			}
-    }},
+		}},
 		{'$sort': {
 			'score': -1
 		}},
@@ -194,14 +209,15 @@ async def search_entries(query, limit=10, search_id=True, page=0,discord_id=None
 
 	return found
 
+
 # Query is only if sort == relevant
-async def get_entries(sort, limit=20, page=0, query=None, discord_id=None,unlisted=False):
-	match = {'$match': {'unlisted': {'$ne': True}}}
-	if(discord_id != None):
-	    if(discord_id in ADMIN_IDS):
-	        match = {}
+async def get_entries(sort, limit=20, page=0, query=None, discord_id=None, unlisted=False):
+	# match = {'$match': {'unlisted': {'$ne': True}}}
+	# if discord_id is not None:
+	# 	if discord_id in ADMIN_IDS:
+	# 		match = {}
 	if sort == 'relevant' and query:
-		found = await search_entries(query, limit=limit, page=page,discord_id=discord_id,unlisted=unlisted)
+		found = await search_entries(query, limit=limit, page=page, discord_id=discord_id, unlisted=unlisted)
 		return found
 	cursor = entries_coll.find({
 		'unlisted': {'$ne': True}
@@ -214,6 +230,7 @@ async def get_entries(sort, limit=20, page=0, query=None, discord_id=None,unlist
 		entry = await fix_entry(entry)
 		found.append(entry)
 	return found
+
 
 async def set_personal_entry(discord_id, entry_id):
 	user_data = {
@@ -249,7 +266,8 @@ async def set_personal_entry(discord_id, entry_id):
 		if hasattr(get_personal_entry, 'cache'):
 			get_personal_entry.cache[discord_id] = user_data
 	except Exception as e:
-		print('BRUH MOMENT',e)
+		print('BRUH MOMENT', e)
+
 
 async def get_personal_entry(discord_id):
 	if not hasattr(get_personal_entry, 'cache'):
@@ -264,11 +282,13 @@ async def get_personal_entry(discord_id):
 	if found is None: return
 	return found.get('personal_entry')
 
+
 async def count_entries():
 	count = await entries_coll.count_documents({
 		'unlisted': {'$ne': True}
 	})
 	return count
+
 
 async def get_random_entry():
 	cursor = entries_coll.aggregate([
