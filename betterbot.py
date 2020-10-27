@@ -119,12 +119,12 @@ class BetterBot():
 			self.allowed[name.lower()] = allowed
 			if(self.command_settings.get(name.lower(),None)==None):
 				self.command_settings[name.lower()] = {}
-			self.command_settings[name.lower()] = bots_allowed
+			self.command_settings[name.lower()]["allowed"] = bots_allowed
 			for alias in aliases:
 				self.functions[alias.lower()] = func
 				self.allowed[alias.lower()] = allowed
 				if(self.command_settings.get(alias.lower(),None)==None):
 					self.command_settings[alias.lower()] = {}
-				self.command_settings[alias.lower()] = bots_allowed
+				self.command_settings[alias.lower()]["allowed"] = bots_allowed
 			return func
 		return decorator
