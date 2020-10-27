@@ -48,7 +48,8 @@ class BetterBot():
 			f'<@!{bot_id}>'
 		]
 		self.allowed = {}
-
+		self.command_settings = {}
+		
 	async def try_converter(self, ctx, string, converter):
 		if hasattr(converter, 'convert'):
 			return await converter.convert(converter, ctx, string)
@@ -85,8 +86,6 @@ class BetterBot():
 		return return_args
 
 	async def process_commands(self, message):
-		if message.author.bot:
-			return
 		parsing_left = message.content
 		found = False
 		for prefix in self.prefixes:
@@ -100,7 +99,10 @@ class BetterBot():
 		if command in self.functions:
 			if(not self.allowed[command] and message.author.id in BLACKLISTED_IDS): return
 			func = self.functions[command]
+			bots_allowed = self.command_settings["allowed"]
 		else:
+			return
+		if message.author.bot and not bots_allowed:
 			return
 		ctx = Context(message, prefix=prefix)
 		if parsing_left:
@@ -111,13 +113,18 @@ class BetterBot():
 		# 	all_arguments[annotation] = func.__annotations__[annotation]
 		return await func(ctx, *return_args)
 
-	def command(self, name, aliases=[],allowed=False):
+	def command(self, name, aliases=[],allowed=False,bots_allowed=False):
 		def decorator(func):
 			self.functions[name.lower()] = func
 			self.allowed[name.lower()] = allowed
+			if(self.command_settings.get(name.lower(),None)==None):
+				self.command_settings[name.lower()] = {}
+			self.command_settings[name.lower()] = bots_allowed
 			for alias in aliases:
 				self.functions[alias.lower()] = func
 				self.allowed[alias.lower()] = allowed
-			
+				if(self.command_settings.get(alias.lower(),None)==None):
+					self.command_settings[alias.lower()] = {}
+				self.command_settings[alias.lower()] = bots_allowed
 			return func
 		return decorator
