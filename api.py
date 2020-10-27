@@ -6,16 +6,15 @@ import database
 from server import routes
 import utils
 
+
 def json_serial(obj):
 	if isinstance(obj, (datetime)):
 		return obj.isoformat()
 
-def json_response(d):
-	return web.Response(
-		text=json.dumps(d, default=json_serial),
-		content_type='application/json'
-	)
 
+def json_response(d):
+	return web.Response(text=json.dumps(d, default=json_serial),
+	                    content_type='application/json')
 
 
 @routes.get('/api/entries/{sort}')
@@ -28,17 +27,16 @@ async def api_entries_new(request):
 		sort = 'last_edited'
 	if sort == 'search':
 		sort = 'relevant'
-	raw_entries = await database.get_entries(
-		sort=sort,
-		page=page,
-		limit=limit,
-		query=query
-	)
+	raw_entries = await database.get_entries(sort=sort,
+	                                         page=page,
+	                                         limit=limit,
+	                                         query=query)
 	entries = []
 	for entry in raw_entries:
 		entry = await create_response(entry, preview=True)
 		entries.append(entry)
 	return json_response(entries)
+
 
 async def create_response(entry_data, preview=False):
 	if entry_data:
@@ -59,23 +57,23 @@ async def create_response(entry_data, preview=False):
 
 	if preview:
 		return {
-			'title': title,
-			'preview': utils.remove_html(content),
-			'html': content,
-			'id': entry_id,
-			'image': image
+		    'title': title,
+		    'preview': utils.remove_html(content),
+		    'html': content,
+		    'id': entry_id,
+		    'image': image
 		}
 	else:
 		return {
-			'slug': url_title,
-			'id': entry_id,
-			'title': title,
-			'html': content,
-			'unlisted': unlisted,
-			'image': image,
-			'markdown': markdown,
-			'no_html': no_html,
-			'owner_id': owner_id,
+		    'slug': url_title,
+		    'id': entry_id,
+		    'title': title,
+		    'html': content,
+		    'unlisted': unlisted,
+		    'image': image,
+		    'markdown': markdown,
+		    'no_html': no_html,
+		    'owner_id': owner_id,
 		}
 
 
@@ -92,11 +90,10 @@ async def api_entry(request):
 
 	return json_response(data)
 
+
 @routes.get('/api/selfentry/{owner_id}')
 async def api_selfentry(request):
 	owner_id = int(request.match_info['owner_id'])
-	entry_data = await database.get_entry(
-		owner=owner_id
-	)
+	entry_data = await database.get_entry(owner=owner_id)
 	data = await create_response(entry_data)
 	return json_response(data)

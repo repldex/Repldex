@@ -1,10 +1,8 @@
 import discord
 import discordbot
-import asyncio
 import utils
 
 from config import BLACKLISTED_IDS
-# this is just so i can customize command parsing more
 
 
 class Context():  # very unfinished but its fine probably
@@ -21,7 +19,8 @@ class Context():  # very unfinished but its fine probably
 			# print(dir(message.guild))
 			for _ in range(10):
 				print('waiting for message')
-				await discordbot.client.wait_for('message', check=lambda m:m.channel == message.channel)
+				await discordbot.client.wait_for(
+				    'message', check=lambda m: m.channel == message.channel)
 			await message.delete()
 		return message
 
@@ -35,18 +34,15 @@ class Context():  # very unfinished but its fine probably
 		self.client = discordbot.client
 
 
-class NothingFound(BaseException): pass
+class NothingFound(BaseException):
+	pass
 
 
 class BetterBot():
 	functions = {}
 
 	def __init__(self, prefix, bot_id):
-		self.prefixes = [
-			prefix,
-			f'<@{bot_id}>',
-			f'<@!{bot_id}>'
-		]
+		self.prefixes = [prefix, f'<@{bot_id}>', f'<@!{bot_id}>']
 		self.allowed = {}
 
 	async def try_converter(self, ctx, string, converter):
@@ -65,7 +61,9 @@ class BetterBot():
 			if arg in ann:
 				hint = ann[arg]
 				found = None
-				for i in reversed([pos for pos, char in enumerate(parsing_left + ' ') if char == ' ']):
+				for i in reversed([
+				    pos for pos, char in enumerate(parsing_left + ' ') if char == ' '
+				]):
 					cmd_arg = parsing_left[:i]
 					tried = await self.try_converter(ctx, cmd_arg, hint)
 					if tried is not None:
@@ -76,7 +74,8 @@ class BetterBot():
 					return_args.append(found)
 				else:
 					# raise NothingFound(f'nothing found {parsing_left} {hint}')
-					parsing_left = (parsing_left + ' ').split(' ', len(args) - argnum)[-1]
+					parsing_left = (parsing_left + ' ').split(' ',
+					                                          len(args) - argnum)[-1]
 					return_args.append(None)
 			else:
 				cmd_arg, parsing_left = (parsing_left + ' ').split(' ', 1)
@@ -98,7 +97,8 @@ class BetterBot():
 		command, parsing_left = (parsing_left + ' ').split(' ', 1)
 		command = command.lower()
 		if command in self.functions:
-			if(not self.allowed[command] and message.author.id in BLACKLISTED_IDS): return
+			if (not self.allowed[command] and message.author.id in BLACKLISTED_IDS):
+				return
 			func = self.functions[command]
 		else:
 			return
@@ -111,13 +111,14 @@ class BetterBot():
 		# 	all_arguments[annotation] = func.__annotations__[annotation]
 		return await func(ctx, *return_args)
 
-	def command(self, name, aliases=[],allowed=False):
+	def command(self, name, aliases=[], allowed=False):
 		def decorator(func):
 			self.functions[name.lower()] = func
 			self.allowed[name.lower()] = allowed
 			for alias in aliases:
 				self.functions[alias.lower()] = func
 				self.allowed[alias.lower()] = allowed
-			
+
 			return func
+
 		return decorator

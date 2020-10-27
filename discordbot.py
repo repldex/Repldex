@@ -6,11 +6,9 @@ import database
 import json
 import base64
 
-
 intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(intents=intents)
-
 
 with open('config/config.json', 'r') as f:
 	config = json.loads(f.read())
@@ -23,32 +21,32 @@ if not bot_token:
 # first part of the token is always the bot id
 bot_id = int(base64.b64decode(bot_token.split('.')[0]))
 
+
 async def start_bot():
 	print('starting bot pog')
 	await client.start(bot_token)
 
+
 @client.event
 async def on_ready():
 	print('ready')
-	await client.change_presence(
-		activity=discord.Game(name='^help')
-	)
+	await client.change_presence(activity=discord.Game(name='^help'))
 
 
 def discord_id_to_user(user_id):
 	user = client.get_user(user_id)
 	return str(user)
 
+
 prefix = config.get('prefix', '^')
 
-betterbot = BetterBot(
-	prefix=prefix,
-	bot_id=bot_id
-)
+betterbot = BetterBot(prefix=prefix, bot_id=bot_id)
+
 
 @client.event
 async def on_message(message):
 	await betterbot.process_commands(message)
+
 
 @client.event
 async def on_raw_reaction_add(payload):
