@@ -161,7 +161,7 @@ async def show_raw_entry(message, *args):
 
 
 
-@betterbot.command(name='selfentry')
+@betterbot.command(name='selfentry',bots_allowed=True)
 async def personal_entry(message, *args):
 	search_query = ' '.join(args)
 	if not search_query:
