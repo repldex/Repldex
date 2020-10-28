@@ -18,7 +18,7 @@ async def help(message, *args):
 		'entry <name>': 'Shows the matching entry',
 		'random': 'Gets a random entry',
 		'request <entry>': 'Lets noneditors request a Repldex entry',
-		'selfentry': 'Gets your own entry if you have one.'
+		'selfentry': 'Gets your own entry if you have one.',
 		'source': 'Links my source on github'
 	}
 	if message.author.id in EDITOR_IDS:
