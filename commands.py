@@ -18,7 +18,8 @@ async def help(message, *args):
 		'entry <name>': 'Shows the matching entry',
 		'random': 'Gets a random entry',
 		'request <entry>': 'Lets noneditors request a Repldex entry',
-		'selfentry': 'Gets your own entry if you have one.'
+		'selfentry': 'Gets your own entry if you have one.',
+		'source': 'Links my source on github'
 	}
 	if message.author.id in EDITOR_IDS:
 		commands['selfentry <name>'] = 'Links you to your entry (editor only)'
@@ -126,6 +127,15 @@ async def search_entries(message, *args):
 		embed = await create_entry_embed(found[emoji_pos], author_id=message.author.id)
 		await message.send(embed=embed)
 
+@betterbot.command(name='source',allowed=True)
+async def link_source(message,*args):
+	embed = discord.Embed(
+		title="Source code",
+		description="My source coee on github"
+	)
+	embed.add_field(name="github",value="https://github.com/mat-1/ReplDex")
+
+	await message.send(embed=embed)
 
 @betterbot.command(name='entry', allowed=True)
 async def show_entry(message, *args):
