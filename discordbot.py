@@ -16,14 +16,16 @@ with open('config/config.json', 'r') as f:
 
 bot_token = os.getenv('token')
 
-if not bot_token:
-	raise Exception('No token found')
-
-# first part of the token is always the bot id
-bot_id = int(base64.b64decode(bot_token.split('.')[0]))
+if bot_token:
+	# first part of the token is always the bot id
+	bot_id = int(base64.b64decode(bot_token.split('.')[0]))
+else:
+	bot_id = 0  # might be set later by a unit test, so just default to 0
 
 
 async def start_bot():
+	if not bot_token:
+		raise Exception('No token found')
 	print('starting bot pog')
 	await client.start(bot_token)
 

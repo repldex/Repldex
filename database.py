@@ -1,11 +1,11 @@
-from discordbot import log_edit, log_delete, log_view
 from datetime import datetime
 from config import ADMIN_IDS
 import motor.motor_asyncio
+import discordbot
 import images
 import utils
 import uuid
-import dns
+import dns  # noqa: F401 (required so replit always installs it)
 import os
 
 connection_uri = os.getenv('dburi')
@@ -144,9 +144,10 @@ async def get_editor_session(sid):
 
 
 async def search_entries(query, limit=10, search_id=True, page=0, discord_id=None, unlisted=False):
+	print('searching')
 	found = []
 	match = {'$match': {'unlisted': {'$ne': True}}}
-	if(unlisted):
+	if unlisted:
 		match = {'$match': {'unlisted': {'$eq': True}}}
 	async for doc in entries_coll.aggregate([
 		{'$searchBeta': {
@@ -180,7 +181,6 @@ async def search_entries(query, limit=10, search_id=True, page=0, discord_id=Non
 		{'$skip': page * limit},
 		{'$limit': limit}
 	]):
-		# print(doc['title'], doc['score'])
 		found.append(await fix_entry(doc))
 	if len(found) == 0 and search_id:
 		found = await get_entry(query)
@@ -199,14 +199,12 @@ async def search_entries(query, limit=10, search_id=True, page=0, discord_id=Non
 			if entry_owner_id[0] == '!':
 				entry_owner_id = entry_owner_id[1:]
 			entry_owner_id = int(entry_owner_id)
-			print(entry_owner_id)
 			owned_entry = await entries_coll.find_one({
 				'owner_id': entry_owner_id
 			})
-			print(owned_entry)
 			if entry_owner_id:
 				found = [owned_entry]
-
+	print(found)
 	return found
 
 

@@ -1,0 +1,9 @@
+pytest
+discord
+python-dotenv
+beautifulsoup4
+timeago
+jellyfish
+motor
+dnspython
+pytest-asyncio

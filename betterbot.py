@@ -96,7 +96,7 @@ class BetterBot():
 		command, parsing_left = (parsing_left + ' ').split(' ', 1)
 		command = command.lower()
 		if command in self.functions:
-			if(not self.allowed[command] and message.author.id in BLACKLISTED_IDS): return
+			if not self.allowed[command] and message.author.id in BLACKLISTED_IDS: return
 			func = self.functions[command]
 			bots_allowed = self.command_settings.get('allowed', False)
 		else:
