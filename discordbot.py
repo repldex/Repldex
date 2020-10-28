@@ -32,7 +32,7 @@ async def start_bot():
 
 async def log_edit(editor, title, time):
 	channel = client.get_channel(770468229410979881)
-	await channel.send(f'{time}: {editor} edited {title}')
+	await channel.send(f'{time}: <@{editor}>({editor}) edited {title}')
 
 
 async def log_delete(title, time):
