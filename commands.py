@@ -127,11 +127,11 @@ async def search_entries(message, *args):
 		embed = await create_entry_embed(found[emoji_pos], author_id=message.author.id)
 		await message.send(embed=embed)
 
-@betterbot.command(name='source',allowed=True)
+@betterbot.command(name='source', allowed=True, aliases=['code'])
 async def link_source(message,*args):
 	embed = discord.Embed(
 		title='Source code',
-		description='My source coee on github'
+		description='My source code on github'
 	)
 	embed.add_field(name='github', value='https://github.com/mat-1/ReplDex')
 
