@@ -54,6 +54,7 @@ async def edit_entry(
 ):
 	t = datetime.now()
 	title = title.strip()
+	await log_edit(editor, title, t)
 	content = utils.fix_html(content)
 	nohtml_content = utils.remove_html(content)
 	new_data = {
