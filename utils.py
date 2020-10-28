@@ -1,10 +1,9 @@
-from discordbot import discord_id_to_user
 from config import BASE_URL, EDITOR_IDS
 from bs4 import BeautifulSoup as bs
 from discord.ext import commands
-from discordbot import client
 from datetime import datetime
 import timeago as timeagolib
+import discordbot
 import jellyfish
 import database
 import discord
@@ -30,9 +29,9 @@ def embed_from_dict(dict, **kwargs):
 
 def get_channel_members(channel_id):
 	try:
-		return client.get_channel(channel_id).members
+		return discordbot.client.get_channel(channel_id).members
 	except AttributeError:
-		return [client.get_channel(channel_id).recipient]
+		return [discordbot.client.get_channel(channel_id).recipient]
 
 
 def check_user_id(ctx, arg):
@@ -191,7 +190,7 @@ def html_to_markdown(inputted, prev=None):
 async def get_editor_list():
 	editor_list = []
 	for editor_id in EDITOR_IDS:
-		editor_username = discord_id_to_user(editor_id)
+		editor_username = discordbot.discord_id_to_user(editor_id)
 		personal_entry = await database.get_personal_entry(editor_id)
 		if personal_entry:
 			editor_html = f'<a href="/entry/{personal_entry}">{editor_username}</a>'
