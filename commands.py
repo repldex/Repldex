@@ -290,7 +290,7 @@ async def link_entry(message, *args):
 	# TODO: make it use Member instead of mentions
 	if message.author.id not in ADMIN_IDS: return
 	if len(message.message.mentions) == 0:
-		return message.send('No mentions in command')
+		return await message.send('No mentions in command')
 	else:
 		member = message.message.mentions[0]
 	args = list(args)
