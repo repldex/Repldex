@@ -224,7 +224,7 @@ async def user_info(message, member: utils.Member):
 
 
 @betterbot.command(name='view_selfentry')
-async def view_self_entry(message, member: utils.Member):
+async def view_self_entry(message, member: utils.User):
 	if message.author.id not in ADMIN_IDS: return
 	entry_id = await database.get_personal_entry(member.id)
 	entry = await database.get_entry(entry_id)
@@ -289,7 +289,7 @@ async def unlist(message, entry_id):
 async def link_entry(message, *args):
 	# TODO: make it use Member instead of mentions
 	if message.author.id not in ADMIN_IDS: return
-	if len(message.message.mentions == 0):
+	if len(message.message.mentions) == 0:
 		return message.send('No mentions in command')
 	else:
 		member = message.message.mentions[0]

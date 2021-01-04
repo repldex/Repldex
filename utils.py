@@ -33,13 +33,22 @@ def get_channel_members(channel_id):
 	except AttributeError:
 		return [discordbot.client.get_channel(channel_id).recipient]
 
-
-def check_user_id(ctx, arg):
+def check_member_id(ctx, arg):
 	try:
 		if ctx.guild:
 			member = ctx.guild.get_member(int(arg))
 		else:
 			member = ctx.client.get_user(int(arg))
+
+		if member is not None:
+			return member
+	except ValueError:
+		pass
+
+def check_user_id(ctx, arg):
+	try:
+		arg = re.sub("[^0-9]", "", arg)
+		member = ctx.client.fetch_user(int(arg))
 		if member is not None:
 			return member
 	except ValueError:
@@ -123,7 +132,7 @@ class Member(commands.Converter):
 		# also this should be a module-level constant
 		# but this module is too big already
 		CHECKERS = [
-			check_user_id,  # Check user id
+			check_member_id,  # Check member id
 			check_mention,  # Check mention
 			check_name_with_discrim,  # Name + discrim
 			check_nickname,  # Nickname
@@ -139,6 +148,23 @@ class Member(commands.Converter):
 
 		return None
 
+class User(commands.Converter):
+	async def convert(self, ctx, arg):
+		if arg[0] == '@':
+			arg = arg[1:]
+
+		# these comments suck but i dont really want to remove them
+		# also this should be a module-level constant
+		# but this module is too big already
+		CHECKERS = [
+			check_user_id,  # Check user id
+		]
+		for checker in CHECKERS:
+			member = await checker(ctx, arg)
+			if member is not None:
+				return member
+
+		return None
 
 def remove_html(inputted, prev=None):
 	inputted = str(inputted)
