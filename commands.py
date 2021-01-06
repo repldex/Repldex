@@ -18,8 +18,9 @@ async def help(message, *args):
 		'entry <name>': 'Shows the matching entry',
 		'random': 'Gets a random entry',
 		'request <entry>': 'Lets noneditors request a Repldex entry',
+		'source': 'Links my source on github',
+		'ping': 'Gets current bot ping',
 		'selfentry': 'Gets your own entry if you have one.',
-		'source': 'Links my source on github'
 	}
 	if message.author.id in EDITOR_IDS:
 		commands['selfentry <name>'] = 'Links you to your entry (editor only)'
@@ -341,6 +342,11 @@ async def random_entry(message, *args):
 	embed = await create_entry_embed(entry, author_id=message.author.id)
 	await message.send(embed=embed)
 
+@betterbot.command(name="ping", aliases=["pong", "pung"])
+async def ping(message, *args):
+	ping = client.latency * 1000
+	print(f"Bot ping is: {int(ping)}ms")
+	await message.send(embed=discord.Embed(title="Ping!", description=f"Bot ping is: `{int(ping)}ms`"))
 
 # @betterbot.command(name="neweditor")
 # async def new_editor(message, member: utils.Member):
