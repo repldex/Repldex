@@ -8,13 +8,11 @@ from datetime import datetime
 from aiohttp import web
 import jinja2.ext
 import functools
-import commands
 import database
 import aiohttp
 import asyncio
 import images
 import utils
-import json
 import os
 
 config = CONFIG
