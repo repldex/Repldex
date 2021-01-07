@@ -59,7 +59,11 @@
 			<button onclick="delete()">Delete Entry</button>
 			<script>
 				function delete() {
-					alert("this does not work yet")
+					if (confirm("This will delete the entry FOREVER! Are you sure you want to do this???")) {
+						if (confirm("You are going to delete "+window.location.pathname)) {
+							//send a post request, or something
+						}
+					}
 				}
 			</script>
 		{% endif %}
