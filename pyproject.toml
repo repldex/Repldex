@@ -22,9 +22,7 @@ pytest = "^6.1.1"
 python-dotenv = "^0.15.0"
 flake8 = "^3.8.4"
 flake8-tabs = "^2.2.2"
-black = {git = "https://github.com/psf/black.git"}
-black-with-tabs = "^19.10b0"
-flake8-black = "^0.2.1"
+yapf = "^0.30.0"
 
 [tool.black]
 line-length=127

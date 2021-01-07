@@ -11,7 +11,7 @@ import difflib
 import html
 import re
 
-x_emoji = "❌"
+x_emoji = '❌'
 
 auto_delete_channels = {437067256049172491}  # oof-topic
 
@@ -47,7 +47,7 @@ def check_member_id(ctx, arg):
 
 def check_user_id(ctx, arg):
 	try:
-		arg = re.sub("[^0-9]", "", arg)
+		arg = re.sub('[^0-9]', '', arg)
 		member = ctx.client.fetch_user(int(arg))
 		if member is not None:
 			return member
@@ -56,7 +56,7 @@ def check_user_id(ctx, arg):
 
 
 def check_mention(ctx, arg):
-	match = re.match(r"<@!?(\d+)>", arg)
+	match = re.match(r'<@!?(\d+)>', arg)
 	if match:
 		user_id = match.group(1)
 		try:
@@ -103,8 +103,9 @@ def check_nickname_contains(ctx, arg):
 
 
 class Member(commands.Converter):
+
 	async def convert(self, ctx, arg):
-		if arg[0] == "@":
+		if arg[0] == '@':
 			arg = arg[1:]
 
 		# these comments suck but i dont really want to remove them
@@ -129,8 +130,9 @@ class Member(commands.Converter):
 
 
 class User(commands.Converter):
+
 	async def convert(self, ctx, arg):
-		if arg[0] == "@":
+		if arg[0] == '@':
 			arg = arg[1:]
 
 		# these comments suck but i dont really want to remove them
@@ -149,13 +151,13 @@ class User(commands.Converter):
 
 def remove_html(inputted, prev=None):
 	inputted = str(inputted)
-	new_string = re.sub(r"<(\s*)br(\s*)([\S\s]*)\/?>", "\n", inputted)
-	new_string = re.sub(r"<\/(div|p|br|li|h1|h2|h3)>", " ", inputted)
-	new_string = re.sub(r"<[\S\s]{1,}?>", "", new_string)
+	new_string = re.sub(r'<(\s*)br(\s*)([\S\s]*)\/?>', '\n', inputted)
+	new_string = re.sub(r'<\/(div|p|br|li|h1|h2|h3)>', ' ', inputted)
+	new_string = re.sub(r'<[\S\s]{1,}?>', '', new_string)
 	new_string = html.unescape(new_string)
-	new_string = new_string.replace(" ", " ")
-	while "  " in new_string:
-		new_string = new_string.replace("  ", " ")
+	new_string = new_string.replace(' ', ' ')
+	while '  ' in new_string:
+		new_string = new_string.replace('  ', ' ')
 	new_string = new_string.strip()
 
 	if new_string == prev:
@@ -165,29 +167,29 @@ def remove_html(inputted, prev=None):
 
 
 def html_to_markdown(inputted, prev=None):
-	print("html_to_markdown")
+	print('html_to_markdown')
 	new_string = str(inputted)
 	if prev is None:
-		new_string = new_string.replace("\n", " ")
-	new_string = re.sub(r"<(\s{0,}?)br(\s{0,}?)([\S\s]{0,}?)\/?>", "\n", inputted)
-	new_string = re.sub(r"<(div|p|br)>", "", new_string)
-	new_string = re.sub(r"<\/(div|p|br|h1|h2|h3)>", r"</\1>\n", new_string)
+		new_string = new_string.replace('\n', ' ')
+	new_string = re.sub(r'<(\s{0,}?)br(\s{0,}?)([\S\s]{0,}?)\/?>', '\n', inputted)
+	new_string = re.sub(r'<(div|p|br)>', '', new_string)
+	new_string = re.sub(r'<\/(div|p|br|h1|h2|h3)>', r'</\1>\n', new_string)
 	new_string = re.sub(
-		r"<(?:\s{0,}?)(b|strong|h1|h2|h3)(?:\s{0,}?)(?:[\S\s]*)>(.{1,}?)<\/?(?:\s*)\1(?:\s*)>", r"**\2**", new_string
+		r'<(?:\s{0,}?)(b|strong|h1|h2|h3)(?:\s{0,}?)(?:[\S\s]*)>(.{1,}?)<\/?(?:\s*)\1(?:\s*)>', r'**\2**', new_string
 	)
-	new_string = re.sub(r"<(?:\s*)(i|em)(?:\s*)(?:[\S\s]*)>(.+?)<(?:\s*)\/\1>>", r"*\1*", new_string)
-	new_string = re.sub(r"<li>(.+?)</li>", r"• \1\n", new_string)
+	new_string = re.sub(r'<(?:\s*)(i|em)(?:\s*)(?:[\S\s]*)>(.+?)<(?:\s*)\/\1>>', r'*\1*', new_string)
+	new_string = re.sub(r'<li>(.+?)</li>', r'• \1\n', new_string)
 
 	for found in list(re.finditer(r'<\s*a[\s\S]{1,}?href="(.{0,}?)"[\s\S]{0,}?>(.{0,}?)<\s*\/a\s*>', new_string))[::-1]:
 		span_start, span_end = found.span()
 		href, href_text = found.groups()
-		href = href.replace(" ", "%20")
-		if href[0] == "/":
+		href = href.replace(' ', '%20')
+		if href[0] == '/':
 			href = BASE_URL + href
-		new_string = new_string[:span_start] + f"[{href_text}]({href})" + new_string[span_end:]
+		new_string = new_string[:span_start] + f'[{href_text}]({href})' + new_string[span_end:]
 
 	# replace all the remaining tags with spaces
-	new_string = re.sub(r"<[\S\s]{1,}?>", " ", new_string)
+	new_string = re.sub(r'<[\S\s]{1,}?>', ' ', new_string)
 	new_string = html.unescape(new_string)
 	new_string = new_string.strip()
 	if new_string == prev:
@@ -205,25 +207,25 @@ async def get_editor_list():
 			editor_html = f'<a href="/entry/{personal_entry}">{editor_username}</a>'
 		else:
 			editor_html = editor_username
-		editor_html = f"<li>{editor_html}</li>"
+		editor_html = f'<li>{editor_html}</li>'
 		editor_list.append(editor_html)
-	return "<ul>" + "\n".join(editor_list) + "</ul>"
+	return '<ul>' + '\n'.join(editor_list) + '</ul>'
 
 
 async def before_show_text(inputted):
 	variables = {
-		"editorcount": str(len(EDITOR_IDS)),
-		"editorlist": get_editor_list,
+		'editorcount': str(len(EDITOR_IDS)),
+		'editorlist': get_editor_list,
 	}
 	new_string = inputted
-	for found in list(re.finditer(r"{{\s{0,}?(.{1,}?)\s{0,}?}}", new_string))[::-1]:
+	for found in list(re.finditer(r'{{\s{0,}?(.{1,}?)\s{0,}?}}', new_string))[::-1]:
 		span_start, span_end = found.span()
 		variable = found.group(1).lower()
 		if variable in variables:
 			variable_output = variables[variable]
-			if hasattr(variable_output, "__code__"):
+			if hasattr(variable_output, '__code__'):
 				variable_output = variable_output()
-			if hasattr(variable_output, "cr_code"):
+			if hasattr(variable_output, 'cr_code'):
 				variable_output = await variable_output
 			new_string = new_string[:span_start] + variable_output + new_string[span_end:]
 
@@ -236,16 +238,16 @@ def fix_html(inputted, prev=None):
 	for found in list(re.finditer(r'<\s*a[\s\S]{1,}?href="(.{0,}?)"[\s\S]{0,}?>(.{0,}?)<\s*\/a\s*>', new_string))[::-1]:
 		span_start, span_end = found.span()
 		href, href_text = found.groups()
-		href = href.replace(" ", "%20")
+		href = href.replace(' ', '%20')
 		# fmt: off
 		if href.startswith(BASE_URL):
 			href = href[len(BASE_URL):]
-		elif href.startswith("https://repldex.mat1.repl.co"):
-			href = href[len("https://repldex.mat1.repl.co"):]
-		if href.startswith("/entry?name="):
-			href = "/entry/" + href[len("/entry?name="):]
-		elif href.startswith("/entry?id="):
-			href = "/entry/" + href[len("/entry?id="):]
+		elif href.startswith('https://repldex.mat1.repl.co'):
+			href = href[len('https://repldex.mat1.repl.co'):]
+		if href.startswith('/entry?name='):
+			href = '/entry/' + href[len('/entry?name='):]
+		elif href.startswith('/entry?id='):
+			href = '/entry/' + href[len('/entry?id='):]
 		link_html = f'<a href="{href}">{href_text}</a>'
 		new_string = new_string[:span_start] + link_html + new_string[span_end:]
 		# fmt: on
@@ -259,14 +261,19 @@ def fix_html(inputted, prev=None):
 
 
 def prettify_html(inputted):
-	soup = bs(inputted.strip(), "html.parser")
+	soup = bs(inputted.strip(), 'html.parser')
 	prettyHTML = soup.prettify()
 	return prettyHTML
 
 
 def compare_diff(a, b):
-	diff = difflib.unified_diff(b.splitlines(), a.splitlines(), fromfile="before", tofile="after",)
-	return "\n".join(list(diff)[3:])
+	diff = difflib.unified_diff(
+		b.splitlines(),
+		a.splitlines(),
+		fromfile='before',
+		tofile='after',
+	)
+	return '\n'.join(list(diff)[3:])
 
 
 def timeago(date):
@@ -283,10 +290,10 @@ def levenshtein(a, b):
 
 
 def url_title(title):
-	title = title.replace(" ", "+")
-	title = title.replace("#", "")
-	title = title.replace("?", "")
-	title = title.replace("/", "+")
+	title = title.replace(' ', '+')
+	title = title.replace('#', '')
+	title = title.replace('?', '')
+	title = title.replace('/', '+')
 	return title
 
 
@@ -300,8 +307,8 @@ def get_top_editors(history, limit=5):
 	top_editors = {}
 	# levenshtein
 	for revision in history:
-		author = revision["author"]
-		content = revision["content"]
+		author = revision['author']
+		content = revision['content']
 		if author not in top_editors:
 			top_editors[author] = 0
 		score = 0
@@ -313,18 +320,18 @@ def get_top_editors(history, limit=5):
 			score += 3
 		top_editors[author] += score
 		revision_before = revision
-		content_before = revision_before["content"]
+		content_before = revision_before['content']
 	return {editor: top_editors[editor] for editor in dictsort(top_editors)[:limit] if top_editors[editor]}
 
 
-def html_image_with_thumbnail(data, is_preview=False, alt=""):
-	url = data["src"]
-	thumbnail_b64 = data.get("thumbnail_b64")
-	thumbnail_content_type = data.get("thumbnail-content-type", "image/webp")
-	el_class = "previewImage" if is_preview else "entryImage"
+def html_image_with_thumbnail(data, is_preview=False, alt=''):
+	url = data['src']
+	thumbnail_b64 = data.get('thumbnail_b64')
+	thumbnail_content_type = data.get('thumbnail-content-type', 'image/webp')
+	el_class = 'previewImage' if is_preview else 'entryImage'
 	output = f'<div class="imageContainer {el_class}">'
 	output += f'<noscript><img src="{url}" alt="{alt}"></noscript>'
-	thumbnail_src = f"data:{thumbnail_content_type};base64,{thumbnail_b64}"
+	thumbnail_src = f'data:{thumbnail_content_type};base64,{thumbnail_b64}'
 	output += f'<img src="{thumbnail_src}" data-src="{url}" class="lazy" alt="{alt}">'
-	output += "</div>"
+	output += '</div>'
 	return output
