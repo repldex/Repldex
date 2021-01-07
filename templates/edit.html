@@ -56,17 +56,9 @@
 			<button>Submit</button>
 		</form>
 		{% if is_admin %}
-			<form onsubmit="del()" method="post" action="/delete?id={{ content['_id'] }}">
-				<button>Delete Entry</button>
+			<form method="post" action="/delete?id={{ entry_id }}">
+				<button>Delete Entry: {{ title }}</button>
 			</form>
-			<script>
-				function del() {
-					if(!confirm("Are you sure you want to delete "+window.location.pathname)) {
-						return false;
-						}
-					this.form.submit();
-				}
-			</script>
 		{% endif %}
 	{% endif %}
 {% endblock %}
