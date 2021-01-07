@@ -13,6 +13,7 @@ import utils
 from config import BLACKLISTED_IDS, CONFIG
 # this is just so i can customize command parsing more
 
+
 class BetterBot:
 	functions = {}
 
@@ -141,6 +142,7 @@ class Context:  # very unfinished but its fine probably
 
 class NothingFound(BaseException):
 	pass
+
 
 bot_token = os.getenv("token")
 
