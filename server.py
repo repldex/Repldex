@@ -343,12 +343,13 @@ async def edit_entry_post(request):
 @routes.post('/delete')
 async def delete_entry(request):
 	#404 until I actually implement this - rediar/prussia/jetstream
-	"""
 	if not request.is_admin:
 		return web.HTTPFound('/')
 	entry_id = request.query.get('id')
-	"""
-	raise web.HTTPNotFound()
+	entry_data = await database.get_entry(entry_id)
+	if not entry_data:
+		return "hey man there's no entry data, get your grip together!"
+	await database.delete_entry(entry_data.get('title'), entry_data.get('content'), entry_id, editor=request.discord_id)
 
 @routes.post('/revert')
 async def revert_edit(request):
