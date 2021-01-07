@@ -54,10 +54,10 @@ async def log_view(title, time):
 prefix = config.get('prefix', '^')
 
 @client.event
-async def on_ready():	
+async def on_ready():
 	print('ready')
 	await client.change_presence(
-		activity= discord.Game(name= prefix + 'help')
+		activity=discord.Game(name=prefix + 'help')
 	)
 
 
