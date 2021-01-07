@@ -7,7 +7,6 @@ intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(intents=intents)
 
-import discordbot
 import discord
 import utils
 
@@ -116,7 +115,7 @@ class BetterBot():
             return
         if message.author.bot and not bots_allowed:
             return
-        ctx = Context(message,self.client, prefix=prefix)
+        ctx = Context(message, self.client, prefix=prefix)
         if parsing_left:
             return_args = await self.parse_args(parsing_left, func, ctx)
         else:
@@ -143,8 +142,6 @@ class BetterBot():
                 self.command_settings[alias]['allowed'] = bots_allowed
             return func
         return decorator
-
-
 
 
 bot_token = os.getenv('token')
@@ -198,6 +195,7 @@ async def on_ready():
 def discord_id_to_user(user_id):
     user = client.get_user(user_id)
     return str(user)
+
 
 betterbot = BetterBot(
     prefix=prefix,
