@@ -18,7 +18,6 @@ entries_coll = db['entries']
 sessions_coll = db['sessions']
 users_coll = db['users']
 
-
 async def fix_entry(data):
 	if data is None: return
 	original_data = dict(data)
@@ -40,6 +39,11 @@ async def fix_entry(data):
 	if 'nohtml_content' not in data:
 		data['nohtml_content'] = utils.remove_html(data['content'])
 	return data
+
+async def delete_entry(title, content, entry_id, editor=None):
+	t = datetime.now() 
+	await discordbot.log_delete(title, t, content)
+	await entries_coll.delete_one({'_id': entry_id})
 
 
 async def edit_entry(

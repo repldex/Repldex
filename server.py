@@ -201,7 +201,6 @@ async def edit_entry(request):
 		title = entry_data.get('title', None)
 		content = entry_data.get('content', '')
 		unlisted = entry_data.get('unlisted', False)
-
 	else:
 		title = request.query.get('title')
 		content = ''
