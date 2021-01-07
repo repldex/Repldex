@@ -340,6 +340,10 @@ async def edit_entry_post(request):
 
 	return web.HTTPFound(f'/entry/{entry_id}')
 
+@routes.post('/delete')
+async def delete_entry(request):
+	#404 until I actually implement this - rediar/prussia/jetstream
+	raise web.HTTPNotFound()
 
 @routes.post('/revert')
 async def revert_edit(request):
