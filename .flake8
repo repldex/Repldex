@@ -1,2 +1,3 @@
 [flake8]
-ignore = E402,E712,E501,E722
+ignore = E402,E712,E501,E722,C901
+exclude = tests
