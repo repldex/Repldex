@@ -51,12 +51,13 @@ async def log_view(title, time):
 # 	channel = client.get_channel(770498997428551680)
 # 	await channel.send(title+" has been unlisted at "+time+" new url is "+newurl)
 
+prefix = config.get('prefix', '^')
 
 @client.event
 async def on_ready():
 	print('ready')
 	await client.change_presence(
-		activity=discord.Game(name='^help')
+		activity=discord.Game(name=prefix + 'help')
 	)
 
 
