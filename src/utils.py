@@ -5,7 +5,6 @@ from datetime import datetime
 import timeago as timeagolib
 import discordbot
 import jellyfish
-import database
 import discord
 import difflib
 import html
@@ -198,7 +197,7 @@ def html_to_markdown(inputted, prev=None):
 		return html_to_markdown(new_string, prev=inputted)
 
 
-async def get_editor_list():
+async def get_editor_list(database):
 	editor_list = []
 	for editor_id in EDITOR_IDS:
 		editor_username = discordbot.discord_id_to_user(editor_id)

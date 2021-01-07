@@ -1,6 +1,5 @@
 from datetime import datetime
 import motor.motor_asyncio
-from discordbot import discordbot
 import images
 import utils
 import uuid
@@ -16,6 +15,8 @@ db = client['repldex']
 entries_coll = db['entries']
 sessions_coll = db['sessions']
 users_coll = db['users']
+
+import discordbot
 
 
 async def fix_entry(data):
