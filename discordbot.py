@@ -38,7 +38,7 @@ async def log_edit(editor, title, time):
 async def log_delete(title, time, content):
 	channel = client.get_channel(770468181486600253)
 	await channel.send(f'{title} has been deleted (through Repldex [direct database deletions are not detected]) at {time}')
-	await channel.send(f'First 140 characters of entry: `{content[:140]}`'
+	await channel.send(f'First 140 characters of entry: `{content[:140]}`')
 
 
 async def log_view(title, time):
