@@ -1,5 +1,11 @@
 import json
-config_path = 'config/'
+import os
+if 'src' in os.getcwd():
+	config_path = 'config/' #running from src
+elif os.getcwd() == '/home/runner':
+	config_path = '/home/runner/src/config/' #absolute path when on repl.it
+else:
+	config_path = 'src/config/' #running from project root with vscode for example
 
 with open(config_path + 'baseurl.txt') as f:
 	BASE_URL = f.read()
@@ -8,7 +14,10 @@ with open(config_path + 'subs.json') as f:
 	SUBS = f.read()
 
 with open(config_path + 'config.json') as f:
-	CLIENT_ID = json.loads(f.read()).get('client_id', 662036612460445713)
+	CONFIG = json.loads(f.read())
+	CLIENT_ID = CONFIG.get('client_id', 662036612460445713)
+	DOT_ENV = CONFIG.get('dotenv',False)
+
 
 # this kind of makes sense as a file i guess
 with open(config_path + 'editors.txt') as f:

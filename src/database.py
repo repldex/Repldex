@@ -1,7 +1,7 @@
 from datetime import datetime
 from config import ADMIN_IDS
 import motor.motor_asyncio
-import discordbot
+from discordbot import discordbot
 import images
 import utils
 import uuid
