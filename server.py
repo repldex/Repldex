@@ -343,6 +343,11 @@ async def edit_entry_post(request):
 @routes.post('/delete')
 async def delete_entry(request):
 	#404 until I actually implement this - rediar/prussia/jetstream
+	"""
+	if not request.is_admin:
+		return web.HTTPFound('/')
+	entry_id = request.query.get('id')
+	"""
 	raise web.HTTPNotFound()
 
 @routes.post('/revert')
