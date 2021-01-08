@@ -28,10 +28,31 @@ html {
 }
 
 .box {
+    color: whitesmoke;
+    max-height: auto;
     min-height: 200px;
-    max-height: 200px;
+}
+
+.box>.content>.subtitle {
+    font-weight: bolder;
+    color: whitesmoke;
+}
+
+.box>p {
+    color: lightgray;
 }
 
 .media-content {
     color: whitesmoke;
+}
+
+.entry-image {
+    float: left;
+    margin: 1ch;
+}
+
+.entry-image.preview {
+    float: left;
+    max-width: 64px;
+    max-height: 64px;
 }
