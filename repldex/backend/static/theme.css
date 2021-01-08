@@ -1,0 +1,208 @@
+/* Text & Colors */
+.title {
+	font-size: 2rem;
+	font-weight: 600;
+	line-height: 1.125
+}
+
+.subtitle {
+	font-size: 1.25rem;
+	font-weight: 400;
+	line-height: 1.25
+}
+
+.title, .subtitle {
+    color: whitesmoke;
+    word-break: break-word;
+}
+
+.has-text-centered {
+    text-align: center !important;
+}
+
+
+/* Columns */
+.columns {
+	margin-left: -.75rem;
+	margin-right: -.75rem;
+	margin-top: -.75rem
+}
+
+.column {
+	display: block;
+	flex-basis: 0;
+	flex-grow: 1;
+	flex-shrink: 1;
+	padding: .75rem
+}
+
+.columns:last-child {
+	margin-bottom: -.75rem
+}
+
+.columns:not(:last-child) {
+	margin-bottom: calc(1.5rem - .75rem)
+}
+
+
+/* Entry Boxes */
+a.entry-box {
+    display: block;
+    padding: 1.25rem;
+    color: whitesmoke;
+    border-radius: 6px;
+    background-color: #070809;
+    box-shadow: 0 .5em 1em -.125em rgba(10, 10, 10, .1), 0 0 0 1px rgba(10, 10, 10, .02);
+}
+
+a.entry-box:focus,
+a.entry-box:hover {
+    box-shadow: 0 .5em 1em -.125em rgba(10, 10, 10, .1), 0 0 0 1px #3273dc;
+}
+
+a.entry-box:active {
+    box-shadow: inset 0 1px 2px rgba(10, 10, 10, .2), 0 0 0 1px #3273dc;
+}
+
+
+
+/* Hero & Navbar */
+.hero {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.hero .navbar {
+    background: 0 0;
+}
+
+.hero.is-black {
+    color: whitesmoke;
+	background-color: #0a0a0a;
+	
+}
+
+@media screen and (max-width:1023px) {
+	.hero.is-black .navbar-menu {
+		background-color: #0a0a0a;
+	}
+}
+
+.hero.is-black .navbar-item,
+.hero.is-black .navbar-link {
+	color: rgba(255, 255, 255, .7)
+}
+
+.hero.is-black .navbar-link.is-active,
+.hero.is-black .navbar-link:hover,
+.hero.is-black a.navbar-item.is-active,
+.hero.is-black a.navbar-item:hover {
+    color: whitesmoke;
+	background-color: #000;
+}
+
+.navbar.is-black {
+    color: whitesmoke;
+	background-color: #0a0a0a;
+}
+
+.navbar.is-black .navbar-link,
+.navbar.is-black .navbar-item {
+	color: whitesmoke;
+}
+
+.navbar.is-black .navbar-link.is-active,
+.navbar.is-black .navbar-link:focus,
+.navbar.is-black .navbar-link:hover,
+.navbar.is-black a.navbar-item.is-active,
+.navbar.is-black a.navbar-item:focus,
+.navbar.is-black a.navbar-item:hover {
+    color: whitesmoke;
+	background-color: #000;
+	
+}
+
+.navbar.is-black .navbar-link::after {
+	border-color: whitesmoke;
+}
+
+.navbar.is-black .navbar-burger {
+	color: whitesmoke;
+}
+
+@media screen and (min-width:1024px) {
+	.navbar.is-black .navbar-end .navbar-link,
+	.navbar.is-black .navbar-end>.navbar-item,
+	.navbar.is-black .navbar-start .navbar-link,
+	.navbar.is-black .navbar-start>.navbar-item {
+		color: whitesmoke
+	}
+	.navbar.is-black .navbar-end .navbar-link.is-active,
+	.navbar.is-black .navbar-end .navbar-link:focus,
+	.navbar.is-black .navbar-end .navbar-link:hover,
+	.navbar.is-black .navbar-end>a.navbar-item.is-active,
+	.navbar.is-black .navbar-end>a.navbar-item:focus,
+	.navbar.is-black .navbar-end>a.navbar-item:hover,
+	.navbar.is-black .navbar-start .navbar-link.is-active,
+	.navbar.is-black .navbar-start .navbar-link:focus,
+	.navbar.is-black .navbar-start .navbar-link:hover,
+	.navbar.is-black .navbar-start>a.navbar-item.is-active,
+	.navbar.is-black .navbar-start>a.navbar-item:focus,
+	.navbar.is-black .navbar-start>a.navbar-item:hover {
+        color: whitesmoke;
+		background-color: #000;
+	}
+	.navbar.is-black .navbar-end .navbar-link::after,
+	.navbar.is-black .navbar-start .navbar-link::after {
+		border-color: whitesmoke;
+	}
+	.navbar.is-black .navbar-item.has-dropdown.is-active .navbar-link,
+	.navbar.is-black .navbar-item.has-dropdown:focus .navbar-link,
+	.navbar.is-black .navbar-item.has-dropdown:hover .navbar-link {
+        color: whitesmoke;
+		background-color: #000;
+		
+	}
+	.navbar.is-black .navbar-dropdown a.navbar-item.is-active {
+        color: whitesmoke;
+		background-color: #0a0a0a;	
+    }
+}
+
+
+
+/* Containers */
+.container {
+    width: auto;
+	flex-grow: 1;
+	margin: 0 auto;
+	position: relative;
+}
+
+@media screen and (min-width:1024px) {
+	.container {max-width: 960px}
+}
+
+@media screen and (max-width:1215px) {
+	.container.is-widescreen:not(.is-max-desktop) {
+		max-width: 1152px
+	}
+}
+
+@media screen and (max-width:1407px) {
+	.container.is-fullhd:not(.is-max-desktop):not(.is-max-widescreen) {
+		max-width: 1344px
+	}
+}
+
+@media screen and (min-width:1216px) {
+	.container:not(.is-max-desktop) {max-width: 1152px}
+}
+
+@media screen and (min-width:1408px) {
+	.container:not(.is-max-desktop):not(.is-max-widescreen) {
+		max-width: 1344px
+	}
+}
