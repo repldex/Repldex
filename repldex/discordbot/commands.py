@@ -314,7 +314,6 @@ async def random_entry(message, *args):
 @betterbot.command(name='ping', aliases=['pong', 'pung'])
 async def ping(message, *args):
 	ping = client.latency * 1000
-	print(f'Bot ping is: {int(ping)}ms')
 	await message.send(embed=discord.Embed(title='Ping!', description=f'Bot ping is: `{int(ping)}ms`'))
 
 

@@ -523,17 +523,14 @@ async def view_entry(request):
 		history = entry_data.get('history', [])
 		image = entry_data.get('image')
 	else:
-		print(entry_name, 'not found')
 		return web.HTTPNotFound()
 
 	url_title = utils.url_title(title)
 
 	if url_title != entry_name:
 		if not unlisted:
-			print('Redirected', entry_name, 'to', url_title)
+			# redirect the entry if it's not unlisted
 			return web.HTTPFound('/entry/' + url_title)
-		else:
-			print(f'{entry_name} ({url_title}) is unlisted so it was not redirected')
 
 	sid_cookie = request.cookies.get('sid')
 	if sid_cookie:
