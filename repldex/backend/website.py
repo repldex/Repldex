@@ -1,4 +1,20 @@
-from config import (
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from ibm_watson import LanguageTranslatorV3
+from repldex.discordbot.bot import discord_id_to_user
+from bs4 import BeautifulSoup
+from datetime import datetime
+from aiohttp import web
+import jinja2.ext
+import functools
+import aiohttp
+import asyncio
+import os
+
+from repldex.backend import database
+from repldex.backend import images
+from repldex import utils
+from repldex.config import (
 	EDITOR_IDS,
 	ADMIN_IDS,
 	APPROVAL_IDS,
@@ -9,21 +25,6 @@ from config import (
 	new_disabled,
 	CONFIG,
 )
-from jinja2 import Environment, FileSystemLoader, select_autoescape
-from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-from ibm_watson import LanguageTranslatorV3
-from discordbot import discord_id_to_user
-from bs4 import BeautifulSoup
-from datetime import datetime
-from aiohttp import web
-import jinja2.ext
-import functools
-import database
-import aiohttp
-import asyncio
-import images
-import utils
-import os
 
 config = CONFIG
 
@@ -123,7 +124,7 @@ language_codes = {
 }  # noqa: E501
 
 jinja_env = Environment(
-	loader=FileSystemLoader(searchpath='website/templates'),
+	loader=FileSystemLoader(searchpath='templates'),
 	autoescape=select_autoescape(['html', 'xml']),
 	enable_async=True,
 	extensions=[jinja2.ext.do],
@@ -667,7 +668,7 @@ def start_server(loop, background_task, client):
 	asyncio.set_event_loop(loop)
 	app = web.Application(middlewares=[middleware], client_max_size=4096**2)
 	app.discord = client
-	app.add_routes([web.static('/static', 'src/website/static')])
+	app.add_routes([web.static('/static', 'repldex/backend/static')])
 	app.add_routes(routes)
 	asyncio.ensure_future(background_task, loop=loop)
 	web.run_app(app, host=config.get('host', '0.0.0.0'), port=config.get('port', 8081))

@@ -1,14 +1,12 @@
 import discord
 import base64
 import os
-
 intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(intents=intents)
 
-import utils
-
-from config import BLACKLISTED_IDS, CONFIG
+from repldex.config import BLACKLISTED_IDS, CONFIG
+from repldex import utils
 # this is just so i can customize command parsing more
 
 

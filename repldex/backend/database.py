@@ -1,7 +1,5 @@
 from datetime import datetime
 import motor.motor_asyncio
-import images
-import utils
 import uuid
 import dns  # noqa: F401 (required so replit always installs it)
 import os
@@ -16,8 +14,9 @@ entries_coll = db['entries']
 sessions_coll = db['sessions']
 users_coll = db['users']
 
-import discordbot
-
+from repldex.discordbot import bot as discordbot
+from repldex import utils
+from repldex.backend import images
 
 async def fix_entry(data):
 	if data is None:

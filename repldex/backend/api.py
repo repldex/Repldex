@@ -2,9 +2,8 @@ from aiohttp import web
 from datetime import datetime
 import json
 
-import database
-from server import routes
-import utils
+from repldex.backend import database
+from repldex.backend.website import routes
 
 
 def json_serial(obj):

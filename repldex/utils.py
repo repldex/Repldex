@@ -1,14 +1,15 @@
-from config import BASE_URL, EDITOR_IDS
 from bs4 import BeautifulSoup as bs
 from discord.ext import commands
 from datetime import datetime
 import timeago as timeagolib
-import discordbot
 import jellyfish
 import discord
 import difflib
 import html
 import re
+
+from repldex.config import EDITOR_IDS, BASE_URL
+from repldex.discordbot import bot as discordbot
 
 x_emoji = '❌'
 

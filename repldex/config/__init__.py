@@ -1,12 +1,12 @@
 import json
 import os
 
-if 'src' in os.getcwd():
+if 'repldex' in os.getcwd():
 	config_path = 'config/'  # running from src
 elif os.getcwd() == '/home/runner':
-	config_path = '/home/runner/src/config/'  # absolute path when on repl.it
+	config_path = '/home/runner/repldex/config/'  # absolute path when on repl.it
 else:
-	config_path = 'src/config/'  # running from project root with vscode for example
+	config_path = 'repldex/config/'  # running from project root with vscode for example
 
 with open(config_path + 'baseurl.txt') as f:
 	BASE_URL = f.read()
