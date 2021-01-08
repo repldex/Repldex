@@ -1,7 +1,7 @@
 from repldex.config import DOT_ENV
 print('starting')
 
-if DOT_ENV == False:
+if DOT_ENV:
 	from dotenv import load_dotenv
 
 	load_dotenv()
