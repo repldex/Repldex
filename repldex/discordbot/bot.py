@@ -1,6 +1,6 @@
 import discord
 import base64
-import os
+import os, io
 intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(intents=intents)
@@ -162,9 +162,10 @@ async def log_edit(editor, title, time):
 
 
 async def log_delete(title, time, content):
+	#make sure content is string
 	channel = client.get_channel(770468181486600253)
 	await channel.send(f'{title} has been deleted (through Repldex [direct database deletions are not detected]) at {time}')
-	await channel.send(f'First 140 characters of entry: `{content[:140]}`')
+	await channel.send(file=io.BytesIO(str.encode(content)).read())
 
 
 async def log_view(title, time):

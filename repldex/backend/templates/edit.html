@@ -60,7 +60,7 @@
 			<script>
 				async function deleteOnclick() {
 					if (confirm("Are you sure you want to delete this entry?")) {
-						await fetch('/delete?id={{ entry_id }}', {method:'POST'});
+						await fetch('/delete?id={{ entry_id }}');
 						location.href = "/";
 					}
 				}

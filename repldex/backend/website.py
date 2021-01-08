@@ -418,7 +418,7 @@ async def edit_entry_post(request):
 	return web.HTTPFound(f'/entry/{entry_id}')
 
 
-@routes.post('/delete')
+@routes.get('/delete')
 async def delete_entry(request):
 	if not request.is_admin:
 		return web.HTTPFound('/')
