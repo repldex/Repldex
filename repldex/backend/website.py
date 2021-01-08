@@ -123,8 +123,12 @@ language_codes = {
 	'zh-TW',
 }  # noqa: E501
 
+template_path = os.path.join(os.path.dirname(__file__), 'templates')
+
+print(template_path)
+
 jinja_env = Environment(
-	loader=FileSystemLoader(searchpath='templates'),
+	loader=FileSystemLoader(searchpath=template_path),
 	autoescape=select_autoescape(['html', 'xml']),
 	enable_async=True,
 	extensions=[jinja2.ext.do],
@@ -293,7 +297,7 @@ async def edit_entry(request):
 				is_editor = True
 
 	return Template(
-		'edit.html', title=title, content=content, unlisted=unlisted, is_editor=is_editor, new_disabled=new_disabled, entry_id = entry_id
+		'edit.html', title=title, content=content, unlisted=unlisted, is_editor=is_editor, new_disabled=new_disabled, entry_id=entry_id
 	)
 
 
@@ -519,17 +523,14 @@ async def view_entry(request):
 		history = entry_data.get('history', [])
 		image = entry_data.get('image')
 	else:
-		print(entry_name, 'not found')
 		return web.HTTPNotFound()
 
 	url_title = utils.url_title(title)
 
 	if url_title != entry_name:
 		if not unlisted:
-			print('Redirected', entry_name, 'to', url_title)
+			# redirect the entry if it's not unlisted
 			return web.HTTPFound('/entry/' + url_title)
-		else:
-			print(f'{entry_name} ({url_title}) is unlisted so it was not redirected')
 
 	sid_cookie = request.cookies.get('sid')
 	if sid_cookie:

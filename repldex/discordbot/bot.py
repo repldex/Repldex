@@ -119,9 +119,7 @@ class Context:  # very unfinished but its fine probably
 			except discord.errors.Forbidden:
 				pass
 			utils.commands_ran_by[message.id] = self.author.id
-			# print(dir(message.guild))
 			for _ in range(10):
-				print('waiting for message')
 				await self.client.wait_for('message', check=lambda m: m.channel == message.channel)
 			await message.delete()
 		return message
