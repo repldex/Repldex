@@ -1,5 +1,5 @@
 import discord
-from repldex.discordbot.bot import betterbot, client
+from .bot import betterbot, client
 import asyncio
 from repldex.config import EDITOR_IDS, BASE_URL, ADMIN_IDS, BLACKLIST_IDS
 from repldex.backend import database
@@ -8,9 +8,10 @@ from repldex import utils
 blacklist_wait = 5
 # ACTUAL COMMANDS START HERE
 
+print('commands')
 
 @betterbot.command(name='help', allowed=True)
-async def help(message, *args):
+async def help(message):
 	if message.message.author.id in BLACKLIST_IDS:
 		await asyncio.sleep(blacklist_wait)
 
@@ -110,7 +111,7 @@ async def search_entries(message, search_query: str):
 
 
 @betterbot.command(name='source', allowed=True, aliases=['code'])
-async def link_source(message, *args):
+async def link_source(message):
 	embed = discord.Embed(title='Source code', description='My source code on github')
 	embed.add_field(name='github', value='https://github.com/mat-1/ReplDex')
 
@@ -121,7 +122,6 @@ async def link_source(message, *args):
 async def show_entry(message, search_query: str):
 	if message.message.author.id in BLACKLIST_IDS:
 		await asyncio.sleep(blacklist_wait)
-	search_query = ' '.join(args)
 	found = await database.search_entries(search_query, limit=1)
 	if found:
 		embed = await create_entry_embed(found[0], author_id=message.author.id)
@@ -140,7 +140,6 @@ async def show_entry(message, search_query: str):
 async def show_raw_entry(message, search_query: str):
 	if message.author.id not in ADMIN_IDS:
 		return
-	search_query = ' '.join(args)
 	found = await database.search_entries(search_query, limit=1)
 	if found:
 		data = await create_entry_embed(found[0], author_id=message.author.id, raw_entry=True)
@@ -214,7 +213,7 @@ async def view_self_entry(message, member: utils.User):
 
 
 @betterbot.command(name='who_is_the_leader')
-async def leader(message, *args):
+async def leader(message):
 	if message.channel.id in utils.auto_delete_channels:
 		return
 	if message.author.id not in ADMIN_IDS:
@@ -226,12 +225,13 @@ async def leader(message, *args):
 @betterbot.command(name='request')
 async def suggest(message, request: str):
 	suggestions_channel = client.get_channel(753331575034347642)
-	if len(args) >= 1:
-		embed = discord.Embed(title='Entry Suggestion', description=' '.join(args))
+	if request:
+		embed = discord.Embed(title='Entry Suggestion', description=request)
 		embed.set_footer(text='Requested by {}'.format(message.author.name))
 		await message.send('Suggestion sent.')
 		return await suggestions_channel.send(embed=embed)
-	return await message.send('Invalid command usage.')
+	else:
+		return await message.send('Invalid command usage.')
 
 
 """@betterbot.command(name='role')
@@ -264,15 +264,9 @@ async def unlist(message, entry_id: str):
 async def link_entry(message, member: utils.Member, search_query: str):
 	if message.author.id not in ADMIN_IDS:
 		return
-	if len(message.message.mentions) == 0:
-		return await message.send('No mentions in command')
-	else:
-		member = message.message.mentions[0]
-	args = list(args)
-	del args[0]
+	if not member:
+		return await message.send('Invalid member')
 
-	entry_name = tuple(args)
-	search_query = ' '.join(entry_name)
 	found = await database.search_entries(search_query, limit=1)
 	if found:
 		entry = found[0]
@@ -300,7 +294,7 @@ async def new_entry(message, search_query: str):
 
 
 @betterbot.command(name='random')
-async def random_entry(message, *args):
+async def random_entry(message):
 	entry = await database.get_random_entry()
 
 	embed = await create_entry_embed(entry, author_id=message.author.id)
@@ -308,7 +302,7 @@ async def random_entry(message, *args):
 
 
 @betterbot.command(name='ping', aliases=['pong', 'pung'])
-async def ping(message, *args):
+async def ping(message):
 	ping = client.latency * 1000
 	await message.send(embed=discord.Embed(title='Ping!', description=f'Bot ping is: `{int(ping)}ms`'))
 

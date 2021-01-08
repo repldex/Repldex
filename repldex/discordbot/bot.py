@@ -8,12 +8,9 @@ client = discord.Client(intents=intents)
 
 from repldex.config import BLACKLISTED_IDS, CONFIG
 from repldex import utils
-# this is just so i can customize command parsing more
 
 
 class BetterBot:
-	functions = {}
-
 	def __init__(self, prefix, bot_id):
 		'''
 		All the bot prefixes.
