@@ -32,6 +32,7 @@ class BetterBot:
 			if arg in ann:
 				hint = ann[arg]
 				found = None
+				i = None
 				for i in reversed([pos for pos, char in enumerate(parsing_remaining + ' ') if char == ' ']):
 					cmd_arg = parsing_remaining[:i]
 					tried = await self.try_converter(ctx, cmd_arg, hint)

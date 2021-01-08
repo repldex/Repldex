@@ -227,7 +227,7 @@ async def leader(message):
 async def suggest(message, request):
 	suggestions_channel = client.get_channel(753331575034347642)
 	if request:
-		embed = discord.Embed(title='Entry Suggestion', description=' '.join(args))
+		embed = discord.Embed(title='Entry Suggestion', description=request)
 		embed.set_footer(text='Requested by {}'.format(message.author.name))
 		await message.send('Suggestion sent.')
 		return await suggestions_channel.send(embed=embed)
