@@ -71,7 +71,6 @@ class BetterBot:
 		return return_args
 
 	async def process_commands(self, message):
-		print('process commands')
 		parsing_remaining = message.content.replace('  ', ' ')
 		found_prefix = False
 		prefix = None
@@ -85,9 +84,7 @@ class BetterBot:
 		parsing_remaining = parsing_remaining[len(prefix):].strip()
 		command_name, parsing_remaining = (parsing_remaining + ' ').split(' ', 1)
 		command_name = command_name.lower()
-		print('bruh what', self.commands)
 		for command in self.commands:
-			print(command_name, command['name'])
 			if command_name != command['name']:
 				continue
 			func = command['function']
@@ -113,7 +110,6 @@ class BetterBot:
 					continue
 			else:
 				return_args = []
-			print('args', return_args)
 			for attempt in range(10):
 				try:
 					return await func(ctx, *return_args)
