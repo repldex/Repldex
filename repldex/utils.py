@@ -168,7 +168,6 @@ def remove_html(inputted, prev=None):
 
 
 def html_to_markdown(inputted, prev=None):
-	print('html_to_markdown')
 	new_string = str(inputted)
 	if prev is None:
 		new_string = new_string.replace('\n', ' ')
