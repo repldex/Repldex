@@ -56,15 +56,13 @@
 			<button>Submit</button>
 		</form>
 		{% if is_admin %}
-			<form onsubmit="del()" method="post" action="/delete?id={{ content['_id'] }}">
-				<button>Delete Entry</button>
-			</form>
+			<button onclick="deleteOnclick()">Delete Entry: {{ title }}</button>
 			<script>
-				function del() {
-					if(!confirm("Are you sure you want to delete "+window.location.pathname)) {
-						return false;
-						}
-					this.form.submit();
+				async function deleteOnclick() {
+					if (confirm("Are you sure you want to delete this entry?")) {
+						await fetch('/delete?id={{ entry_id }}', {method:'POST'});
+						location.href = "/";
+					}
 				}
 			</script>
 		{% endif %}

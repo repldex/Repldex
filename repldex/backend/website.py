@@ -293,7 +293,7 @@ async def edit_entry(request):
 				is_editor = True
 
 	return Template(
-		'edit.html', title=title, content=content, unlisted=unlisted, is_editor=is_editor, new_disabled=new_disabled
+		'edit.html', title=title, content=content, unlisted=unlisted, is_editor=is_editor, new_disabled=new_disabled, entry_id = entry_id
 	)
 
 
@@ -420,7 +420,6 @@ async def edit_entry_post(request):
 
 @routes.post('/delete')
 async def delete_entry(request):
-	# 404 until I actually implement this - rediar/prussia/jetstream
 	if not request.is_admin:
 		return web.HTTPFound('/')
 	entry_id = request.query.get('id')
@@ -428,6 +427,7 @@ async def delete_entry(request):
 	if not entry_data:
 		return "hey man there's no entry data, get your grip together!"
 	await database.delete_entry(entry_data.get('title'), entry_data.get('content'), entry_id, editor=request.discord_id)
+	return web.HTTPFound('/')
 
 
 @routes.post('/revert')
