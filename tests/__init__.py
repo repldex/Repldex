@@ -63,7 +63,6 @@ class FakeHTTPClient():
 		return 'https://discord.com'
 
 	async def send_message(self, channel_id, content, *, tts=False, embed=None, nonce=None, allowed_mentions=None):
-		print('send message!')
 		self.messages_queue.append({
 			'channel_id': channel_id,
 			'content': content,
@@ -249,5 +248,4 @@ class Tester:
 				raise TimeoutError()
 
 		message = self.client.http.messages_queue.pop(0)
-		print('GOOD', message)
 		assert checker(message)

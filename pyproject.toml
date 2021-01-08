@@ -16,6 +16,7 @@ bs4 = "^0.0.1"
 dnspython = "^2.0.0"
 ibm-watson = "4.6.0"
 ibm_cloud_sdk_core = "1.5.1"
+python-dotenv = "^0.15.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.1.1"
