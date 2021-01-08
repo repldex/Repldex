@@ -293,7 +293,7 @@ async def edit_entry(request):
 				is_editor = True
 
 	return Template(
-		'edit.html', title=title, content=content, unlisted=unlisted, is_editor=is_editor, new_disabled=new_disabled, entry_id = entry_id
+		'edit.html', title=title, content=content, unlisted=unlisted, is_editor=is_editor, new_disabled=new_disabled, entry_id=entry_id
 	)
 
 
