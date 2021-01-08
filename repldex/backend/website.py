@@ -123,8 +123,12 @@ language_codes = {
 	'zh-TW',
 }  # noqa: E501
 
+template_path = os.path.join(os.path.dirname(__file__), 'templates')
+
+print(template_path)
+
 jinja_env = Environment(
-	loader=FileSystemLoader(searchpath='templates'),
+	loader=FileSystemLoader(searchpath=template_path),
 	autoescape=select_autoescape(['html', 'xml']),
 	enable_async=True,
 	extensions=[jinja2.ext.do],
