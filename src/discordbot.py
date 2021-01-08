@@ -6,7 +6,6 @@ intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(intents=intents)
 
-import discord
 import utils
 
 from config import BLACKLISTED_IDS, CONFIG

@@ -1,13 +1,12 @@
-from src.discordbot import discordbot as bot
-from src.discordbot import commands  # noqa: F401 (must be imported in order for commands to work)
-from src import database
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)),"src"))
+import discordbot as bot
+from config import CONFIG
+import database
 import datetime
 import pytest
-import json
 from . import Tester
-
-with open('config/config.json', 'r') as f:
-	config = json.loads(f.read())
 
 
 async def search_entries(query, limit=10, search_id=True, page=0, discord_id=None, unlisted=False):
@@ -53,7 +52,7 @@ def channel(test, guild):
 	return test.make_channel(guild, id=750045724166848572)
 
 
-prefix = config.get('prefix', '^')
+prefix = CONFIG.get('prefix', '^')
 
 
 @pytest.mark.asyncio
