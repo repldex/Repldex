@@ -1,0 +1,4 @@
+[flake8]
+ignore = E402,E712,E501,E722,C901,ET121
+exclude = tests
+use-flake8-tabs = true

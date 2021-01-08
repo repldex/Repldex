@@ -1,47 +1,127 @@
-from config import EDITOR_IDS, ADMIN_IDS, APPROVAL_IDS, BLACKLISTED_IDS, REPORTER_IDS, BASE_URL, CLIENT_ID, new_disabled
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson import LanguageTranslatorV3
-from discordbot import discord_id_to_user
+from repldex.discordbot.bot import discord_id_to_user
 from bs4 import BeautifulSoup
 from datetime import datetime
 from aiohttp import web
 import jinja2.ext
 import functools
-import commands
-import database
 import aiohttp
 import asyncio
-import images
-import utils
-import json
 import os
 
-with open('config/config.json', 'r') as f:
-	config = json.loads(f.read())
+from repldex.backend import database
+from repldex.backend import images
+from repldex import utils
+from repldex.config import (
+	EDITOR_IDS,
+	ADMIN_IDS,
+	APPROVAL_IDS,
+	BLACKLISTED_IDS,
+	REPORTER_IDS,
+	BASE_URL,
+	CLIENT_ID,
+	new_disabled,
+	CONFIG,
+)
+
+config = CONFIG
 
 routes = web.RouteTableDef()
 
 s = aiohttp.ClientSession()
-
 
 ibm_token = os.getenv('IBM_TOKEN')
 ibm_url = os.getenv('IBM_URL')
 
 if ibm_token:
 	authenticator = IAMAuthenticator(ibm_token)
-	language_translator = LanguageTranslatorV3(
-			version='2018-05-01',
-			authenticator=authenticator
-	)
+	language_translator = LanguageTranslatorV3(version='2018-05-01', authenticator=authenticator)
 
 	language_translator.set_service_url(ibm_url)
 else:
 	print('no ibm translation token found, this is fine')
 	language_translator = None
 
-language_codes = {'af', 'ar', 'az', 'ba', 'be', 'bg', 'bn', 'ca', 'cs', 'cv', 'cy', 'da', 'de', 'el', 'en', 'eo', 'es', 'et', 'eu', 'fa', 'fi', 'fr', 'ga', 'gu', 'he', 'hi', 'hr', 'ht', 'hu', 'hy', 'is', 'it', 'ja', 'ka', 'kk', 'km', 'ko', 'ku', 'ky', 'lo', 'lt', 'lv', 'ml', 'mn', 'mr', 'ms', 'mt', 'my', 'nb', 'ne', 'nl', 'nn', 'pa', 'pa-PK', 'pl', 'ps', 'pt', 'ro', 'ru', 'si', 'sk', 'sl', 'so', 'sq', 'sr', 'sv', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'zh', 'zh-TW'}  # noqa: E501
-
+language_codes = {
+	'af',
+	'ar',
+	'az',
+	'ba',
+	'be',
+	'bg',
+	'bn',
+	'ca',
+	'cs',
+	'cv',
+	'cy',
+	'da',
+	'de',
+	'el',
+	'en',
+	'eo',
+	'es',
+	'et',
+	'eu',
+	'fa',
+	'fi',
+	'fr',
+	'ga',
+	'gu',
+	'he',
+	'hi',
+	'hr',
+	'ht',
+	'hu',
+	'hy',
+	'is',
+	'it',
+	'ja',
+	'ka',
+	'kk',
+	'km',
+	'ko',
+	'ku',
+	'ky',
+	'lo',
+	'lt',
+	'lv',
+	'ml',
+	'mn',
+	'mr',
+	'ms',
+	'mt',
+	'my',
+	'nb',
+	'ne',
+	'nl',
+	'nn',
+	'pa',
+	'pa-PK',
+	'pl',
+	'ps',
+	'pt',
+	'ro',
+	'ru',
+	'si',
+	'sk',
+	'sl',
+	'so',
+	'sq',
+	'sr',
+	'sv',
+	'ta',
+	'te',
+	'th',
+	'tl',
+	'tr',
+	'uk',
+	'ur',
+	'vi',
+	'zh',
+	'zh-TW',
+}  # noqa: E501
 
 jinja_env = Environment(
 	loader=FileSystemLoader(searchpath='templates'),
@@ -49,11 +129,12 @@ jinja_env = Environment(
 	enable_async=True,
 	extensions=[jinja2.ext.do],
 	trim_blocks=True,
-	lstrip_blocks=True
+	lstrip_blocks=True,
 )
 
 
 class JinjaNamespace:
+
 	def __init__(self, **kwargs):
 		self.args = kwargs
 
@@ -117,12 +198,14 @@ async def load_template(filename, **kwargs):
 
 
 class Template:
+
 	def __init__(self, name, **args):
 		self.name = name
 		self.args = args
 
 
 def admin_only(func):
+
 	@functools.wraps(func)
 	async def wrapper(request):
 		if not request.is_admin:
@@ -141,11 +224,7 @@ async def index(request):
 		discord_id = None
 	entries = await database.get_entries(sort='last_edited', discord_id=discord_id)
 	entry_count = await database.count_entries()
-	return Template(
-		'index.html',
-		entries=entries,
-		entry_count=entry_count
-	)
+	return Template('index.html', entries=entries, entry_count=entry_count)
 
 
 @routes.get('/news')
@@ -158,21 +237,14 @@ async def news(request):
 		discord_id = None
 	entries = await database.get_entries(sort='last_edited', discord_id=discord_id)
 	entry_count = await database.count_entries()
-	return Template(
-		'news.html',
-		entries=entries,
-		entry_count=entry_count
-	)
+	return Template('news.html', entries=entries, entry_count=entry_count)
 
 
 @routes.get('/admin')
 @admin_only
 async def admin_panel(request):
 	entry_count = await database.count_entries()
-	return Template(
-		'admin/main.html',
-		entry_count=entry_count
-	)
+	return Template('admin/main.html', entry_count=entry_count)
 
 
 @routes.get('/admin/users')
@@ -189,7 +261,7 @@ async def admin_users(request):
 		BLACKLISTED_IDS=BLACKLISTED_IDS,
 		REPORTER_IDS=REPORTER_IDS,
 		IDS=IDS,
-		discord_id_to_user=discord_id_to_user
+		discord_id_to_user=discord_id_to_user,
 	)
 
 
@@ -221,12 +293,7 @@ async def edit_entry(request):
 				is_editor = True
 
 	return Template(
-		'edit.html',
-		title=title,
-		content=content,
-		unlisted=unlisted,
-		is_editor=is_editor,
-		new_disabled=new_disabled
+		'edit.html', title=title, content=content, unlisted=unlisted, is_editor=is_editor, new_disabled=new_disabled
 	)
 
 
@@ -251,13 +318,7 @@ async def view_entry_history(request):
 		return web.HTTPNotFound()
 
 	return Template(
-		'history.html',
-		title=title,
-		content=content,
-		id=entry_id,
-		history=history,
-
-		back_location='/entry/' + entry_id
+		'history.html', title=title, content=content, id=entry_id, history=history, back_location='/entry/' + entry_id
 	)
 
 
@@ -279,7 +340,8 @@ async def edit_entry_post(request):
 
 	try:
 		del translated_cache[entry_id]
-	except KeyError: pass
+	except KeyError:
+		pass
 
 	if request.is_admin:
 		unlisted = post_data.get('unlisted', 'off') == 'on'
@@ -310,7 +372,7 @@ async def edit_entry_post(request):
 		editor_real=request.orig_id,
 		unlisted=unlisted,
 		impersonate=impersonate,
-		image=image_url
+		image=image_url,
 	)
 
 	if not entry_data:
@@ -321,28 +383,44 @@ async def edit_entry_post(request):
 		if len(content) > 1020:
 			content = content[:1020] + '...'
 		if os.getenv('newentry_hook'):
-			await s.post(os.getenv('newentry_hook'), json={
-				'embeds': [{
-					'title': 'New entry!',
-					'url': 'https://repldex.com/entry/' + entry_id,
-					'timestamp': datetime.now().isoformat(),
-					'color': 0x2ecc71,
-					'fields': [
-						{'name': 'Author', 'value': author, 'inline': False},
-						{'name': 'Title', 'value': title, 'inline': False},
-						{'name': 'Content', 'value': content, 'inline': False},
-						{'name': 'unlisted', 'value': str(unlisted), 'inline': False},
-						{'name': 'id', 'content': entry_id},
-						{'name': 'link', 'content': 'https://repldex.com/entry/' + entry_id}
-					]
-				}]
-			})
+			await s.post(
+				os.getenv('newentry_hook'),
+				json={
+					'embeds': [{
+						'title': 'New entry!',
+						'url': 'https://repldex.com/entry/' + entry_id,
+						'timestamp': datetime.now().isoformat(),
+						'color': 0x2ECC71,
+						'fields': [
+							{
+								'name': 'Author', 'value': author, 'inline': False
+							},
+							{
+								'name': 'Title', 'value': title, 'inline': False
+							},
+							{
+								'name': 'Content', 'value': content, 'inline': False
+							},
+							{
+								'name': 'unlisted', 'value': str(unlisted), 'inline': False
+							},
+							{
+								'name': 'id', 'content': entry_id
+							},
+							{
+								'name': 'link', 'content': 'https://repldex.com/entry/' + entry_id
+							},
+						],
+					}]
+				},
+			)
 
 	return web.HTTPFound(f'/entry/{entry_id}')
 
+
 @routes.post('/delete')
 async def delete_entry(request):
-	#404 until I actually implement this - rediar/prussia/jetstream
+	# 404 until I actually implement this - rediar/prussia/jetstream
 	if not request.is_admin:
 		return web.HTTPFound('/')
 	entry_id = request.query.get('id')
@@ -350,6 +428,7 @@ async def delete_entry(request):
 	if not entry_data:
 		return "hey man there's no entry data, get your grip together!"
 	await database.delete_entry(entry_data.get('title'), entry_data.get('content'), entry_id, editor=request.discord_id)
+
 
 @routes.post('/revert')
 async def revert_edit(request):
@@ -380,19 +459,13 @@ async def revert_edit(request):
 	new_content = history_data['content']
 
 	entry_id = await database.edit_entry(
-		title=new_title,
-		content=new_content,
-		entry_id=entry_id,
-		editor=request.discord_id,
-		unlisted=unlisted,
-
-		image=new_image
+		title=new_title, content=new_content, entry_id=entry_id, editor=request.discord_id, unlisted=unlisted, image=new_image
 	)
 	return web.HTTPFound(f'/entry/{entry_id}')
 
 
 CLIENT_SECRET = os.getenv('client_secret')
-REDIRECT_URI = BASE_URL+'/loggedin'
+REDIRECT_URI = BASE_URL + '/loggedin'
 
 
 @routes.get('/login')
@@ -417,27 +490,18 @@ async def loggedin_redirect(request):
 			'code': code,
 			'redirect_uri': REDIRECT_URI,
 			'scope': 'identify',
-		}
+		},
 	)
 	data = await r.json()
 	if 'error' in data:
 		return web.HTTPFound('/login')
 	access_token = data['access_token']
-	r = await s.get(
-		'https://discordapp.com/api/users/@me',
-		headers={
-			'Authorization': 'Bearer ' + access_token
-		}
-	)
+	r = await s.get('https://discordapp.com/api/users/@me', headers={'Authorization': 'Bearer ' + access_token})
 	data = await r.json()
 	user_id = int(data['id'])
 	sid = await database.new_editor_session(user_id)
 	resp = web.HTTPFound('/')
-	resp.set_cookie(
-		'sid',
-		sid,
-		max_age=31557600  # a year
-	)
+	resp.set_cookie('sid', sid, max_age=31557600)  # a year
 	return resp
 
 
@@ -461,7 +525,7 @@ async def view_entry(request):
 	url_title = utils.url_title(title)
 
 	if url_title != entry_name:
-		if(not unlisted):
+		if not unlisted:
 			print('Redirected', entry_name, 'to', url_title)
 			return web.HTTPFound('/entry/' + url_title)
 		else:
@@ -497,9 +561,7 @@ async def view_entry(request):
 				else:
 					cached = False
 			if not cached and language_translator:
-				translation = language_translator.translate(
-					text=nohtml_content,
-					model_id='en-{}'.format(lang)).get_result()
+				translation = language_translator.translate(text=nohtml_content, model_id='en-{}'.format(lang)).get_result()
 				article_text = translation['translations'][0]['translation']
 				try:
 					translated_cache[entry_id][lang] = article_text
@@ -507,7 +569,8 @@ async def view_entry(request):
 					translated_cache[entry_id] = {lang: article_text}
 				translated = True
 
-		except Exception as e: print(e)
+		except Exception as e:
+			print(e)
 	elif if_lang:
 		translated = True
 		article_text = 'Translations are currently disabled'
@@ -545,14 +608,14 @@ async def api_website_title(request):
 		url = config.BASE_URL + url
 
 	if url.startswith(config.BASE_URL):
+		# fmt: off
 		url = url[len(config.BASE_URL):]
 		if url.startswith('/entry/'):
 			entry_name = url[len('/entry/'):]
+			# fmt: on
 			entry = await database.get_entry(name=entry_name)
 			return web.json_response({
-				'title': entry['title'],
-				'favicon': config.BASE_URL + '/static/icon.png',
-				'content': entry['nohtml_content']
+				'title': entry['title'], 'favicon': config.BASE_URL + '/static/icon.png', 'content': entry['nohtml_content']
 			})
 		else:
 			return web.json_response({})
@@ -570,10 +633,7 @@ async def api_website_title(request):
 			favicon = base_url + favicon
 	else:
 		favicon = None
-	return web.json_response({
-		'title': title,
-		'favicon': favicon
-	})
+	return web.json_response({'title': title, 'favicon': favicon})
 
 
 @web.middleware
@@ -599,32 +659,16 @@ async def middleware(request, handler):
 		if 'is_editor' not in args:
 			args['is_editor'] = is_editor
 		args['is_admin'] = is_admin
-		resp = web.Response(
-			text=await load_template(
-				resp.name,
-				**args
-			),
-			content_type='text/html'
-		)
+		resp = web.Response(text=await load_template(resp.name, **args), content_type='text/html')
 	return resp
 
 
 def start_server(loop, background_task, client):
 	global app
 	asyncio.set_event_loop(loop)
-	app = web.Application(
-		middlewares=[middleware],
-		client_max_size=4096**2
-	)
+	app = web.Application(middlewares=[middleware], client_max_size=4096**2)
 	app.discord = client
-	app.add_routes([web.static('/static', 'static')])
+	app.add_routes([web.static('/static', 'repldex/backend/static')])
 	app.add_routes(routes)
-	asyncio.ensure_future(
-		background_task,
-		loop=loop
-	)
-	web.run_app(
-		app,
-		host=config.get('host', '0.0.0.0'),
-		port=config.get('port', 8081)
-	)
+	asyncio.ensure_future(background_task, loop=loop)
+	web.run_app(app, host=config.get('host', '0.0.0.0'), port=config.get('port', 8081))

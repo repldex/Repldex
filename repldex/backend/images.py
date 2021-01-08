@@ -5,11 +5,7 @@ s = aiohttp.ClientSession()
 
 async def upload(img):
 	data = aiohttp.FormData()
-	data.add_field(
-		'image',
-		img.file,
-		content_type=img.content_type
-	)
+	data.add_field('image', img.file, content_type=img.content_type)
 	async with s.post(
 		'https://i.matdoes.dev/api/upload',
 		data=data,
@@ -26,5 +22,5 @@ async def get_data(url):
 	return {
 		'thumbnail_b64': data.get('thumbnail_b64'),
 		'src': url,
-		'thumbnail_content_type': data.get('thumbnail-content-type', 'image/webp')
+		'thumbnail_content_type': data.get('thumbnail-content-type', 'image/webp'),
 	}

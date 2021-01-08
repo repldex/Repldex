@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "repldex"
+version = "0.1.0"
+description = ""
+authors = ["mat <replit@matdoes.dev>","prussia","coderman51","minx"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+discord = "^1.0.1"
+jellyfish = "^0.8.2"
+jinja2 = "^2.11.2"
+motor = "^2.1.0"
+timeago = "^1.0.14"
+aiohttp = "^3.6.2"
+bs4 = "^0.0.1"
+dnspython = "^2.0.0"
+ibm-watson = "4.6.0"
+ibm_cloud_sdk_core = "1.5.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.1.1"
+python-dotenv = "^0.15.0"
+flake8 = "^3.8.4"
+flake8-tabs = "^2.2.2"
+yapf = "^0.30.0"
+
+[tool.black]
+line-length=127
+target-version = ['py38']
+skip-string-normalization = true
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

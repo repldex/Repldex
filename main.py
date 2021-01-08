@@ -1,20 +1,13 @@
-import json
-
+from repldex.config import DOT_ENV
 print('starting')
 
-with open('config/config.json', 'r') as f:
-	config = json.load(f)
+if DOT_ENV == False:
+	from dotenv import load_dotenv
 
-if config.get('dotenv', False):
-	__import__('dotenv').load_dotenv()
+	load_dotenv()
 
 # Don't move this up, env must be loaded first
-import api
-import server
-import discordbot
+from repldex.discordbot import bot as discordbot
+from repldex.backend import website
 
-server.start_server(
-	discordbot.client.loop,
-	discordbot.start_bot(),
-	discordbot.client
-)
+website.start_server(discordbot.client.loop, discordbot.start_bot(), discordbot.client)

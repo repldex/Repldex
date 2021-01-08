@@ -2,9 +2,9 @@ from aiohttp import web
 from datetime import datetime
 import json
 
-import database
-from server import routes
-import utils
+from repldex.backend import database
+from repldex.backend.website import routes
+from repldex import utils
 
 
 def json_serial(obj):
@@ -13,10 +13,7 @@ def json_serial(obj):
 
 
 def json_response(d):
-	return web.Response(
-		text=json.dumps(d, default=json_serial),
-		content_type='application/json'
-	)
+	return web.Response(text=json.dumps(d, default=json_serial), content_type='application/json')
 
 
 @routes.get('/api/entries/{sort}')
@@ -29,12 +26,7 @@ async def api_entries_new(request):
 		sort = 'last_edited'
 	if sort == 'search':
 		sort = 'relevant'
-	raw_entries = await database.get_entries(
-		sort=sort,
-		page=page,
-		limit=limit,
-		query=query
-	)
+	raw_entries = await database.get_entries(sort=sort, page=page, limit=limit, query=query)
 	entries = []
 	for entry in raw_entries:
 		entry = await create_response(entry, preview=True)
@@ -60,13 +52,7 @@ async def create_response(entry_data, preview=False):
 	url_title = utils.url_title(title)
 
 	if preview:
-		return {
-			'title': title,
-			'preview': utils.remove_html(content),
-			'html': content,
-			'id': entry_id,
-			'image': image
-		}
+		return {'title': title, 'preview': utils.remove_html(content), 'html': content, 'id': entry_id, 'image': image}
 	else:
 		return {
 			'slug': url_title,
@@ -98,8 +84,6 @@ async def api_entry(request):
 @routes.get('/api/selfentry/{owner_id}')
 async def api_selfentry(request):
 	owner_id = int(request.match_info['owner_id'])
-	entry_data = await database.get_entry(
-		owner=owner_id
-	)
+	entry_data = await database.get_entry(owner=owner_id)
 	data = await create_response(entry_data)
 	return json_response(data)

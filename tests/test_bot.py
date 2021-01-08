@@ -1,13 +1,9 @@
-import discordbot as bot
-import discordpytest
-import commands  # noqa: F401 (must be imported in order for commands to work)
-import database
+from repldex.discordbot import bot
+from repldex.config import CONFIG
+from repldex.backend import database
 import datetime
 import pytest
-import json
-
-with open('config/config.json', 'r') as f:
-	config = json.loads(f.read())
+from . import Tester
 
 
 async def search_entries(query, limit=10, search_id=True, page=0, discord_id=None, unlisted=False):
@@ -31,7 +27,7 @@ database.search_entries = search_entries
 
 @pytest.fixture
 def test():
-	tester = discordpytest.Tester(bot.client)
+	tester = Tester(bot.client)
 	bot.client.http = tester.client.http
 	bot.client._connection = tester.client._connection
 	bot.client = tester.client
@@ -53,7 +49,7 @@ def channel(test, guild):
 	return test.make_channel(guild, id=750045724166848572)
 
 
-prefix = config.get('prefix', '^')
+prefix = CONFIG.get('prefix', '^')
 
 
 @pytest.mark.asyncio
@@ -63,9 +59,14 @@ async def test_entry(test, channel):
 	await test.message(prefix + 'entry example', channel)
 
 	def check(message):
-		if message['content']: return False
-		if message['embed']['description'] != 'hello world': return False
-		if message['embed']['url'] != 'https://repldex.com/entry/example': return False
-		if message['embed']['title'] != 'example': return False
+		if message['content']:
+			return False
+		if message['embed']['description'] != 'hello world':
+			return False
+		if message['embed']['url'] != 'https://repldex.com/entry/example':
+			return False
+		if message['embed']['title'] != 'example':
+			return False
 		return True
+
 	await test.verify_message(check)

@@ -1,21 +1,19 @@
-from config import BASE_URL, EDITOR_IDS
 from bs4 import BeautifulSoup as bs
 from discord.ext import commands
 from datetime import datetime
 import timeago as timeagolib
-import discordbot
 import jellyfish
-import database
 import discord
 import difflib
 import html
 import re
 
+from repldex.config import EDITOR_IDS, BASE_URL
+from repldex.discordbot import bot as discordbot
+
 x_emoji = '❌'
 
-auto_delete_channels = {
-	437067256049172491  # oof-topic
-}
+auto_delete_channels = {437067256049172491}  # oof-topic
 
 commands_ran_by = {}
 
@@ -33,6 +31,7 @@ def get_channel_members(channel_id):
 	except AttributeError:
 		return [discordbot.client.get_channel(channel_id).recipient]
 
+
 def check_member_id(ctx, arg):
 	try:
 		if ctx.guild:
@@ -45,9 +44,10 @@ def check_member_id(ctx, arg):
 	except ValueError:
 		pass
 
+
 def check_user_id(ctx, arg):
 	try:
-		arg = re.sub("[^0-9]", "", arg)
+		arg = re.sub('[^0-9]', '', arg)
 		member = ctx.client.fetch_user(int(arg))
 		if member is not None:
 			return member
@@ -68,62 +68,42 @@ def check_mention(ctx, arg):
 
 
 def check_name_with_discrim(ctx, arg):
-	member = discord.utils.find(
-		lambda m: str(m).lower() == arg.lower(),
-		get_channel_members(ctx.channel.id)
-	)
+	member = discord.utils.find(lambda m: str(m).lower() == arg.lower(), get_channel_members(ctx.channel.id))
 	return member
 
 
 def check_name_without_discrim(ctx, arg):
-	member = discord.utils.find(
-		lambda m: m.name.lower == arg.lower(),
-		get_channel_members(ctx.channel.id)
-	)
+	member = discord.utils.find(lambda m: m.name.lower == arg.lower(), get_channel_members(ctx.channel.id))
 	return member
 
 
 def check_nickname(ctx, arg):
-	member = discord.utils.find(
-		lambda m: m.display_name.lower() == arg.lower(),
-		get_channel_members(ctx.channel.id)
-	)
+	member = discord.utils.find(lambda m: m.display_name.lower() == arg.lower(), get_channel_members(ctx.channel.id))
 	return member
 
 
 def check_name_starts_with(ctx, arg):
-	member = discord.utils.find(
-		lambda m: m.name.lower().startswith(arg.lower()),
-		get_channel_members(ctx.channel.id)
-	)
+	member = discord.utils.find(lambda m: m.name.lower().startswith(arg.lower()), get_channel_members(ctx.channel.id))
 	return member
 
 
 def check_nickname_starts_with(ctx, arg):
-	member = discord.utils.find(
-		lambda m: m.display_name.lower().startswith(arg.lower()),
-		get_channel_members(ctx.channel.id)
-	)
+	member = discord.utils.find(lambda m: m.display_name.lower().startswith(arg.lower()), get_channel_members(ctx.channel.id))
 	return member
 
 
 def check_name_contains(ctx, arg):
-	member = discord.utils.find(
-		lambda m: arg.lower() in m.name.lower(),
-		get_channel_members(ctx.channel.id)
-	)
+	member = discord.utils.find(lambda m: arg.lower() in m.name.lower(), get_channel_members(ctx.channel.id))
 	return member
 
 
 def check_nickname_contains(ctx, arg):
-	member = discord.utils.find(
-		lambda m: arg.lower() in m.display_name.lower(),
-		get_channel_members(ctx.channel.id)
-	)
+	member = discord.utils.find(lambda m: arg.lower() in m.display_name.lower(), get_channel_members(ctx.channel.id))
 	return member
 
 
 class Member(commands.Converter):
+
 	async def convert(self, ctx, arg):
 		if arg[0] == '@':
 			arg = arg[1:]
@@ -148,7 +128,9 @@ class Member(commands.Converter):
 
 		return None
 
+
 class User(commands.Converter):
+
 	async def convert(self, ctx, arg):
 		if arg[0] == '@':
 			arg = arg[1:]
@@ -166,6 +148,7 @@ class User(commands.Converter):
 
 		return None
 
+
 def remove_html(inputted, prev=None):
 	inputted = str(inputted)
 	new_string = re.sub(r'<(\s*)br(\s*)([\S\s]*)\/?>', '\n', inputted)
@@ -177,8 +160,10 @@ def remove_html(inputted, prev=None):
 		new_string = new_string.replace('  ', ' ')
 	new_string = new_string.strip()
 
-	if new_string == prev: return new_string
-	else: return remove_html(new_string, prev=inputted)
+	if new_string == prev:
+		return new_string
+	else:
+		return remove_html(new_string, prev=inputted)
 
 
 def html_to_markdown(inputted, prev=None):
@@ -190,9 +175,7 @@ def html_to_markdown(inputted, prev=None):
 	new_string = re.sub(r'<(div|p|br)>', '', new_string)
 	new_string = re.sub(r'<\/(div|p|br|h1|h2|h3)>', r'</\1>\n', new_string)
 	new_string = re.sub(
-		r'<(?:\s{0,}?)(b|strong|h1|h2|h3)(?:\s{0,}?)(?:[\S\s]*)>(.{1,}?)<\/?(?:\s*)\1(?:\s*)>',
-		r'**\2**',
-		new_string
+		r'<(?:\s{0,}?)(b|strong|h1|h2|h3)(?:\s{0,}?)(?:[\S\s]*)>(.{1,}?)<\/?(?:\s*)\1(?:\s*)>', r'**\2**', new_string
 	)
 	new_string = re.sub(r'<(?:\s*)(i|em)(?:\s*)(?:[\S\s]*)>(.+?)<(?:\s*)\/\1>>', r'*\1*', new_string)
 	new_string = re.sub(r'<li>(.+?)</li>', r'• \1\n', new_string)
@@ -209,11 +192,13 @@ def html_to_markdown(inputted, prev=None):
 	new_string = re.sub(r'<[\S\s]{1,}?>', ' ', new_string)
 	new_string = html.unescape(new_string)
 	new_string = new_string.strip()
-	if new_string == prev: return new_string
-	else: return html_to_markdown(new_string, prev=inputted)
+	if new_string == prev:
+		return new_string
+	else:
+		return html_to_markdown(new_string, prev=inputted)
 
 
-async def get_editor_list():
+async def get_editor_list(database):
 	editor_list = []
 	for editor_id in EDITOR_IDS:
 		editor_username = discordbot.discord_id_to_user(editor_id)
@@ -224,7 +209,7 @@ async def get_editor_list():
 			editor_html = editor_username
 		editor_html = f'<li>{editor_html}</li>'
 		editor_list.append(editor_html)
-	return '<ul>' + ('\n'.join(editor_list)) + '</ul>'
+	return '<ul>' + '\n'.join(editor_list) + '</ul>'
 
 
 async def before_show_text(inputted):
@@ -254,6 +239,7 @@ def fix_html(inputted, prev=None):
 		span_start, span_end = found.span()
 		href, href_text = found.groups()
 		href = href.replace(' ', '%20')
+		# fmt: off
 		if href.startswith(BASE_URL):
 			href = href[len(BASE_URL):]
 		elif href.startswith('https://repldex.mat1.repl.co'):
@@ -264,11 +250,14 @@ def fix_html(inputted, prev=None):
 			href = '/entry/' + href[len('/entry?id='):]
 		link_html = f'<a href="{href}">{href_text}</a>'
 		new_string = new_string[:span_start] + link_html + new_string[span_end:]
+		# fmt: on
 
 	new_string = new_string.strip()
 
-	if new_string == prev: return new_string
-	else: return fix_html(new_string, prev=inputted)
+	if new_string == prev:
+		return new_string
+	else:
+		return fix_html(new_string, prev=inputted)
 
 
 def prettify_html(inputted):
