@@ -18,6 +18,7 @@ from repldex.discordbot import bot as discordbot
 from repldex import utils
 from repldex.backend import images
 
+
 async def fix_entry(data):
 	if data is None:
 		return

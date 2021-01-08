@@ -4,6 +4,7 @@ import json
 
 from repldex.backend import database
 from repldex.backend.website import routes
+from repldex import utils
 
 
 def json_serial(obj):
