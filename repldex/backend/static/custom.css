@@ -1,0 +1,37 @@
+html {
+    color: whitesmoke;
+    font-family: 'Nunito Sans', sans-serif;
+}
+
+.body {
+    min-height: 100vh;
+    padding-top: 4rem;
+    padding-bottom: 10rem;
+    background-color: #191b1f;
+}
+
+.darken {
+    color: whitesmoke;
+    border-color: #191b1f;
+    background-color: #191b1f;
+}
+
+.darkener {
+    color: whitesmoke;
+    border-color: #070809;
+    background-color: #070809;
+}
+
+.title, .subtitle {
+    color: whitesmoke;
+    word-break: break-word;
+}
+
+.box {
+    min-height: 200px;
+    max-height: 200px;
+}
+
+.media-content {
+    color: whitesmoke;
+}
