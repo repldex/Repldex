@@ -59,7 +59,7 @@
 			<button onclick="deleteOnclick()">Delete Entry: {{ title }}</button>
 			<script>
 				async function deleteOnclick() {
-					if (confirm("Are you sure you want to delete this entry?")) {
+					if (confirm('Are you sure you want to delete this entry?')) {
 						await fetch('/delete?id={{ entry_id }}', {method:'POST'});
 						location.href = "/";
 					}
