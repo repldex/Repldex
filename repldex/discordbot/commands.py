@@ -119,7 +119,7 @@ async def link_source(message):
 
 
 @betterbot.command(name='entry', allowed=True)
-async def show_entry(message, search_query: str):
+async def show_entry(message, *, search_query: str):
 	if message.message.author.id in BLACKLIST_IDS:
 		await asyncio.sleep(blacklist_wait)
 	found = await database.search_entries(search_query, limit=1)
