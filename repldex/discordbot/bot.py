@@ -1,6 +1,7 @@
 import discord
 import base64
-import os, io
+import os
+import io
 intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(intents=intents)
@@ -10,6 +11,7 @@ from repldex import utils
 
 
 class BetterBot:
+
 	def __init__(self, prefix, bot_id):
 		self.prefixes = [prefix, f'<@{bot_id}>', f'<@!{bot_id}>']
 		self.allowed = {}
@@ -163,11 +165,14 @@ async def log_edit(editor, title, time):
 	await channel.send(f'{time}: <@{editor}>({editor}) edited {title}')
 
 
-async def log_delete(title, time, content):
-	#make sure content is string
+async def log_delete(entry_data, time_):
+	# make sure content is string
 	channel = client.get_channel(770468181486600253)
-	await channel.send(f'{title} has been deleted (through Repldex [direct database deletions are not detected]) at {time}')
-	await channel.send(file=io.BytesIO(str.encode(content)).read())
+	title = entry_data.get('title')
+	await channel.send(f'{title} has been deleted (through Repldex [direct database deletions are not detected]) at {time_}')
+	await channel.send(file=discord.File(fp=io.BytesIO(entry_data['content'].encode('utf8'), name=f'{title}.txt')))
+	if entry_data.get('image', False):
+		await channel.send(content=entry_data.get('image')['src'])
 
 
 async def log_view(title, time):
@@ -228,5 +233,6 @@ async def on_raw_reaction_add(payload):
 			except discord.errors.NotFound:
 				pass
 
+
 # this is required to make bot commands work, must be at the end otherwise it causes a circular import
-from . import commands
+from . import commands  # noqa: F401,E261

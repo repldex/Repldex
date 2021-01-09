@@ -13,7 +13,7 @@ import os
 
 from repldex.backend import database
 from repldex.backend import images
-from repldex import utils
+from repldex import discordbot, utils
 from repldex.config import (
 	EDITOR_IDS,
 	ADMIN_IDS,
@@ -297,7 +297,13 @@ async def edit_entry(request):
 				is_editor = True
 
 	return Template(
-		'edit.html', title=title, content=content, unlisted=unlisted, is_editor=is_editor, new_disabled=new_disabled, entry_id=entry_id
+		'edit.html',
+		title=title,
+		content=content,
+		unlisted=unlisted,
+		is_editor=is_editor,
+		new_disabled=new_disabled,
+		entry_id=entry_id
 	)
 
 
@@ -422,7 +428,7 @@ async def edit_entry_post(request):
 	return web.HTTPFound(f'/entry/{entry_id}')
 
 
-@routes.get('/delete')
+# @routes.get('/delete') The call will be disabled before we can figure out authencation for admins
 async def delete_entry(request):
 	if not request.is_admin:
 		return web.HTTPFound('/')
