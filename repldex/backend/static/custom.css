@@ -29,7 +29,6 @@ html {
 
 .box {
     color: whitesmoke;
-    max-height: auto;
     min-height: 200px;
 }
 
@@ -49,10 +48,11 @@ html {
 .entry-image {
     float: left;
     margin: 1ch;
+    max-width: 200px;
+    max-height: 200px;
 }
 
 .entry-image.preview {
-    float: left;
     max-width: 64px;
     max-height: 64px;
 }
