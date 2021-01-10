@@ -1,2 +1,2 @@
-language = "python3"
-run = "python main.py"
+language = "python"
+run = "poetry install --no-dev && python main.py"
