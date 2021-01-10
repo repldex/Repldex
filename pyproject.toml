@@ -6,7 +6,7 @@ authors = ["mat <replit@matdoes.dev>","prussia","coderman51","minx"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-discord = "^1.0.1"
+discord.py = "^1.0.1"
 jellyfish = "^0.8.2"
 jinja2 = "^2.11.2"
 motor = "^2.1.0"
@@ -15,7 +15,6 @@ aiohttp = "^3.6.2"
 bs4 = "^0.0.1"
 ibm-watson = "4.6.0"
 ibm_cloud_sdk_core = "1.5.1"
-python-dotenv = "^0.15.0"
 aiodns = "^2.0.0"
 cchardet = "^2.1.7"
 pymongo = {version = ">=3.11<4", extras = ["srv"]}
@@ -25,6 +24,7 @@ pytest = "^6.1.1"
 flake8 = "^3.8.4"
 flake8-tabs = "^2.2.2"
 yapf = "^0.30.0"
+python-dotenv = "^0.15.0"
 
 [tool.black]
 line-length=127
