@@ -55,12 +55,12 @@
 		<br>
 			<button>Submit</button>
 		</form>
-		{% if is_admin %}
+		{% if is_admin and entry_id  %}
 			<button onclick="deleteOnclick()">Delete Entry: {{ title }}</button>
 			<script>
 				async function deleteOnclick() {
 					if (confirm("Are you sure you want to delete this entry?")) {
-						await fetch('/delete?id={{ entry_id }}');
+						await fetch('{{ "/delete?id="+entry_id }}');
 						location.href = "/";
 					}
 				}

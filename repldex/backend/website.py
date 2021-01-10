@@ -428,7 +428,7 @@ async def edit_entry_post(request):
 	return web.HTTPFound(f'/entry/{entry_id}')
 
 
-# @routes.get('/delete') The call will be disabled before we can figure out authencation for admins
+@routes.get('/delete') 
 async def delete_entry(request):
 	if not request.is_admin:
 		return web.HTTPFound('/')
