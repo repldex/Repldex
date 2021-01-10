@@ -41,9 +41,7 @@ class BetterBot:
 						found = tried
 						break
 				if found:
-					# fmt: off
 					parsing_left = parsing_left[i + 1:]
-					# fmt: off
 					return_args.append(found)
 				else:
 					# raise NothingFound(f'nothing found {parsing_left} {hint}')
@@ -64,9 +62,7 @@ class BetterBot:
 				break
 		if not found:
 			return
-		# fmt: off
 		parsing_left = parsing_left[len(prefix):].strip()
-		# fmt: on
 		command, parsing_left = (parsing_left + ' ').split(' ', 1)
 		command = command.lower()
 		if command in self.functions:
