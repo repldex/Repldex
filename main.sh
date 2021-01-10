@@ -9,7 +9,9 @@ if [ $? -ne 0 ]; then
   /usr/local/bin/python3 -m pip install poetry --user
 fi
 clear
-echo "Installing dependencies"
-#(set -o posix ; set)
-/usr/local/bin/python3 -m poetry install --no-root --no-dev -v
+if [ ! -d "/home/runner/venv" ];then
+    echo "Installing dependencies"
+    /usr/local/bin/python3 -m poetry install --no-root --no-dev -v
+fi
 /usr/local/bin/python3 -m poetry run python main.py
+#(set -o posix ; set)
