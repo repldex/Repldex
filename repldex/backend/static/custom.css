@@ -54,7 +54,9 @@ html {
 }
 
 .entry-image.preview {
-    margin: 1ch;
+    margin: 0px;
+    margin-right: 1ch;
+    margin-bottom: 1ch;
     max-width: 64px;
     max-height: 64px;
 }
