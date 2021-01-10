@@ -1,2 +1,4 @@
+cache-dir = "/home/runner/.cache"
 [virtualenvs]
 in-project = true
+create = true
