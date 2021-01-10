@@ -1,3 +1,4 @@
+ [![Run on Repl.it](https://repl.it/badge/github/mat-1/ReplDex)](https://repl.it/github/mat-1/ReplDex)
 # Contributing
 - Fork the repo
 - Make a Discord bot, set the `token` and `client_secret` in env to the bot token and client secret
