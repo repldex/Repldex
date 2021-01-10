@@ -29,7 +29,6 @@ async def fix_entry(data):
 	elif data.get('image') and not data['image'].get('thumbnail_b64'):
 		data['image'] = await images.get_data(data['image']['src'])
 	if data != original_data:
-		# print('updated', data['_id'])
 		await entries_coll.update_one({'_id': data['_id']}, {'$set': data})
 	data['content'] = utils.fix_html(data['content'])
 	if 'nohtml_content' not in data:
@@ -79,7 +78,6 @@ async def get_entry(entry_id=None, name=None, search_id=True, owner=None):
 			return
 		return entries[0]
 	elif owner:
-		# print(type(owner), owner)
 		found = await entries_coll.find_one({'owner_id': owner})
 	else:
 		found = await entries_coll.find_one({'_id': entry_id})
@@ -107,7 +105,6 @@ async def get_editor_session(sid):
 
 
 async def search_entries(query, limit=10, search_id=True, page=0, discord_id=None, unlisted=False):
-	print('searching')
 	found = []
 	match = {'$match': {'unlisted': {'$ne': True}}}
 	if unlisted:
@@ -143,7 +140,6 @@ async def search_entries(query, limit=10, search_id=True, page=0, discord_id=Non
 			owned_entry = await entries_coll.find_one({'owner_id': entry_owner_id})
 			if entry_owner_id:
 				found = [owned_entry]
-	print(found)
 	return found
 
 

@@ -1,3 +1,4 @@
+import traceback
 import discord
 import base64
 import os
@@ -7,16 +8,20 @@ client = discord.Client(intents=intents)
 
 from repldex.config import BLACKLISTED_IDS, CONFIG
 from repldex import utils
-# this is just so i can customize command parsing more
 
 
 class BetterBot:
-	functions = {}
-
 	def __init__(self, prefix, bot_id):
-		self.prefixes = [prefix, f'<@{bot_id}>', f'<@!{bot_id}>']
-		self.allowed = {}
-		self.command_settings = {}
+		'''
+		All the bot prefixes.
+		Also allows pings
+		'''
+		self.prefixes = [
+			prefix,
+			f'<@{bot_id}>',
+			f'<@!{bot_id}>'
+		]
+		self.commands = []
 
 	async def try_converter(self, ctx, string, converter):
 		if hasattr(converter, 'convert'):
@@ -26,81 +31,112 @@ class BetterBot:
 		except ValueError:
 			return
 
-	async def parse_args(self, parsing_left, func, ctx):
+	async def parse_args(self, parsing_remaining, func, ctx, ignore_extra=True):
+		'''
+		Parses the command arguments
+		'''
+		# Annotations are the expected types (str, int, Member, etc)
 		ann = func.__annotations__
+		# Args is all the arguments for the function
 		args = func.__code__.co_varnames[1:]  # [1:] to skip ctx
 		return_args = []
 		for argnum, arg in enumerate(args):
 			if arg in ann:
 				hint = ann[arg]
 				found = None
-				for i in reversed([pos for pos, char in enumerate(parsing_left + ' ') if char == ' ']):
-					cmd_arg = parsing_left[:i]
+				i = 0
+				for i in reversed([pos for pos, char in enumerate(parsing_remaining + ' ') if char == ' ']):
+					cmd_arg = parsing_remaining[:i]
 					tried = await self.try_converter(ctx, cmd_arg, hint)
 					if tried is not None:
 						found = tried
 						break
 				if found:
-					parsing_left = parsing_left[i + 1:]
+					parsing_remaining = parsing_remaining[i + 1:]
+					if isinstance(found, str):
+						found = found.strip()
 					return_args.append(found)
 				else:
-					# raise NothingFound(f'nothing found {parsing_left} {hint}')
-					parsing_left = (parsing_left + ' ').split(' ', len(args) - argnum)[-1]
+					parsing_remaining = (parsing_remaining + ' ').split(' ', len(args) - argnum)[-1]
 					return_args.append(None)
 			else:
-				cmd_arg, parsing_left = (parsing_left + ' ').split(' ', 1)
+				cmd_arg, parsing_remaining = (parsing_remaining + ' ').split(' ', 1)
 				if cmd_arg:
+					if isinstance(cmd_arg, str):
+						cmd_arg = cmd_arg.strip()
 					return_args.append(cmd_arg)
+		if parsing_remaining.strip():
+			if not ignore_extra:
+				raise Exception('Extra data left')
 		return return_args
 
 	async def process_commands(self, message):
-		parsing_left = message.content
-		found = False
+		parsing_remaining = message.content.replace('  ', ' ')
+		found_prefix = False
+		prefix = None
 		for prefix in self.prefixes:
-			if parsing_left.startswith(prefix):
-				found = True
+			if parsing_remaining.startswith(prefix):
+				found_prefix = True
 				break
-		if not found:
+		if not found_prefix:
+			# no prefix found in the message
 			return
-		parsing_left = parsing_left[len(prefix):].strip()
-		command, parsing_left = (parsing_left + ' ').split(' ', 1)
-		command = command.lower()
-		if command in self.functions:
-			if not self.allowed[command] and message.author.id in BLACKLISTED_IDS:
+		parsing_remaining = parsing_remaining[len(prefix):].strip()
+		command_name, parsing_remaining = (parsing_remaining + ' ').split(' ', 1)
+		command_name = command_name.lower()
+		for command in self.commands:
+			if command_name != command['name']:
+				continue
+			func = command['function']
+			pad_none = command['pad_none']
+			bots_allowed = command['bots_allowed']
+			always_allowed = command['always_allowed']
+
+			if message.author.bot and not bots_allowed:
+				# if bots aren't allowed and the author's a bot, kill it. discrimination pog!
 				return
-			func = self.functions[command]
-			bots_allowed = self.command_settings.get('allowed', False)
-		else:
-			return
-		if message.author.bot and not bots_allowed:
-			return
-		ctx = Context(message, self.client, prefix=prefix)
-		if parsing_left:
-			return_args = await self.parse_args(parsing_left, func, ctx)
-		else:
-			return_args = []
-		# for annotation in func.__annotations__:
-		# 	all_arguments[annotation] = func.__annotations__[annotation]
-		return await func(ctx, *return_args)
+
+			if message.author.id in BLACKLISTED_IDS and not always_allowed:
+				# if the author is blacklisted and the command isn't always allowed, kill them
+				return
+
+			ctx = Context(message, client, prefix=prefix)
+			if parsing_remaining:
+				try:
+					return_args = await self.parse_args(parsing_remaining, func, ctx, ignore_extra=pad_none)
+				except Exception as e:
+					traceback.print_exc()
+					print('error parsing?', type(e), e, func.__code__.co_filename)
+					continue
+			else:
+				return_args = []
+			for attempt in range(10):
+				try:
+					return await func(ctx, *return_args)
+				except TypeError:
+					if pad_none:
+						return_args.append(None)
+					else:
+						break
+				except BaseException as e:
+					print('error :(')
+					traceback.print_exc()
+					return
 
 	def command(self, name, aliases=[], allowed=False, bots_allowed=False):
-		name = name.lower()
-
 		def decorator(func):
-			self.functions[name] = func
-			self.allowed[name] = allowed
-			if name not in self.command_settings:
-				self.command_settings[name] = {}
-			self.command_settings[name]['allowed'] = bots_allowed
-			for alias in aliases:
-				alias = alias.lower()
-				self.functions[alias] = func
-				self.allowed[alias] = allowed
-				if alias not in self.command_settings:
-					self.command_settings[alias] = {}
-				self.command_settings[alias]['allowed'] = bots_allowed
+			for command_name in [name] + aliases:
+				self.commands.append(
+					# TODO: make this a class instead of dict maybe idk
+					{
+						'name': command_name.lower(),
+						'function': func,
+						'pad_none': True,
+						'always_allowed': allowed,
+						'bots_allowed': bots_allowed
+					}
+				)
 			return func
-
 		return decorator
 
 
@@ -115,9 +151,7 @@ class Context:  # very unfinished but its fine probably
 			except discord.errors.Forbidden:
 				pass
 			utils.commands_ran_by[message.id] = self.author.id
-			# print(dir(message.guild))
 			for _ in range(10):
-				print('waiting for message')
 				await self.client.wait_for('message', check=lambda m: m.channel == message.channel)
 			await message.delete()
 		return message
@@ -220,3 +254,5 @@ async def on_raw_reaction_add(payload):
 				await message.delete()
 			except discord.errors.NotFound:
 				pass
+
+from . import commands
