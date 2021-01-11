@@ -78,9 +78,8 @@ async def create_entry_embed(entry_data, author_id=None, raw_entry=False):
 
 
 @betterbot.command(name='search')
-async def search_entries(message, *args):
+async def search_entries(message, search_query: str):
 	numbers = ('1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟')
-	search_query = ' '.join(args)
 	found = await database.search_entries(search_query)
 	if found:
 		content = []
@@ -120,7 +119,7 @@ async def link_source(message):
 
 
 @betterbot.command(name='entry', allowed=True)
-async def show_entry(message, search_query):
+async def show_entry(message, search_query: str):
 	if message.message.author.id in BLACKLIST_IDS:
 		await asyncio.sleep(blacklist_wait)
 	found = await database.search_entries(search_query, limit=1)
@@ -138,7 +137,7 @@ async def show_entry(message, search_query):
 
 
 @betterbot.command(name='raw_entry')
-async def show_raw_entry(message, search_query):
+async def show_raw_entry(message, search_query: str):
 	if message.author.id not in ADMIN_IDS:
 		return
 	found = await database.search_entries(search_query, limit=1)
@@ -151,7 +150,7 @@ async def show_raw_entry(message, search_query):
 
 
 @betterbot.command(name='selfentry', bots_allowed=True)
-async def personal_entry(message, search_query):
+async def personal_entry(message, search_query: str):
 	if not search_query:
 		entry_id = await database.get_personal_entry(message.author.id)
 		if not entry_id:
@@ -224,7 +223,7 @@ async def leader(message):
 
 
 @betterbot.command(name='request')
-async def suggest(message, request):
+async def suggest(message, request: str):
 	suggestions_channel = client.get_channel(753331575034347642)
 	if request:
 		embed = discord.Embed(title='Entry Suggestion', description=request)
@@ -245,7 +244,7 @@ async def role(message, role):
 
 
 @betterbot.command(name='unlist')
-async def unlist(message, entry_id):
+async def unlist(message, entry_id: str):
 	if message.author.id not in ADMIN_IDS:
 		return
 	entry_data = await database.get_entry(entry_id)
@@ -262,7 +261,7 @@ async def unlist(message, entry_id):
 
 
 @betterbot.command(name='link')
-async def link_entry(message, member: utils.Member, search_query):
+async def link_entry(message, member: utils.Member, search_query: str):
 	if message.author.id not in ADMIN_IDS:
 		return
 	if not member:
@@ -280,7 +279,7 @@ async def link_entry(message, member: utils.Member, search_query):
 
 
 @betterbot.command(name='newentry')
-async def new_entry(message, search_query):
+async def new_entry(message, search_query: str):
 	search_query_url_encoded = utils.url_title(search_query)
 	edit_url = f'{BASE_URL}/edit?title={search_query_url_encoded}'
 	edit_url = edit_url
