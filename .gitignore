@@ -1,6 +1,5 @@
 .env
 .local/
-poetry.lock
 *.pyc
 __pycache__/
 _test_runner_.py
