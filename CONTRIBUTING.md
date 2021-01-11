@@ -3,7 +3,7 @@
 
 Changing the Discord Bot:
 - Create your own bot at the [Discord Dev Portal](https://discord.com/developers/docs).
-- Create a MongoDB database (Atlas or otherwise). (Your URI should start with `mongodb+srv://`).
+- Create a MongoDB database (Atlas or otherwise; your URI should start with `mongodb+srv://`).
 - Set your `.env` like so:
 
 ```ini
