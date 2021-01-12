@@ -1,7 +1,6 @@
 from datetime import datetime
 import motor.motor_asyncio
 import uuid
-import dns  # noqa: F401 (required so replit always installs it)
 import os
 
 connection_uri = os.getenv('dburi')
