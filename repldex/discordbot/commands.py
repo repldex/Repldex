@@ -303,11 +303,9 @@ async def random_entry(message):
 
 @betterbot.command(name='ping', aliases=['pong', 'pung'])
 async def ping(message):
-	if message.author.id not in ADMIN_IDS or message.author.id not in DEV_IDS:
-		return
-  
-	ping = client.latency * 1000
-	await message.send(embed=discord.Embed(title='Ping!', description=f'Bot ping is: `{ping}ms`'))
+	if message.author.id in ADMIN_IDS or message.author.id in DEV_IDS:
+		ping = client.latency * 1000
+		await message.send(embed=discord.Embed(title='Ping!', description=f'Bot ping is: `{ping}ms`'))
 
 
 # @betterbot.command(name="neweditor")
