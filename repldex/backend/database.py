@@ -1,14 +1,20 @@
 from datetime import datetime
 import motor.motor_asyncio
+from . import mockmotor
 import uuid
 import os
 
 connection_uri = os.getenv('dburi')
 
-client = motor.motor_asyncio.AsyncIOMotorClient(connection_uri)
+if connection_uri:
+	client = motor.motor_asyncio.AsyncIOMotorClient(connection_uri)
+
+else:
+	# assume we're using the mongodb if connection_uri isn't there
+	print('dburi isn\'t in env, using mock db in database folder instead. Don\'t use this in production!')
+	client = mockmotor.AsyncIOMotorClient('database')
 
 db = client['repldex']
-
 entries_coll = db['entries']
 sessions_coll = db['sessions']
 users_coll = db['users']
@@ -67,7 +73,14 @@ async def edit_entry(
 	}
 	if image is not None:
 		new_history_data['image'] = {'src': image}
-	await entries_coll.update_one({'_id': entry_id}, {'$set': new_data, '$push': {'history': new_history_data}}, upsert=True)
+	await entries_coll.update_one(
+		{'_id': entry_id},
+		{
+			'$set': new_data,
+			'$push': {'history': new_history_data}
+		},
+		upsert=True
+	)
 	return entry_id
 
 
