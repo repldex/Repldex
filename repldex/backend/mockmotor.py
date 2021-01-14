@@ -27,6 +27,9 @@ class AsyncIOMotorDatabase:
 			os.mkdir(collection_path)
 		return AsyncIOMotorCollection(self, collection_name)
 
+class MotorCursor:
+	pass
+
 class AsyncIOMotorCollection:
 	def __init__(self, database: AsyncIOMotorDatabase, name: str):
 		self.database = database
@@ -127,6 +130,3 @@ class AsyncIOMotorCollection:
 
 	async def with_options(codec_options=None, read_preference=None, write_concern=None, read_concern=None):
 		raise NotImplementedError()
-
-class MotorCursor:
-	pass
