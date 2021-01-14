@@ -10,7 +10,6 @@ blacklist_wait = 5
 
 print('commands')
 
-
 @betterbot.command(name='help', allowed=True)
 async def help(message):
 	if message.message.author.id in BLACKLIST_IDS:
@@ -304,9 +303,6 @@ async def random_entry(message):
 
 @betterbot.command(name='ping', aliases=['pong', 'pung'])
 async def ping(message):
-	if message.author.id not in ADMIN_IDS:
-		return
-
 	ping = client.latency * 1000
 	await message.send(embed=discord.Embed(title='Ping!', description=f'Bot ping is: `{int(ping)}ms`'))
 
