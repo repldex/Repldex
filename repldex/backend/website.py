@@ -24,6 +24,7 @@ from repldex.config import (
 	CLIENT_ID,
 	new_disabled,
 	CONFIG,
+	FEATURED,
 )
 
 config = CONFIG
@@ -325,6 +326,12 @@ async def view_entry_history(request):
 		'history.html', title=title, content=content, id=entry_id, history=history, back_location='/entry/' + entry_id
 	)
 
+@routes.get('/featured')
+async def featured_articles(request):
+	featured_articles = []
+	for entry_id in FEATURED:
+	  featured_articles.append(await database.get_entry(entry_id))
+	return Template('featured.html',featured_articles=featured_articles)
 
 @routes.post('/edit')
 async def edit_entry_post(request):

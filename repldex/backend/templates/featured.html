@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block body %}
+	<center>
+		<h1>Featured Articles</h1>
+		<p>Featured articles represent the best of Repldex.</p>
+		{% for article in featured_articles %}
+			<h2>article.title</h2>
+			{% if article.image %}
+				{{
+					lazyimage(
+						entry.image,
+						is_preview=True,
+						alt=entry.title
+					)|safe
+				}}
+			{% endif %}
+			<p class="entryPreview">
+				{{ title.content|before_show_text|nohtml }}
+			</p>
+		{% endfor %}
+	</center>
+{% endblock %}
