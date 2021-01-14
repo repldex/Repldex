@@ -6,4 +6,4 @@
 - Create a pull request describing what you changed
 
 # License
-ReplDex is licensed under the MIT license
+Repldex is licensed under the MIT license
