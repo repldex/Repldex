@@ -1,7 +1,7 @@
 [![Run on Repl.it](https://repl.it/badge/github/mat-1/ReplDex)](https://repl.it/github/mat-1/ReplDex)
 
 # Repldex
-Official encyclopedia of user created entries for the Replit Discord Server. Contains the Discord bot source code and `aiohttp` web server (API and frontend).
+\[Un\]official encyclopedia of user created entries for the Replit Discord Server. Contains the Discord bot source code and `aiohttp` web server (API and frontend).
 
 # Contributing
 - Fork the repository and setup your enviornment. (`git clone` or otherwise).
