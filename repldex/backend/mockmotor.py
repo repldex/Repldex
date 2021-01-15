@@ -2,6 +2,7 @@
 
 import os
 import json
+from datetime import datetime
 
 class AsyncIOMotorClient:
 	def __init__(self, path_name: str):
@@ -50,6 +51,20 @@ def is_matching_filter(filter, match):
 		else:
 			pass
 	return True
+
+
+def bson_to_json(raw_bson):
+	is_list = isinstance(raw_bson, list)
+	if is_list:
+		return [bson_to_json(item) for item in raw_bson]
+	raw_json = {}
+	for bson_key, bson_value in raw_bson.items():
+		if bson_key[0] == '$':
+			if bson_key[1:] == 'date':
+				return datetime.fromtimestamp(bson_value / 1000)
+		json_value = bson_to_json(bson_value) if isinstance(bson_value, dict) else bson_value
+		raw_json[bson_key] = json_value
+	return raw_json
 
 
 class AsyncIOMotorCursor:
@@ -148,7 +163,17 @@ class AsyncIOMotorCursor:
 		for item in self.collection._read():
 			if is_matching_filter(self.filter, item):
 				documents.append(item)
-		
+		for chain_item in self.chained:
+			if chain_item['type'] == 'limit':
+				limit = chain_item['limit']
+				documents = documents[:limit]
+			elif chain_item['type'] == 'skip':
+				skip = chain_item['skip']
+				documents = documents[skip:]
+			elif chain_item['type'] == 'sort':
+				key_or_list = chain_item['key_or_list']
+				direction = chain_item['direction']
+				documents = sorted(documents, key=lambda d: d[key_or_list], reverse=direction == -1)
 		self.documents = documents
 		return self
 
@@ -265,4 +290,5 @@ class AsyncIOMotorCollection:
 
 	def _read(self):
 		with open(self.path, 'r') as f:
-			return json.loads(f.read())
+			raw_bson = json.loads(f.read())
+		return bson_to_json(raw_bson)
