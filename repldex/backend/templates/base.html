@@ -1,25 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
 {% block head %}
 <title>{% block title %}Repldex{% endblock %}</title>
+
 <link rel="icon" type="image/png" href="/static/icon.png">
-<link rel="stylesheet" href="/static/main.css">
+<link rel="preload" href="/static/main.css" as="style">
+
+<meta name="robots" content="index, follow">
 <meta name="theme-color" content="#ff0000">
 <meta name="description" content="{% block description %}insert description here{% endblock %}">
-<meta name="robots" content="index, follow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <meta property="og:title" content="{{ self.title() }}">
 <meta property="og:description" content="{{ self.description() }}">
 <meta property="og:site_name" content="Repldex">
-<meta property="og:type" content="website"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:type" content="website">
+
 <noscript>
-<style>
-.lazy {
-	display: none
-}
-</style>
+<style>.lazy {display: none}</style>
 </noscript>
+
 <script>
 function checkLazyImages() {
 	for (const el of document.getElementsByClassName('lazy')) {
@@ -48,6 +50,7 @@ document.addEventListener('DOMContentLoaded', checkLazyImages)
 </script>
 {% endblock %}
 </head>
+
 <body>
 {% if back_location %}
 <nav>
@@ -63,4 +66,5 @@ document.addEventListener('DOMContentLoaded', checkLazyImages)
 	There's nothing here yet.
 {% endblock %}
 </main>
+
 </html>
