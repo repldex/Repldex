@@ -25,7 +25,7 @@ with open(config_path + 'editors.txt') as f:
 	EDITOR_IDS = [int(item.split()[0]) for item in f.read().splitlines()]
 	with open(config_path + 'entry_approval.txt') as f:
 		approves = f.read()
-		APPROVAL_IDS = [int(item.split()[0]) for item in approves.splitlines()]
+		APPROVAL_IDS = [item.split()[0] for item in approves.splitlines()]
 
 	for i in APPROVAL_IDS:
 		if i not in EDITOR_IDS:
