@@ -62,33 +62,7 @@ anchor.addEventListener('mouseout', () => {
 }
 	
 })
-
-var idkwhyineedthis=true; //dont even ask
-
-function tts(){
-	var msg=new SpeechSynthesisUtterance();
-	var voices=speechSynthesis.getVoices();
-	var voice=document.getElementById("voice").value;
-	msg.voice=voices[voice];
-	msg.text="{{nohtml_content}}";
-	if(idkwhyineedthis){idkwhyineedthis=false;return;}
-	speechSynthesis.speak(msg);
-}
-
-function translate(){
-  var language=document.getElementById("language").value;
-  let language = {1:"english", 3:"pirate", 5: "shakespeare"};
-  <option value="1" selected>English</option>
-		<option value="2">Lolcat</option>
-		<option value="3">Pirate</option>
-    <option value="4">Morse Code</option>
-    <option value="5">Shakespeare</option>
-    <option value="6">Gungan</option>
-    <option value="7">Leet</option>
-    <option value="8">Pig Latin</option>
-}
-
-	</script>
+</script>
 {% endblock %}
 
 {% block body %}
@@ -127,45 +101,6 @@ function translate(){
 		  {{ content|before_show_text|safe }}
     {% endif %}
 	</article>
-
-	<button onclick="tts()">Read it to me!</button>
-	<select id="voice">
-		<option value="5" selected>UK English Male</option>
-		<option value="4">UK English Female</option>
-		<option value="3">US English</option>
-		<!--<option value="2">Deutsch</option>
-		<option value="6">Español</option>
-		<option value="7">Español de Estados Unidos</option>
-		<option value="8">Français</option>
-		<option value="9">हिन्दी</option>
-		<option value="10">Bahasa Indonesia</option>
-		<option value="11">Italiano</option>
-		<option value="12">日本語</option>
-		<option value="13">한국의</option>
-		<option value="14">Nederlands</option>
-		<option value="15">Polski</option>
-		<option value="16">Português do Brasil</option>
-		<option value="17">Русский</option>
-		<option value="18">普通话（中国大陆）</option>
-		<option value="19">粤語（香港）</option>
-		<option value="20">國語（臺灣）</option>-->
-	</select>
-
-<script>tts();</script>
-
-  <!--
-  <button onclick="translate()">Translate</button>
-	<select id="language">
-		<option value="1" selected>English</option>
-		<option value="2">Lolcat</option>
-		<option value="3">Pirate</option>
-    <option value="4">Morse Code</option>
-    <option value="5">Shakespeare</option>
-    <option value="6">Gungan</option>
-    <option value="7">Leet</option>
-    <option value="8">Pig Latin</option>
-  </select>
-  -->
 
 	<br><br>
 	{% if is_editor %}
