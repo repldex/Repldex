@@ -34,6 +34,9 @@ with open(config_path + 'editors.txt') as f:
 with open(config_path + 'admins.txt') as f:
 	ADMIN_IDS = [int(item.split()[0]) for item in f.read().splitlines()]  # admins can now have names
 
+with open(config_path + 'devs.txt') as f:
+	DEV_IDS = [int(item.split()[0]) for item in f.read().splitlines()]
+
 with open(config_path + 'reporters.txt') as f:
 	REPORTER_IDS = [int(item.split()[0]) for item in f.read().splitlines()]
 	for i in ADMIN_IDS:
