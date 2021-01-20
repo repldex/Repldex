@@ -361,3 +361,9 @@ a[href*="//discord.gg"]::before, a[href*="//repl.it/discord"]::before, a[href*="
 a[href*="//twitter.com"]::before {
 	background-image: url(/static/twitter-logo-blue.png);
 }
+
+.featuredEntry {
+  border: 1px solid #212428;
+  border-radius: 6px;
+  padding: 0px 10px 10px 10px;
+}
