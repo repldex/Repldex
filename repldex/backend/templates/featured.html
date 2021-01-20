@@ -5,19 +5,21 @@
 		<h1>Featured Articles</h1>
 		<p>Featured articles represent the best of Repldex.</p>
 		{% for article in featured_articles %}
-			<h2>article.title</h2>
-			{% if article.image %}
-				{{
-					lazyimage(
-						entry.image,
-						is_preview=True,
-						alt=entry.title
-					)|safe
-				}}
-			{% endif %}
-			<p class="entryPreview">
-				{{ title.content|before_show_text|nohtml }}
-			</p>
+      <article class="featuredEntry" onclick='{{ "window.location.href = \'/entry/\'" + "+\'"+article.title+"\'" }}'>
+			  <h2>{{ article.title }}</h2>
+			  {% if article.image %}
+			  	{{
+			  		lazyimage(
+			  			article.image,
+			  			is_preview=True,
+			  			alt=article.title
+			  		)|safe
+			  	}}
+			  {% endif %}
+			  <p class="featuredEntryPreview">
+			  	{{ article.nohtml_content[:175]+"..." }}
+			  </p>
+      </article>
 		{% endfor %}
 	</center>
 {% endblock %}
