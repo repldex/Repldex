@@ -7,17 +7,8 @@
 		{% for article in featured_articles %}
       <article class="featuredEntry" onclick='{{ "window.location.href = \'/entry/\'" + "+\'"+article.title+"\'" }}'>
 			  <h2>{{ article.title }}</h2>
-			  {% if article.image %}
-			  	{{
-			  		lazyimage(
-			  			article.image,
-			  			is_preview=True,
-			  			alt=article.title
-			  		)|safe
-			  	}}
-			  {% endif %}
 			  <p class="featuredEntryPreview">
-			  	{{ article.nohtml_content[:175]+"..." }}
+			  	{{ article.nohtml_content[:225]+"..." }}
 			  </p>
       </article>
 		{% endfor %}
