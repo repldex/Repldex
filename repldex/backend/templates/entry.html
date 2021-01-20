@@ -10,56 +10,54 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const articleEl = document.getElementsByTagName('article')[0]
-    for (const anchor of document.getElementsByTagName('a')) {
-        anchor.addEventListener('mouseover', () => {
-            if (!articleEl.contains(anchor)) return
-            const popupContainerEl = document.createElement('div')
-            const popupInnerEl = document.createElement('div')
+	const articleEl = document.getElementsByTagName('article')[0]
+	for (const anchor of document.getElementsByTagName('a')) {
+		anchor.addEventListener('mouseover', () => {
+			if (!articleEl.contains(anchor)) return
+			const popupContainerEl = document.createElement('div')
+			const popupInnerEl = document.createElement('div')
 
-            const popupFaviconEl = document.createElement('img')
-            const popupTitleEl = document.createElement('p')
-            const popupContentEl = document.createElement('p')
+			const popupFaviconEl = document.createElement('img')
+			const popupTitleEl = document.createElement('p')
+			const popupContentEl = document.createElement('p')
 
-            popupContainerEl.classList.add('popupContainer')
-            popupInnerEl.classList.add('popupInner')
-            popupTitleEl.classList.add('popupTitle')
-            popupContentEl.classList.add('popupContent')
-            popupFaviconEl.classList.add('popupFavicon')
-            anchor.popupContainerEl = popupContainerEl
+			popupContainerEl.classList.add('popupContainer')
+			popupInnerEl.classList.add('popupInner')
+			popupTitleEl.classList.add('popupTitle')
+			popupContentEl.classList.add('popupContent')
+			popupFaviconEl.classList.add('popupFavicon')
+			anchor.popupContainerEl = popupContainerEl
 
-            popupInnerEl.appendChild(popupTitleEl)
-            popupContainerEl.appendChild(popupInnerEl)
+			popupInnerEl.appendChild(popupTitleEl)
+			popupContainerEl.appendChild(popupInnerEl)
 
-            anchor.parentElement.insertBefore(popupContainerEl, anchor)
+			anchor.parentElement.insertBefore(popupContainerEl, anchor)
 
-            popupContainerEl.style.display = 'none'
-
-
-            fetch(`/api/website-title?url=${anchor.href}`).then(async(r) => {
-                resp = await r.json()
-                popupTitleEl.innerText = resp.title
-
-                if (resp.favicon) {
-                    popupInnerEl.appendChild(popupFaviconEl)
-                    popupFaviconEl.src = resp.favicon
-                }
-                if (resp.content) {
-                    popupInnerEl.appendChild(popupContentEl)
-                    popupContentEl.innerText = resp.content.substr(0, 200)
-                }
-                popupContainerEl.style.display = 'inline-block'
+			popupContainerEl.style.display = 'none'
 
 
-            })
+			fetch(`/api/website-title?url=${anchor.href}`).then(async(r) => {
+				resp = await r.json()
+				popupTitleEl.innerText = resp.title
+
+				if (resp.favicon) {
+					popupInnerEl.appendChild(popupFaviconEl)
+					popupFaviconEl.src = resp.favicon
+				}
+				if (resp.content) {
+					popupInnerEl.appendChild(popupContentEl)
+					popupContentEl.innerText = resp.content.substr(0, 200)
+				}
+				popupContainerEl.style.display = 'inline-block'
 
 
-        })
-        anchor.addEventListener('mouseout', () => {
-            anchor.popupContainerEl.remove()
-            anchor.popupContainerEl = undefined
-        })
-    }
+			})
+		})
+		anchor.addEventListener('mouseout', () => {
+			anchor.popupContainerEl.remove()
+			anchor.popupContainerEl = undefined
+		})
+	}
 })
 </script>
 {% endblock %}
