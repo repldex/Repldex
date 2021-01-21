@@ -202,3 +202,10 @@ async def get_random_entry():
 	async for entry in cursor:
 		found.append(entry)
 	return found[0]
+
+async def getFeaturedArticle():
+	#WIP
+	return None
+
+async def changeFeaturedArticle():
+	pass

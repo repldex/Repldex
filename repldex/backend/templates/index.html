@@ -141,6 +141,14 @@ document.addEventListener('DOMContentLoaded', () => {
 			{% endif %}
     {% endif %}
   </div>
+  {% if featured_article %}
+    <article class="featuredEntry" onclick='{{ "window.location.href = \'/entry/\'" + "+\'"+featured_article.title+"\'" }}'>
+	  <h2>{{ featured_article.title }}</h2>
+	  <p class="featuredEntryPreview">
+		{{ featured_article.nohtml_content[:225]+"..." }}
+	  </p>
+	</article>
+  {% endif %}
 	<input id="search-bar" placeholder="Search entries">
 	<div id="entry-list">
 		{% for entry in entries %}
