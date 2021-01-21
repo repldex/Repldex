@@ -436,8 +436,12 @@ async def delete_entry(request):
 	entry_data = await database.get_entry(entry_id)
 	if not entry_data:
 		return "hey man there's no entry data, get your grip together!"
-	await database.delete_entry(entry_data.get('title'), entry_data.get('content'), entry_id, editor=request.discord_id)
-	return web.HTTPFound('/')
+	unlisted = entry_data.get('unlisted', False)
+	if unlisted:
+		await database.delete_entry(entry_data.get('title'), entry_data.get('content'), entry_id, editor=request.discord_id)
+		return web.HTTPFound('/')
+	else:
+		return "entry not unlisted cannot delete"
 
 
 @routes.post('/revert')

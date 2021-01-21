@@ -55,7 +55,7 @@
 		<br>
 			<button>Submit</button>
 		</form>
-		{% if is_admin and entry_id  %}
+		{% if is_admin and entry_id and unlisted  %}
 			<button onclick="deleteOnclick()">Delete Entry: {{ title }}</button>
 			<script>
 				async function deleteOnclick() {
