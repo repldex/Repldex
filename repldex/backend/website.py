@@ -229,7 +229,7 @@ async def index(request):
 		discord_id = None
 	entries = await database.get_entries(sort='last_edited', discord_id=discord_id)
 	entry_count = await database.count_entries()
-	return Template('index.html', entries=entries, entry_count=entry_count)
+	return Template('index.html', entries=entries, entry_count=entry_count, featured_article=await database.get_entry(await database.getFeaturedArticle()))
 
 
 @routes.get('/news')
@@ -325,13 +325,6 @@ async def view_entry_history(request):
 	return Template(
 		'history.html', title=title, content=content, id=entry_id, history=history, back_location='/entry/' + entry_id
 	)
-
-@routes.get('/featured')
-async def featured_articles(request):
-	featured_articles = []
-	for entry_id in FEATURED:
-	  featured_articles.append(await database.get_entry(entry_id))
-	return Template('featured.html',featured_articles=featured_articles)
 
 @routes.post('/edit')
 async def edit_entry_post(request):

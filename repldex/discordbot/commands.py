@@ -33,6 +33,7 @@ async def help(message):
 			commands['who_is_the_leader'] = 'tells you who the supreme leader is (admin only)'
 			commands['userinfo <user mention>'] = 'get info on the mentioned user (admin only)'
 			commands['unlist <article id>'] = 'Toggles unlisting of entry (admin only)'
+			commands['changefeatured <article id>'] = 'Change featured article on Repldex Main Page (admin only). Do `disabled` instead of entryid to disable featured entries'
 			# commands['neweditor <user mention>'] = 'Make user editor (admin only)'
 	content = []
 	prefix = message.prefix
@@ -300,6 +301,11 @@ async def random_entry(message):
 	embed = await create_entry_embed(entry, author_id=message.author.id)
 	await message.send(embed=embed)
 
+@betterbot.command(name='changefeatured')
+async def change_featured(message, entry_id: str):
+	#check if entry id is valid. If not check if is 'disabled' 
+	#call db command to change new featured to entry id if entry id is valid. if disabled change featured entry to False or None
+	pass
 
 @betterbot.command(name='ping', aliases=['pong', 'pung'])
 async def ping(message):
