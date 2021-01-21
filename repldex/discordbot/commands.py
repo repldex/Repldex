@@ -1,7 +1,7 @@
 import discord
 from .bot import betterbot, client
 import asyncio
-from repldex.config import EDITOR_IDS, BASE_URL, ADMIN_IDS, BLACKLIST_IDS
+from repldex.config import DEV_IDS, EDITOR_IDS, BASE_URL, ADMIN_IDS, BLACKLIST_IDS
 from repldex.backend import database
 from repldex import utils
 
@@ -303,8 +303,9 @@ async def random_entry(message):
 
 @betterbot.command(name='ping', aliases=['pong', 'pung'])
 async def ping(message):
-	ping = client.latency * 1000
-	await message.send(embed=discord.Embed(title='Ping!', description=f'Bot ping is: `{int(ping)}ms`'))
+	if message.author.id in ADMIN_IDS or message.author.id in DEV_IDS:
+		ping = client.latency * 1000
+		await message.send(embed=discord.Embed(title='Ping!', description=f'Bot ping is: `{ping}ms`'))
 
 
 # @betterbot.command(name="neweditor")
