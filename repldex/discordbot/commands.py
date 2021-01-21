@@ -303,9 +303,16 @@ async def random_entry(message):
 
 @betterbot.command(name='changefeatured')
 async def change_featured(message, entry_id: str):
-	#check if entry id is valid. If not check if is 'disabled' 
-	#call db command to change new featured to entry id if entry id is valid. if disabled change featured entry to False or None
-	pass
+	if entry_id.lower() == "disabled":
+		#disable featured
+		pass
+	else:
+		entry = get_entry(entry_id=None, name=None, search_id=True, owner=None)
+		if entry:
+			#add to featured entry
+			pass
+		else:
+			await message.send("Entry ID not valid")
 
 @betterbot.command(name='ping', aliases=['pong', 'pung'])
 async def ping(message):
