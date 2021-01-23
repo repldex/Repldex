@@ -21,5 +21,10 @@ dburi="mongodb-database-uri"
 - Create a pull request describing what you changed.
 -wait for a reviewer to review your PR
 
+If you have any trouble, feel free to hop onto the Repldex Editors Discord Server, where other contributors can help (invite code: `wku7886`)
+
+# Bugs
+Open an issue and we'll get to you ASAP.
+
 # License
 Repldex is licensed under the MIT license
