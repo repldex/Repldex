@@ -302,7 +302,6 @@ async def random_entry(message):
 	embed = await create_entry_embed(entry, author_id=message.author.id)
 	await message.send(embed=embed)
 
-#NOTE: DB command not implemented, also WIP command
 @betterbot.command(name='changefeatured')
 async def change_featured(message, entry_id: str):
 	if entry_id.lower() == "disabled":
@@ -316,14 +315,13 @@ async def change_featured(message, entry_id: str):
 		else:
 			await message.send("Entry ID not valid")
 
-#NOTE: DB function is not implemented, therefore this will not work
 @betterbot.command(name='featured')
 async def featured(message):
 	#get featured article and send
 	featured = await database.getFeaturedArticle()
-	if featured == None:
-		return await message.send("No Featured Article Set. Set one with `"+prefix+"changefeatured"+"`")
-	embed = await create_entry_embed(featured, author_id=message.author.id)
+	if not featured or not featured['entry_id']:
+		return await message.send("No Featured Article Set.")
+	embed = await create_entry_embed(featured['entry_id'], author_id=message.author.id)
 	await message.send(embed=embed)
 
 @betterbot.command(name='ping', aliases=['pong', 'pung'])

@@ -12,6 +12,7 @@ db = client['repldex']
 entries_coll = db['entries']
 sessions_coll = db['sessions']
 users_coll = db['users']
+config_coll = db['config']
 
 from repldex.discordbot import bot as discordbot
 from repldex import utils
@@ -204,8 +205,11 @@ async def get_random_entry():
 	return found[0]
 
 async def getFeaturedArticle():
-	#WIP
-	return None
+	return await config_coll.find_one({'_id': "featured"})
 
-async def setFeaturedArticle():
-	pass
+async def setFeaturedArticle(entry_id):
+	featured = await config_coll.find_one({'_id': "featured"})
+	if featured:
+		await config_coll.replace_one({'_id': "featured"},{'_id': "featured","entry_id":entry_id})
+	else:
+		await config_coll.insert_one({'_id': "featured","entry_id":entry_id}, )
