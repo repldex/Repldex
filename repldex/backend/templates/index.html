@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	  </p>
 	</article>
   {% endif %}
-	<input id="search-bar" placeholder="Search entries">
+	<input id="search-bar" aria-label="Search Entries" placeholder="Entry name here">
 	<div id="entry-list">
 		{% for entry in entries %}
 			<article class="entryContainer">
