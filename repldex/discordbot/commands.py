@@ -318,7 +318,11 @@ async def change_featured(message, entry_id: str):
 @betterbot.command(name='featured')
 async def featured(message):
 	#get featured article and send
-	pass
+	featured = await database.getFeaturedArticle()
+	if featured == None:
+		return await message.send("No Featured Article Set. Set one with `"+prefix+"changefeatured"+"`")
+	embed = await create_entry_embed(featured, author_id=message.author.id)
+	await message.send(embed=embed)
 
 @betterbot.command(name='ping', aliases=['pong', 'pung'])
 async def ping(message):
