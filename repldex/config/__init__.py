@@ -47,7 +47,4 @@ with open(config_path + 'blacklist.txt') as f:
 	BLACKLIST_IDS = [int(item.split()[0]) for item in f.read().splitlines()]
 	BLACKLISTED_IDS = BLACKLIST_IDS
 
-with open(config_path + 'featured.txt') as f:
-	FEATURED = [item.split()[0] for item in f.read().splitlines()]
-
 new_disabled = False
