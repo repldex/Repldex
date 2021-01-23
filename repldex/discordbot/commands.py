@@ -319,7 +319,7 @@ async def change_featured(message, entry_id: str):
 async def featured(message):
 	#get featured article and send
 	featured = await database.getFeaturedArticle()
-	if not featured or not featured['entry_id']:
+	if not featured or not featured['value']:
 		return await message.send("No Featured Article Set.")
 	embed = await create_entry_embed(featured['entry_id'], author_id=message.author.id)
 	await message.send(embed=embed)

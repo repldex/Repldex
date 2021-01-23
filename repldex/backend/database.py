@@ -205,11 +205,11 @@ async def get_random_entry():
 	return found[0]
 
 async def getFeaturedArticle():
-	return await config_coll.find_one({'_id': "featured"})
+	return await config_coll.find_one({'name': "featured"})
 
 async def setFeaturedArticle(entry_id):
-	featured = await config_coll.find_one({'_id': "featured"})
+	featured = await config_coll.find_one({'name': "featured"})
 	if featured:
-		await config_coll.replace_one({'_id': "featured"},{'_id': "featured","entry_id":entry_id})
+		await config_coll.replace_one({'name': "featured"},{'name': "featured","value":entry_id})
 	else:
-		await config_coll.insert_one({'_id': "featured","entry_id":entry_id}, )
+		await config_coll.insert_one({'name': "featured","value":entry_id})
