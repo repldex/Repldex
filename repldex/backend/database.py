@@ -207,5 +207,5 @@ async def getFeaturedArticle():
 	#WIP
 	return None
 
-async def changeFeaturedArticle():
+async def setFeaturedArticle():
 	pass
