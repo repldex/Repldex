@@ -307,7 +307,7 @@ async def change_featured(message, entry_id: str):
 		#disable featured
 		pass
 	else:
-		entry = get_entry(entry_id=None, name=None, search_id=True, owner=None)
+		entry = await database.get_entry(entry_id=None, name=None, search_id=True, owner=None)
 		if entry:
 			#add to featured entry
 			pass
