@@ -23,6 +23,7 @@ async def help(message):
 		'source': 'Links my source on github',
 		'ping': 'Gets current bot ping',
 		'selfentry': 'Gets your own entry if you have one.',
+		'featured':'Get featured article',
 	}
 	if message.author.id in EDITOR_IDS:
 		commands['selfentry <name>'] = 'Links you to your entry (editor only)'
@@ -313,6 +314,11 @@ async def change_featured(message, entry_id: str):
 			pass
 		else:
 			await message.send("Entry ID not valid")
+
+@betterbot.command(name='featured')
+async def featured(message):
+	#get featured article and send
+	pass
 
 @betterbot.command(name='ping', aliases=['pong', 'pung'])
 async def ping(message):
