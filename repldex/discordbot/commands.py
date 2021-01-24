@@ -305,7 +305,7 @@ async def random_entry(message):
 @betterbot.command(name='changefeatured')
 async def change_featured(message, entry_id: str):
 	if entry_id.lower() == "disabled":
-		await database.disabled_featured()
+		await database.disable_featured()
 		return await message.send("Featured articles disabled")
 	else:
 		entry = await database.get_entry(entry_id=entry_id, name=None, search_id=True, owner=None)
