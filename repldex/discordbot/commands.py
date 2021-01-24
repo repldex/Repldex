@@ -321,7 +321,7 @@ async def featured(message):
 	featured = await database.getFeaturedArticle()
 	if not featured or not featured['value']:
 		return await message.send("No Featured Article Set.")
-	embed = await create_entry_embed(featured['entry_id'], author_id=message.author.id)
+	embed = await create_entry_embed(featured['value'], author_id=message.author.id)
 	await message.send(embed=embed)
 
 @betterbot.command(name='ping', aliases=['pong', 'pung'])
