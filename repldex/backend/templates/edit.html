@@ -55,16 +55,5 @@
 		<br>
 			<button>Submit</button>
 		</form>
-		{% if is_admin and entry_id and unlisted  %}
-			<button onclick="deleteOnclick()">Delete Entry: {{ title }}</button>
-			<script>
-				async function deleteOnclick() {
-					if (confirm("Are you sure you want to delete this entry?")) {
-						await fetch('{{ "/delete?id="+entry_id }}');
-						location.href = "/";
-					}
-				}
-			</script>
-		{% endif %}
 	{% endif %}
 {% endblock %}

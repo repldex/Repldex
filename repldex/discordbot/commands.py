@@ -34,6 +34,7 @@ async def help(message):
 			commands['who_is_the_leader'] = 'tells you who the supreme leader is (admin only)'
 			commands['userinfo <user mention>'] = 'get info on the mentioned user (admin only)'
 			commands['unlist <article id>'] = 'Toggles unlisting of entry (admin only)'
+			commands['delete <article id>'] = 'Delete entry (admin only)'
 			commands['changefeatured <article id>'] = 'Change featured article on Repldex Main Page (admin only). Do `disabled` instead of entryid to disable featured entries'
 			# commands['neweditor <user mention>'] = 'Make user editor (admin only)'
 	content = []
@@ -318,11 +319,19 @@ async def change_featured(message, entry_id: str):
 @betterbot.command(name='featured')
 async def featured(message):
 	#get featured article and send
+	if message.author.id not in ADMIN_IDS:
+		return
 	featured = await database.get_featured_article()
 	if not featured or not featured['value']:
 		return await message.send("No Featured Article Set.")
 	embed = await create_entry_embed(await database.get_entry(featured['value']), author_id=message.author.id)
 	await message.send(embed=embed)
+
+@betterbot.command(name='delete')
+async def delete(messag, entry_id: str):
+	if message.author.id not in ADMIN_IDS:
+		return
+	#check if entry is unlisted, if so, delete! 
 
 @betterbot.command(name='ping', aliases=['pong', 'pung'])
 async def ping(message):
