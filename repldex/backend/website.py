@@ -227,8 +227,12 @@ async def index(request):
 	entries = await database.get_entries(sort='last_edited', discord_id=discord_id)
 	entry_count = await database.count_entries()
 	featured = await database.get_featured_article()
+	if featured:
+		featured_id=featured['value']
+	else:
+		featured_id=None
 	return Template(
-		'index.html', entries=entries, entry_count=entry_count, featured_article=await database.get_entry(featured['value'])
+			'index.html', entries=entries, entry_count=entry_count, featured_article=await database.get_entry(featured_id)
 	)
 
 
