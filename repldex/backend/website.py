@@ -26,8 +26,6 @@ from repldex.config import (
 	CONFIG,
 )
 
-config = CONFIG
-
 routes = web.RouteTableDef()
 
 s = aiohttp.ClientSession()
@@ -675,4 +673,4 @@ def start_server(loop, background_task, client):
 	app.add_routes([web.static('/static', 'repldex/backend/static')])
 	app.add_routes(routes)
 	asyncio.ensure_future(background_task, loop=loop)
-	web.run_app(app, host=config.get('host', '0.0.0.0'), port=config.get('port', 8081))
+	web.run_app(app, host=CONFIG.get('host', '0.0.0.0'), port=CONFIG.get('port', 8081))
