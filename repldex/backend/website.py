@@ -26,8 +26,6 @@ from repldex.config import (
 	CONFIG,
 )
 
-config = CONFIG
-
 routes = web.RouteTableDef()
 
 s = aiohttp.ClientSession()
@@ -228,7 +226,14 @@ async def index(request):
 		discord_id = None
 	entries = await database.get_entries(sort='last_edited', discord_id=discord_id)
 	entry_count = await database.count_entries()
-	return Template('index.html', entries=entries, entry_count=entry_count)
+	featured = await database.get_featured_article()
+	if featured:
+		featured_id=featured['value']
+	else:
+		featured_id=None
+	return Template(
+			'index.html', entries=entries, entry_count=entry_count, featured_article=await database.get_entry(featured_id)
+	)
 
 
 @routes.get('/news')
@@ -616,17 +621,17 @@ async def api_website_title(request):
 	if url.startswith('//'):
 		url = 'https:' + url
 	elif url[0] == '/':
-		url = config.BASE_URL + url
+		url = BASE_URL + url
 
-	if url.startswith(config.BASE_URL):
+	if url.startswith(BASE_URL):
 		# fmt: off
-		url = url[len(config.BASE_URL):]
+		url = url[len(BASE_URL):]
 		if url.startswith('/entry/'):
 			entry_name = url[len('/entry/'):]
 			# fmt: on
 			entry = await database.get_entry(name=entry_name)
 			return web.json_response({
-				'title': entry['title'], 'favicon': config.BASE_URL + '/static/icon.png', 'content': entry['nohtml_content']
+				'title': entry['title'], 'favicon': BASE_URL + '/static/icon.png', 'content': entry['nohtml_content']
 			})
 		else:
 			return web.json_response({})
@@ -682,4 +687,4 @@ def start_server(loop, background_task, client):
 	app.add_routes([web.static('/static', 'repldex/backend/static')])
 	app.add_routes(routes)
 	asyncio.ensure_future(background_task, loop=loop)
-	web.run_app(app, host=config.get('host', '0.0.0.0'), port=config.get('port', 8081))
+	web.run_app(app, host=CONFIG.get('host', '0.0.0.0'), port=CONFIG.get('port', 8081))
