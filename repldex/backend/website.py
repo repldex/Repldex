@@ -229,7 +229,9 @@ async def index(request):
 	entries = await database.get_entries(sort='last_edited', discord_id=discord_id)
 	entry_count = await database.count_entries()
 	featured = await database.get_featured_article()
-	return Template('index.html', entries=entries, entry_count=entry_count, featured_article=await database.get_entry(featured['value']))
+	return Template(
+		'index.html', entries=entries, entry_count=entry_count, featured_article=await database.get_entry(featured['value'])
+	)
 
 
 @routes.get('/news')
@@ -325,6 +327,7 @@ async def view_entry_history(request):
 	return Template(
 		'history.html', title=title, content=content, id=entry_id, history=history, back_location='/entry/' + entry_id
 	)
+
 
 @routes.post('/edit')
 async def edit_entry_post(request):
@@ -606,17 +609,17 @@ async def api_website_title(request):
 	if url.startswith('//'):
 		url = 'https:' + url
 	elif url[0] == '/':
-		url = config.BASE_URL + url
+		url = BASE_URL + url
 
-	if url.startswith(config.BASE_URL):
+	if url.startswith(BASE_URL):
 		# fmt: off
-		url = url[len(config.BASE_URL):]
+		url = url[len(BASE_URL):]
 		if url.startswith('/entry/'):
 			entry_name = url[len('/entry/'):]
 			# fmt: on
 			entry = await database.get_entry(name=entry_name)
 			return web.json_response({
-				'title': entry['title'], 'favicon': config.BASE_URL + '/static/icon.png', 'content': entry['nohtml_content']
+				'title': entry['title'], 'favicon': BASE_URL + '/static/icon.png', 'content': entry['nohtml_content']
 			})
 		else:
 			return web.json_response({})
