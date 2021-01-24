@@ -213,3 +213,6 @@ async def setFeaturedArticle(entry_id):
 		await config_coll.replace_one({'name': "featured"},{'name': "featured","value":entry_id})
 	else:
 		await config_coll.insert_one({'name': "featured","value":entry_id})
+
+async def disableFeatured():
+	await config_coll.delete_one({'name': "featured"})
