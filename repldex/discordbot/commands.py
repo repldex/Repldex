@@ -305,12 +305,12 @@ async def random_entry(message):
 @betterbot.command(name='changefeatured')
 async def change_featured(message, entry_id: str):
 	if entry_id.lower() == "disabled":
-		#disable featured
-		pass
+		await database.disabled_featured()
+		return await message.send("Featured articles disabled")
 	else:
 		entry = await database.get_entry(entry_id=entry_id, name=None, search_id=True, owner=None)
 		if entry:
-			await database.setFeaturedArticle(entry_id)
+			await database.set_featured_article(entry_id)
 			await message.send("Featured Article changed")
 		else:
 			await message.send("Entry ID not valid")
@@ -318,7 +318,7 @@ async def change_featured(message, entry_id: str):
 @betterbot.command(name='featured')
 async def featured(message):
 	#get featured article and send
-	featured = await database.getFeaturedArticle()
+	featured = await database.get_featured_article()
 	if not featured or not featured['value']:
 		return await message.send("No Featured Article Set.")
 	embed = await create_entry_embed(await database.get_entry(featured['value']), author_id=message.author.id)
