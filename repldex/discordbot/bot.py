@@ -198,7 +198,7 @@ async def log_delete(entry_data, time_):
 	channel = client.get_channel(770468181486600253)
 	title = entry_data.get('title')
 	await channel.send(f'{title} has been deleted (through Repldex [direct database deletions are not detected]) at {time_}')
-	await channel.send(file=discord.File(fp=io.BytesIO(entry_data['content'].encode('utf8')),filename=title))
+	await channel.send(file=discord.File(fp=io.BytesIO(entry_data['content'].encode('utf8')),filename=title+'.html'))
 	if entry_data.get('image', False):
 		await channel.send(content=entry_data.get('image')['src'])
 
