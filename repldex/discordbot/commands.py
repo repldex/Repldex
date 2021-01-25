@@ -331,7 +331,15 @@ async def featured(message):
 async def delete(message, entry_id: str):
 	if message.author.id not in ADMIN_IDS:
 		return
-	#check if entry is unlisted, if so, delete! 
+	entry = await database.get_entry(entry_id=entry_id)
+	if entry:
+		if entry['unlisted']:
+			await database.delete_entry(entry, entry_id)
+			await message.send("Entry deleted")
+		else:
+			await message.send("You cannot delete non-unlisted entries")
+	else:
+		await message.send("Invalid entry id")
 
 @betterbot.command(name='ping', aliases=['pong', 'pung'])
 async def ping(message):
