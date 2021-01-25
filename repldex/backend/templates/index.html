@@ -142,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {% endif %}
   </div>
   {% if featured_article %}
+  	<br>
     <article class="featuredEntry" onclick='{{ "window.location.href = \'/entry/\'" + "+\'"+featured_article.title+"\'" }}'>
 	  <h2>{{ featured_article['title'] }}</h2>
 	  <p class="featuredEntryPreview">
