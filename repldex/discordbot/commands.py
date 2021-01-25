@@ -328,7 +328,7 @@ async def featured(message):
 	await message.send(embed=embed)
 
 @betterbot.command(name='delete')
-async def delete(messag, entry_id: str):
+async def delete(message, entry_id: str):
 	if message.author.id not in ADMIN_IDS:
 		return
 	#check if entry is unlisted, if so, delete! 
