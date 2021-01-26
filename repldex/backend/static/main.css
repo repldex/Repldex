@@ -367,3 +367,7 @@ a[href*="//twitter.com"]::before {
   border-radius: 6px;
   padding: 0px 10px 10px 10px;
 }
+
+.featruedEntry:hover {
+  cursor: pointer;
+}
