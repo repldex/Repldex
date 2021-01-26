@@ -1,6 +1,4 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-from ibm_watson import LanguageTranslatorV3
 from repldex.discordbot.bot import discord_id_to_user
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -13,7 +11,7 @@ import os
 
 from repldex.backend import database
 from repldex.backend import images
-from repldex import utils
+from repldex import discordbot, utils
 from repldex.config import (
 	EDITOR_IDS,
 	ADMIN_IDS,
@@ -29,97 +27,6 @@ from repldex.config import (
 routes = web.RouteTableDef()
 
 s = aiohttp.ClientSession()
-
-ibm_token = os.getenv('IBM_TOKEN')
-ibm_url = os.getenv('IBM_URL')
-
-if ibm_token:
-	authenticator = IAMAuthenticator(ibm_token)
-	language_translator = LanguageTranslatorV3(version='2018-05-01', authenticator=authenticator)
-
-	language_translator.set_service_url(ibm_url)
-else:
-	print('no ibm translation token found, this is fine')
-	language_translator = None
-
-language_codes = {
-	'af',
-	'ar',
-	'az',
-	'ba',
-	'be',
-	'bg',
-	'bn',
-	'ca',
-	'cs',
-	'cv',
-	'cy',
-	'da',
-	'de',
-	'el',
-	'en',
-	'eo',
-	'es',
-	'et',
-	'eu',
-	'fa',
-	'fi',
-	'fr',
-	'ga',
-	'gu',
-	'he',
-	'hi',
-	'hr',
-	'ht',
-	'hu',
-	'hy',
-	'is',
-	'it',
-	'ja',
-	'ka',
-	'kk',
-	'km',
-	'ko',
-	'ku',
-	'ky',
-	'lo',
-	'lt',
-	'lv',
-	'ml',
-	'mn',
-	'mr',
-	'ms',
-	'mt',
-	'my',
-	'nb',
-	'ne',
-	'nl',
-	'nn',
-	'pa',
-	'pa-PK',
-	'pl',
-	'ps',
-	'pt',
-	'ro',
-	'ru',
-	'si',
-	'sk',
-	'sl',
-	'so',
-	'sq',
-	'sr',
-	'sv',
-	'ta',
-	'te',
-	'th',
-	'tl',
-	'tr',
-	'uk',
-	'ur',
-	'vi',
-	'zh',
-	'zh-TW',
-}  # noqa: E501
 
 template_path = os.path.join(os.path.dirname(__file__), 'templates')
 
@@ -183,9 +90,6 @@ jinja_env.globals['lazyimage'] = utils.html_image_with_thumbnail
 
 jinja_env.globals['name_space'] = JinjaNamespace
 jinja_env.globals['get_top_editors'] = utils.get_top_editors
-
-translated_cache = {}
-
 
 async def load_template(filename, **kwargs):
 	if not hasattr(load_template, 'template_dict'):
@@ -302,7 +206,13 @@ async def edit_entry(request):
 				is_editor = True
 
 	return Template(
-		'edit.html', title=title, content=content, unlisted=unlisted, is_editor=is_editor, new_disabled=new_disabled
+		'edit.html',
+		title=title,
+		content=content,
+		unlisted=unlisted,
+		is_editor=is_editor,
+		new_disabled=new_disabled,
+		entry_id=entry_id
 	)
 
 
@@ -346,11 +256,6 @@ async def edit_entry_post(request):
 	title = post_data.get('title') or entry_data.get('title')
 	image = post_data.get('image')
 	content = post_data['content']
-
-	try:
-		del translated_cache[entry_id]
-	except KeyError:
-		pass
 
 	if request.is_admin:
 		unlisted = post_data.get('unlisted', 'off') == 'on'
@@ -425,19 +330,6 @@ async def edit_entry_post(request):
 			)
 
 	return web.HTTPFound(f'/entry/{entry_id}')
-
-
-@routes.post('/delete')
-async def delete_entry(request):
-	# 404 until I actually implement this - rediar/prussia/jetstream
-	if not request.is_admin:
-		return web.HTTPFound('/')
-	entry_id = request.query.get('id')
-	entry_data = await database.get_entry(entry_id)
-	if not entry_data:
-		return "hey man there's no entry data, get your grip together!"
-	await database.delete_entry(entry_data.get('title'), entry_data.get('content'), entry_id, editor=request.discord_id)
-
 
 @routes.post('/revert')
 async def revert_edit(request):
@@ -548,38 +440,9 @@ async def view_entry(request):
 			is_editor = True
 
 	article_text = None
-	translated = False
 
 	# ok you figure this out imma do templating
 	article_text = None
-	translated = False
-	lang = None
-	if_lang = bool(request.query.get('lang', False))
-
-	if lang in language_codes:
-		try:
-			cached = entry_id in translated_cache
-			if cached:
-				if lang in translated_cache[entry_id]:
-					article_text = translated_cache[entry_id][lang]
-					translated = True
-					print('used lang translation cache')
-				else:
-					cached = False
-			if not cached and language_translator:
-				translation = language_translator.translate(text=nohtml_content, model_id='en-{}'.format(lang)).get_result()
-				article_text = translation['translations'][0]['translation']
-				try:
-					translated_cache[entry_id][lang] = article_text
-				except KeyError:
-					translated_cache[entry_id] = {lang: article_text}
-				translated = True
-
-		except Exception as e:
-			print(e)
-	elif if_lang:
-		translated = True
-		article_text = 'Translations are currently disabled'
 
 	return Template(
 		'entry.html',
@@ -593,7 +456,6 @@ async def view_entry(request):
 		is_editor=is_editor,
 		back_location='/',
 		article_text=article_text,
-		translated=translated,
 	)
 
 

@@ -92,11 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	{% endif %}
 	{% if unlisted %}<i>This entry is unlisted and will not show up in search.</i>{% endif %}
 	<article class="content">
-    {% if translated %}
-      {{ article_text }}
-    {% else %}
 		  {{ content|before_show_text|safe }}
-    {% endif %}
 	</article>
 
 	<br><br>

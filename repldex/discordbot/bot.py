@@ -2,6 +2,7 @@ import traceback
 import discord
 import base64
 import os
+import io
 intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(intents=intents)
@@ -11,6 +12,7 @@ from repldex import utils
 
 
 class BetterBot:
+
 	def __init__(self, prefix, bot_id):
 		'''
 		All the bot prefixes.
@@ -191,11 +193,14 @@ async def log_edit(editor, title, time):
 	await channel.send(f'{time}: <@{editor}>({editor}) edited {title}')
 
 
-async def log_delete(title, time, content):
+async def log_delete(entry_data, time_):
+	# make sure content is string
 	channel = client.get_channel(770468181486600253)
-	await channel.send(f'{title} has been deleted (through Repldex [direct database deletions are not detected]) at {time}')
-	await channel.send(f'First 140 characters of entry: `{content[:140]}`')
-
+	title = entry_data.get('title')
+	await channel.send(f'{title} has been deleted (through Repldex [direct database deletions are not detected]) at {time_}')
+	await channel.send(file=discord.File(fp=io.BytesIO(entry_data['content'].encode('utf8')),filename=title+'.html'))
+	if entry_data.get('image', False):
+		await channel.send(content=entry_data.get('image')['src'])
 
 async def log_view(title, time):
 	channel = client.get_channel(770468271195553823)
@@ -255,4 +260,6 @@ async def on_raw_reaction_add(payload):
 			except discord.errors.NotFound:
 				pass
 
-from . import commands
+
+# this is required to make bot commands work, must be at the end otherwise it causes a circular import
+from . import commands  # noqa: F401,E261

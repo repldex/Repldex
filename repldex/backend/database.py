@@ -37,9 +37,9 @@ async def fix_entry(data):
 	return data
 
 
-async def delete_entry(title, content, entry_id, editor=None):
-	t = datetime.now()
-	await discordbot.log_delete(title, t, content)
+async def delete_entry(entry_data, entry_id, editor=None):
+	time_ = datetime.now()
+	await discordbot.log_delete(entry_data, time_)
 	await entries_coll.delete_one({'_id': entry_id})
 
 
