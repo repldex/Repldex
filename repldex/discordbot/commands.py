@@ -305,6 +305,8 @@ async def random_entry(message):
 
 @betterbot.command(name='changefeatured')
 async def change_featured(message, entry_id: str):
+	if message.author.id not in ADMIN_IDS:
+		return
 	if entry_id.lower() == "disabled":
 		await database.disable_featured()
 		return await message.send("Featured articles disabled")
@@ -319,8 +321,6 @@ async def change_featured(message, entry_id: str):
 @betterbot.command(name='featured')
 async def featured(message):
 	#get featured article and send
-	if message.author.id not in ADMIN_IDS:
-		return
 	featured = await database.get_featured_article()
 	if not featured or not featured['value']:
 		return await message.send("No Featured Article Set.")
