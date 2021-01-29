@@ -56,7 +56,9 @@ async def edit_entry(
 		new_data['unlisted'] = unlisted
 	if image is not None:
 		new_data['image'] = {'src': image}
-
+	
+	new_data['grammar'] = editor == 359017688867012628
+	
 	if not entry_id:
 		entry_id = str(uuid.uuid4())
 	new_history_data = {
