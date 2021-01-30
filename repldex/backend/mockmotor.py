@@ -3,6 +3,7 @@
 import os
 import json
 from datetime import datetime
+from re import search
 
 class AsyncIOMotorClient:
 	def __init__(self, path_name: str):
@@ -43,13 +44,22 @@ def is_matching_filter(filter, match):
 	if filter is None or filter == {}:
 		# if there's no filter, just assume it matches
 		return True
-
-	for filter_key, filter_value in filter.items():
-		if filter_key[0] == '$':
-			if not operator_matches_value(filter_key[1:], filter_value[1:], match):
+	for item_key, item_value in filter.items():
+		# item_key: 'unlisted'
+		# item_value: {'$ne': True}
+		has_operators = False
+		if isinstance(item_value, dict):
+			for filter_key, filter_value in item_value.items():
+				# filter_key: '$ne'
+				# filter_value: True
+				if filter_key[0] == '$':
+					has_operators = True
+					if not operator_matches_value(filter_key[1:], filter_value, match.get(item_key)):
+						return False
+		if not has_operators:
+			if match.get(item_key) != item_value:
 				return False
-		else:
-			pass
+
 	return True
 
 
@@ -132,10 +142,10 @@ class AsyncIOMotorCursor:
 		raise NotImplementedError()
 
 	async def next(self):
-		self.index += 1
-		if self.index >= len(self.documents):
+		self._i += 1
+		if self._i >= len(self.documents):
 			raise StopAsyncIteration()
-		return self.documents[self.index]
+		return self.documents[self._i]
 
 	def remove_option(self, mask):
 		raise NotImplementedError()
@@ -158,7 +168,7 @@ class AsyncIOMotorCursor:
 		raise NotImplementedError()
 
 	def __aiter__(self):
-		self.index = -1
+		self._i = -1
 		documents = []
 		for item in self.collection._read():
 			if is_matching_filter(self.filter, item):
@@ -180,6 +190,79 @@ class AsyncIOMotorCursor:
 	async def __anext__(self):
 		return await self.next()
 
+class Aggregator:
+	def __init__(self, pipeline: list, collection):
+		self.pipeline = pipeline
+		self.collection = collection
+
+	def _search(self, stage_value, document):
+		search_score = 0
+		for search_operator_name, search_operator_value in stage_value.items():
+			if search_operator_name == 'compound':
+				for clause_name, clause_value in search_operator_value.items():
+					if clause_name == 'should':
+						pass
+					for sub_clause in clause_value:
+						for sub_sub_clause, sub_sub_clause_value in sub_clause.items():
+							if sub_sub_clause == 'search':
+								search_query = sub_sub_clause_value['query']
+								# TODO: split the path by commas and get the (potentially) nested value
+								search_path = sub_sub_clause_value['path']
+								weight = 1
+								if 'score' in sub_sub_clause_value:
+									weight *= sub_sub_clause_value['score']['boost']['value']
+								if search_path in document:
+									found_times = document[search_path].lower().count(search_query.lower())
+								else:
+									found_times = 0
+								search_score += found_times * weight
+		return search_score
+
+	def __aiter__(self):
+		documents = self.collection._read()
+		self._i = -1
+		for stage in self.pipeline:
+			new_documents = []
+			for stage_name, stage_value in stage.items():
+				if stage_name == '$searchBeta':
+					for document in documents:
+						search_score = self._search(stage_value, document)
+						if search_score > 0:
+							if '$meta' not in document:
+								document['$meta'] = {}
+							document['$meta']['searchScore'] = search_score
+							new_documents.append(document)
+				elif stage_name == '$match':
+					for document in documents:
+						if is_matching_filter(stage_value, document):
+							new_documents.append(document)
+				elif stage_name == '$skip':
+					new_documents = documents[stage_value:]
+				elif stage_name == '$limit':
+					new_documents = documents[:stage_value]
+				elif stage_name == '$addFields':
+					for new_field, expression in stage_value.items():
+						pass
+				
+				elif stage_name == '$sort':
+					sort_key = list(stage_value.keys())[0]
+					direction = list(stage_value.values())[0]
+					documents = sorted(documents, key=lambda d: d[sort_key], reverse=direction == -1)
+				else:
+					new_documents = documents
+
+			documents = new_documents
+			print(stage, len(documents))
+		self.documents = documents
+		return self
+
+	async def __anext__(self):
+		self._i += 1
+		if self._i >= len(self.documents):
+			raise StopAsyncIteration()
+		else:
+			return self.documents[self._i]
+
 class AsyncIOMotorCollection:
 	def __init__(self, database: AsyncIOMotorDatabase, name: str):
 		self.database = database
@@ -192,8 +275,8 @@ class AsyncIOMotorCollection:
 	async def inline_map_reduce(self, map, reduce, full_response=False, **kwargs):
 		raise NotImplementedError()
 
-	async def aggregate(self, pipeline, **kwargs):
-		raise NotImplementedError()
+	def aggregate(self, pipeline: list) -> Aggregator:
+		return Aggregator(pipeline, self)
 
 	async def aggregate_raw_batches(self, pipeline, **kwargs):
 		raise NotImplementedError()

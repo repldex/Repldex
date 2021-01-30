@@ -117,17 +117,18 @@ async def get_editor_session(sid):
 	return found['discord']
 
 
-async def search_entries(query, limit=10, search_id=True, page=0, discord_id=None, unlisted=False):
+async def search_entries(query: str, limit: int = 10, search_id=True, page=0, discord_id=None, unlisted=False) -> list:
 	found = []
-	match = {'$match': {'unlisted': {'$ne': True}}}
 	if unlisted:
-		match = {'$match': {'unlisted': {'$eq': True}}}
+		match = {'unlisted': {'$eq': True}}
+	else:
+		match = {'unlisted': {'$ne': True}}
 	async for doc in entries_coll.aggregate([
 		{'$searchBeta': {'compound': {'should': [
 			{'search': {'query': query, 'path': 'nohtml_content'}},
 			{'search': {'query': query, 'path': 'title', 'score': {'boost': {'value': 20}}}},
 		]}}},
-		match,
+		{'$match': match},
 		{'$addFields': {'score': {'$meta': 'searchScore'}}},
 		{'$sort': {'score': -1}},
 		{'$skip': page * limit},
