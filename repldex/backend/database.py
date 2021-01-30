@@ -57,7 +57,7 @@ async def edit_entry(
 	if image is not None:
 		new_data['image'] = {'src': image}
 	
-	new_data['grammar'] = editor == 359017688867012628
+	new_data['edited_by_minx'] = editor == 359017688867012628
 	
 	if not entry_id:
 		entry_id = str(uuid.uuid4())
