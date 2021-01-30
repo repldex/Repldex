@@ -3,33 +3,8 @@
 import os
 import json
 from datetime import datetime
-from re import search
-
-class AsyncIOMotorClient:
-	def __init__(self, path_name: str):
-		self.path_name = path_name
-		if not os.path.isdir(path_name):
-			os.mkdir(path_name)
-		print('mock motor')
-
-	def __getitem__(self, db_name: str):
-		database_path = os.path.join(self.path_name, db_name)
-		if not os.path.isdir(database_path):
-			os.mkdir(database_path)
-		return AsyncIOMotorDatabase(self, db_name)
-
-
-class AsyncIOMotorDatabase:
-	def __init__(self, client: AsyncIOMotorClient, name: str):
-		self.client = client
-		self.name = name
-		self.path = os.path.join(self.client.path_name, name)
-
-	def __getitem__(self, collection_name: str):
-		collection_path = os.path.join(self.path, collection_name + '.json')
-		if not os.path.isfile(collection_path):
-			with open(collection_path, 'w') as f: f.write('[]')
-		return AsyncIOMotorCollection(self, collection_name)
+import re
+import typing
 
 
 def operator_matches_value(operator, operator_value, match):
@@ -75,6 +50,21 @@ def bson_to_json(raw_bson):
 		json_value = bson_to_json(bson_value) if isinstance(bson_value, dict) else bson_value
 		raw_json[bson_key] = json_value
 	return raw_json
+
+
+def get_from_expression(expression, document):
+	# Expressions can include field paths, literals, system variables, expression objects, and expression operators. Expressions can be nested.
+	# https://docs.mongodb.com/manual/meta/aggregation-quick-reference/#aggregation-expressions
+	if isinstance(expression, dict):
+		for expression_key, expression_value in expression.items():
+			if isinstance(expression_value, str):
+				# string expressions
+				if expression_key == '$meta':
+					return document['$meta'][expression_value]
+				# TODO: add more string expressions
+			# TODO: add more types of expressions
+	print('failed to get from expression!')
+	return
 
 
 class AsyncIOMotorCursor:
@@ -190,6 +180,18 @@ class AsyncIOMotorCursor:
 	async def __anext__(self):
 		return await self.next()
 
+def split_into_words(string: str) -> typing.List[str]:
+	cleaned_string = string\
+		.lower()\
+		.replace('.', ' ')\
+		.replace(',', ' ')\
+		.replace('!', ' ')\
+		.replace('?', ' ')\
+		.replace('-', ' ')\
+		.replace('+', ' ')\
+		.split(' ')
+	return cleaned_string
+
 class Aggregator:
 	def __init__(self, pipeline: list, collection):
 		self.pipeline = pipeline
@@ -201,6 +203,7 @@ class Aggregator:
 			if search_operator_name == 'compound':
 				for clause_name, clause_value in search_operator_value.items():
 					if clause_name == 'should':
+						# TODO: implement the other clauses
 						pass
 					for sub_clause in clause_value:
 						for sub_sub_clause, sub_sub_clause_value in sub_clause.items():
@@ -212,10 +215,19 @@ class Aggregator:
 								if 'score' in sub_sub_clause_value:
 									weight *= sub_sub_clause_value['score']['boost']['value']
 								if search_path in document:
-									found_times = document[search_path].lower().count(search_query.lower())
+									document_words = split_into_words(document[search_path])
+									query_words = split_into_words(search_query)
+									found_times = 0
+									for query_word in query_words:
+										found_times += document_words.count(query_word)
+									document_length_weight = (8 / len(document_words))
 								else:
 									found_times = 0
-								search_score += found_times * weight
+									document_length_weight = 1
+								# found_times: the number of times the word shows up in the document
+								# weight: the weight specified in the query
+								# document_length_weight: slightly punish longer entries so it matches the most relevant articles even if theyre shorter
+								search_score += found_times * weight * document_length_weight
 		return search_score
 
 	def __aiter__(self):
@@ -242,17 +254,19 @@ class Aggregator:
 					new_documents = documents[:stage_value]
 				elif stage_name == '$addFields':
 					for new_field, expression in stage_value.items():
-						pass
+						for document in documents:
+							new_field_value = get_from_expression(expression, document)
+							document[new_field] = new_field_value
+							new_documents.append(document)
 				
 				elif stage_name == '$sort':
 					sort_key = list(stage_value.keys())[0]
 					direction = list(stage_value.values())[0]
-					documents = sorted(documents, key=lambda d: d[sort_key], reverse=direction == -1)
+					new_documents = sorted(documents, key=lambda d: d[sort_key], reverse=direction == -1)
 				else:
 					new_documents = documents
 
 			documents = new_documents
-			print(stage, len(documents))
 		self.documents = documents
 		return self
 
@@ -264,10 +278,15 @@ class Aggregator:
 			return self.documents[self._i]
 
 class AsyncIOMotorCollection:
-	def __init__(self, database: AsyncIOMotorDatabase, name: str):
+	def __init__(self, database, name: str):
 		self.database = database
 		self.name = name
 		self.path = os.path.join(self.database.path, name + '.json')
+
+	def _read(self) -> typing.Any:
+		with open(self.path, 'r') as f:
+			raw_bson = json.loads(f.read())
+		return bson_to_json(raw_bson)
 
 	async def create_index(self, keys, **kwargs):
 		raise NotImplementedError()
@@ -303,6 +322,9 @@ class AsyncIOMotorCollection:
 	async def distinct(self, key, filter=None, session=None, **kwargs):
 		raise NotImplementedError()
 
+	async def drop_collection(self, session=None):
+		raise NotImplementedError()
+
 	async def drop(self, session=None):
 		return await self.drop_collection(session)
 
@@ -326,10 +348,16 @@ class AsyncIOMotorCollection:
 	async def find_one_and_delete(self, filter, projection=None, sort=None, hint=None, session=None, **kwargs):
 		raise NotImplementedError()
 
-	async def find_one_and_replace(self, filter, replacement, projection=None, sort=None, upsert=False, return_document=False, hint=None, session=None, **kwargs):
+	async def find_one_and_replace(
+		self, filter, replacement, projection=None, sort=None, upsert=False, return_document=False, hint=None, session=None,
+		**kwargs
+	):
 		raise NotImplementedError()
 
-	async def find_one_and_update(self, filter, update, projection=None, sort=None, upsert=False, return_document=False, array_filters=None, hint=None, session=None, **kwargs):
+	async def find_one_and_update(
+		self, filter, update, projection=None, sort=None, upsert=False, return_document=False, array_filters=None, hint=None,
+		session=None, **kwargs
+	):
 		raise NotImplementedError()
 
 	async def find_raw_batches(self, *args, **kwargs):
@@ -356,22 +384,54 @@ class AsyncIOMotorCollection:
 	async def rename(self, new_name, session=None, **kwargs):
 		raise NotImplementedError()
 
-	async def replace_one(self, filter, replacement, upsert=False, bypass_document_validation=False, collation=None, hint=None, session=None):
+	async def replace_one(
+		self, filter, replacement, upsert=False, bypass_document_validation=False, collation=None, hint=None, session=None
+	):
 		raise NotImplementedError()
 
-	async def update_many(self, filter, update, upsert=False, array_filters=None, bypass_document_validation=False, collation=None, hint=None, session=None):
+	async def update_many(
+		self, filter, update, upsert=False, array_filters=None, bypass_document_validation=False, collation=None, hint=None,
+		session=None
+	):
 		raise NotImplementedError()
 
-	async def update_one(self, filter, update, upsert=False, bypass_document_validation=False, collation=None, array_filters=None, hint=None, session=None):
+	async def update_one(
+		self, filter, update, upsert=False, bypass_document_validation=False, collation=None, array_filters=None, hint=None,
+		session=None
+	):
 		raise NotImplementedError()
 
-	async def watch(self, pipeline=None, full_document=None, resume_after=None, max_await_time_ms=None, batch_size=None, collation=None, start_at_operation_time=None, session=None, start_after=None):
+	async def watch(
+		self, pipeline=None, full_document=None, resume_after=None, max_await_time_ms=None, batch_size=None, collation=None,
+		start_at_operation_time=None, session=None, start_after=None
+	):
 		raise NotImplementedError()
 
 	async def with_options(self, codec_options=None, read_preference=None, write_concern=None, read_concern=None):
 		raise NotImplementedError()
 
-	def _read(self):
-		with open(self.path, 'r') as f:
-			raw_bson = json.loads(f.read())
-		return bson_to_json(raw_bson)
+class AsyncIOMotorDatabase:
+	def __init__(self, client, name: str):
+		self.client = client
+		self.name = name
+		self.path = os.path.join(self.client.path_name, name)
+
+	def __getitem__(self, collection_name: str):
+		collection_path = os.path.join(self.path, collection_name + '.json')
+		if not os.path.isfile(collection_path):
+			with open(collection_path, 'w') as f: f.write('[]')
+		return AsyncIOMotorCollection(self, collection_name)
+
+
+class AsyncIOMotorClient:
+	def __init__(self, path_name: str):
+		self.path_name = path_name
+		if not os.path.isdir(path_name):
+			os.mkdir(path_name)
+
+	def __getitem__(self, db_name: str):
+		database_path = os.path.join(self.path_name, db_name)
+		if not os.path.isdir(database_path):
+			os.mkdir(database_path)
+		return AsyncIOMotorDatabase(self, db_name)
+
