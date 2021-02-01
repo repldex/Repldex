@@ -1,3 +1,7 @@
+from collections.abc import Callable
+from typing import Any
+from discord.abc import Messageable
+from discord.enums import MessageType
 from discord.member import Member
 from discord.role import Role
 import discord
@@ -105,7 +109,6 @@ class FakeHTTPClient():
 
 
 class Tester:
-
 	def __init__(self, client):
 		self.client = FakeClient(client)
 
@@ -232,12 +235,11 @@ class Tester:
 		data.update(kwargs)
 		self.client._connection.parse_message_create(data)
 
-	async def verify_message(self, checker, timeout=1):
+	async def verify_message(self, checker: Callable[[Any], bool], timeout=1):
 		if isinstance(checker, str):
 			check_content = checker
 
-			def checker(s):
-				return s['content'] == check_content
+			checker = lambda s: s['content'] == check_content
 
 		started_time = time.time()
 

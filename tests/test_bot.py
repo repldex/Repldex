@@ -1,28 +1,13 @@
 from repldex.discordbot import bot
 from repldex.config import CONFIG
-from repldex.backend import database
-import datetime
-import pytest
 from . import Tester
+import pytest
+import asyncio
+import os
 
 
-async def search_entries(query, limit=10, search_id=True, page=0, discord_id=None, unlisted=False):
-	return [{
-		'_id': '4284eb47-912b-454d-9ac7-95667c5b0e71',
-		'content': '<p>hello world</p>',
-		'image': None,
-		'markdown': 'hello world',
-		'nohtml_content': 'hello world',
-		'title': 'example',
-		'history': [],
-		'last_edited': datetime.datetime(2020, 7, 18, 3, 28, 7, 449000),
-		'unlisted': False,
-		'owner_id': 224588823898619905,
-		'score': 53.651893615722656
-	}]
-
-
-database.search_entries = search_entries
+# force it to use mock db
+os.environ['dburl'] = ''
 
 
 @pytest.fixture
@@ -32,6 +17,11 @@ def test():
 	bot.client._connection = tester.client._connection
 	bot.client = tester.client
 	return tester
+
+
+@pytest.fixture
+def event_loop():
+	yield asyncio.new_event_loop()
 
 
 @pytest.fixture
@@ -54,18 +44,30 @@ prefix = CONFIG.get('prefix', '^')
 
 @pytest.mark.asyncio
 async def test_entry(test, channel):
-	results = await database.search_entries('mat')
-	print(results)
-	await test.message(prefix + 'entry example', channel)
+	await test.message(prefix + 'entry mat', channel)
 
 	def check(message):
 		if message['content']:
 			return False
-		if message['embed']['description'] != 'hello world':
+		if message['embed']['url'] != 'https://repldex.com/entry/mat':
 			return False
-		if message['embed']['url'] != 'https://repldex.com/entry/example':
+		if message['embed']['title'] != 'mat':
 			return False
-		if message['embed']['title'] != 'example':
+		return True
+
+	await test.verify_message(check)
+
+
+@pytest.mark.asyncio
+async def test_search(test, channel):
+	await test.message(prefix + 'search mat', channel)
+
+	def check(message):
+		if message['content']:
+			return False
+		if not message['embed']['description'].startswith('1) mat\n'):
+			return False
+		if message['embed']['title'] != 'Results for mat':
 			return False
 		return True
 

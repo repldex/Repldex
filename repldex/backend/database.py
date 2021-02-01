@@ -8,7 +8,6 @@ connection_uri = os.getenv('dburi')
 
 if connection_uri:
 	client = motor.motor_asyncio.AsyncIOMotorClient(connection_uri)
-
 else:
 	# assume we're using the mongodb if connection_uri isn't there
 	print('dburi isn\'t in env, using mock db in database folder instead. Don\'t use this in production!')
