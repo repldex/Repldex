@@ -91,6 +91,7 @@ jinja_env.globals['lazyimage'] = utils.html_image_with_thumbnail
 jinja_env.globals['name_space'] = JinjaNamespace
 jinja_env.globals['get_top_editors'] = utils.get_top_editors
 
+
 async def load_template(filename, **kwargs):
 	if not hasattr(load_template, 'template_dict'):
 		load_template.template_dict = {}
@@ -132,11 +133,11 @@ async def index(request):
 	entry_count = await database.count_entries()
 	featured = await database.get_featured_article()
 	if featured:
-		featured_id=featured['value']
+		featured_id = featured['value']
 	else:
-		featured_id=None
+		featured_id = None
 	return Template(
-			'index.html', entries=entries, entry_count=entry_count, featured_article=await database.get_entry(featured_id)
+		'index.html', entries=entries, entry_count=entry_count, featured_article=await database.get_entry(featured_id)
 	)
 
 
@@ -331,6 +332,7 @@ async def edit_entry_post(request):
 
 	return web.HTTPFound(f'/entry/{entry_id}')
 
+
 @routes.post('/revert')
 async def revert_edit(request):
 	'Reverts an entry to a former state'
@@ -520,8 +522,6 @@ async def middleware(request, handler):
 	request.is_admin = is_admin
 	request.discord_id = discord_id
 	resp = await handler(request)
-	if resp.status in {404, 500, 418}:
-		return web.HTTPFound('/entry/' + str(resp.status))
 	if isinstance(resp, Template):
 		args = resp.args
 		sid_cookie = request.cookies.get('sid')
@@ -533,10 +533,21 @@ async def middleware(request, handler):
 	return resp
 
 
+@web.middleware
+async def error_middleware(request, handler):
+	try:
+		response = await handler(request)
+		if response.status not in (404, 500, 418):
+			return response
+	except web.HTTPException as ex:
+		return web.HTTPFound('/entry/' + str(ex.status))
+	return 'test'
+
+
 def start_server(loop, background_task, client):
 	global app
 	asyncio.set_event_loop(loop)
-	app = web.Application(middlewares=[middleware], client_max_size=4096**2)
+	app = web.Application(middlewares=[error_middleware, middleware], client_max_size=4096**2)
 	app.discord = client
 	app.add_routes([web.static('/static', 'repldex/backend/static')])
 	app.add_routes(routes)
