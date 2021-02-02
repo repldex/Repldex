@@ -368,6 +368,6 @@ a[href*="//twitter.com"]::before {
   padding: 0px 10px 10px 10px;
 }
 
-.featruedEntry:hover {
+.featuredEntry:hover {
   cursor: pointer;
 }

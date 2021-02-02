@@ -520,6 +520,8 @@ async def middleware(request, handler):
 	request.is_admin = is_admin
 	request.discord_id = discord_id
 	resp = await handler(request)
+	if resp.status in [404, 500, 418]:
+		return web.HTTPFound('/entry/'+str(resp.status))
 	if isinstance(resp, Template):
 		args = resp.args
 		sid_cookie = request.cookies.get('sid')
