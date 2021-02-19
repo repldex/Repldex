@@ -537,7 +537,7 @@ async def middleware(request, handler):
 async def error_middleware(request, handler):
 	try:
 		response = await handler(request)
-		if response.status not in (404, 500, 418):
+		if response.status not in (404, 418):
 			return response
 	except web.HTTPException as ex:
 		return web.HTTPFound('/entry/' + str(ex.status))
