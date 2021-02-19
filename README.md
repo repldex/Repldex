@@ -2,7 +2,7 @@
 
 # Repldex
 \[Un\]official encyclopedia of user created entries for the Repl.it Community in general, but mainly the [Repl.it Discord Server](https://repl.it/discord). Contains the Discord bot source code and `aiohttp` web server (API and frontend).
-500 entries and counting!
+
 
 # Contributing
 - Fork the repository and setup your enviornment. (`git clone` or otherwise).
