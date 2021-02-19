@@ -91,6 +91,7 @@ jinja_env.globals['lazyimage'] = utils.html_image_with_thumbnail
 jinja_env.globals['name_space'] = JinjaNamespace
 jinja_env.globals['get_top_editors'] = utils.get_top_editors
 
+
 async def load_template(filename, **kwargs):
 	if not hasattr(load_template, 'template_dict'):
 		load_template.template_dict = {}
@@ -132,11 +133,11 @@ async def index(request):
 	entry_count = await database.count_entries()
 	featured = await database.get_featured_article()
 	if featured:
-		featured_id=featured['value']
+		featured_id = featured['value']
 	else:
-		featured_id=None
+		featured_id = None
 	return Template(
-			'index.html', entries=entries, entry_count=entry_count, featured_article=await database.get_entry(featured_id)
+		'index.html', entries=entries, entry_count=entry_count, featured_article=await database.get_entry(featured_id)
 	)
 
 
@@ -330,6 +331,7 @@ async def edit_entry_post(request):
 			)
 
 	return web.HTTPFound(f'/entry/{entry_id}')
+
 
 @routes.post('/revert')
 async def revert_edit(request):
@@ -531,10 +533,26 @@ async def middleware(request, handler):
 	return resp
 
 
+@web.middleware
+async def error_middleware(request, handler):
+	try:
+		response = await handler(request)
+	except web.HTTPException as ex:
+		response = ex
+	# http errors can also be returned without actually raising an exception
+	if response.status in (404, 418):
+		# check if an entry exists with the same name
+		matching_entry = await database.get_entry(name=str(response.status))
+		if matching_entry and matching_entry['title'] == str(response.status):
+			return web.HTTPFound(f'/entry/{response.status}')
+
+	return response
+
+
 def start_server(loop, background_task, client):
 	global app
 	asyncio.set_event_loop(loop)
-	app = web.Application(middlewares=[middleware], client_max_size=4096**2)
+	app = web.Application(middlewares=[error_middleware, middleware], client_max_size=4096**2)
 	app.discord = client
 	app.add_routes([web.static('/static', 'repldex/backend/static')])
 	app.add_routes(routes)
