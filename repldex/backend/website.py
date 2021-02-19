@@ -537,11 +537,16 @@ async def middleware(request, handler):
 async def error_middleware(request, handler):
 	try:
 		response = await handler(request)
-		if response.status not in (404, 418):
-			return response
 	except web.HTTPException as ex:
-		return web.HTTPFound('/entry/' + str(ex.status))
-	return 'test'
+		response = ex
+	# http errors can also be returned without actually raising an exception
+	if response.status in (404, 418):
+		# check if an entry exists with the same name
+		matching_entry = await database.get_entry(name=str(response.status))
+		if matching_entry and matching_entry['title'] == str(response.status):
+			return web.HTTPFound(f'/entry/{response.status}')
+
+	return response
 
 
 def start_server(loop, background_task, client):
