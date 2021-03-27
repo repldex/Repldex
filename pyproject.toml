@@ -13,8 +13,6 @@ jinja2 = "^2.11.2"
 motor = "^2.1.0"
 timeago = "^1.0.14"
 aiohttp = "^3.6.2"
-ibm-watson = "4.6.0"
-ibm_cloud_sdk_core = "1.5.1"
 aiodns = "^2.0.0"
 cchardet = "^2.1.7"
 pymongo = {version = ">=3.11<4", extras = ["srv"]}
