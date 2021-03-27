@@ -218,3 +218,23 @@ async def set_featured_article(entry_id):
 
 async def disable_featured():
 	await config_coll.delete_one({'name': "featured"})
+
+# admins will be a boolean field in the editor list, as will reporters and entry approval
+async def get_editors():
+	pass
+
+async def add_editors(editor, admin=False, entry_approval=False, reporter=False):
+	pass
+
+async def remove_editors(editor):
+	pass
+
+async def modify_editor(editor, admin=False, entry_approval=False, reporter=False):
+	pass
+
+# blacklist stuff
+async def add_blacklist(user):
+	pass
+
+async def remove_blacklist(user):
+	pass
