@@ -187,6 +187,7 @@ entry:active {
 }
 .previewImage img {
   max-height: 6em;
+  border-image: 5px;
 }
 .entryImage {
   max-width: 15em;
@@ -279,6 +280,7 @@ blockquote {
 .entryImage img {
   max-height: 10em;
   max-width: 20em;
+  border-radius: 5px;
 }
 .imageContainer {
   overflow: hidden;
