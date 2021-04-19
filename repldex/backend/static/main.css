@@ -373,3 +373,6 @@ a[href*="//twitter.com"]::before {
 .featuredEntry:hover {
   cursor: pointer;
 }
+article pre {
+  white-space: break-spaces
+}
