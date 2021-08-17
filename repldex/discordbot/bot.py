@@ -5,7 +5,7 @@ import os
 import io
 intents = discord.Intents.default()
 intents.members = True
-client = discord.Client(intents=intents,member_cache_flags=discord.MemberCacheFlags.none())
+client = discord.Client(intents=intents, member_cache_flags=discord.MemberCacheFlags.none())
 
 from repldex.config import BLACKLISTED_IDS, CONFIG
 from repldex import utils
@@ -18,11 +18,7 @@ class BetterBot:
 		All the bot prefixes.
 		Also allows pings
 		'''
-		self.prefixes = [
-			prefix,
-			f'<@{bot_id}>',
-			f'<@!{bot_id}>'
-		]
+		self.prefixes = [prefix, f'<@{bot_id}>', f'<@!{bot_id}>']
 		self.commands = []
 
 	async def try_converter(self, ctx, string, converter):
@@ -112,21 +108,22 @@ class BetterBot:
 					continue
 			else:
 				return_args = []
-			for attempt in range(10):
+			for _ in range(10):
 				try:
-                                    print(return_args)
-                                    return await func(ctx, *return_args)
+					print(return_args)
+					return await func(ctx, *return_args)
 				except TypeError:
 					if pad_none:
 						return_args.append(None)
 					else:
 						break
-				except BaseException as e:
+				except Exception:
 					print('error :(')
 					traceback.print_exc()
 					return
 
 	def command(self, name, aliases=[], allowed=False, bots_allowed=False):
+
 		def decorator(func):
 			for command_name in [name] + aliases:
 				self.commands.append(
@@ -140,6 +137,7 @@ class BetterBot:
 					}
 				)
 			return func
+
 		return decorator
 
 
@@ -199,9 +197,10 @@ async def log_delete(entry_data, time_):
 	channel = client.get_channel(770468181486600253)
 	title = entry_data.get('title')
 	await channel.send(f'{title} has been deleted (through Repldex [direct database deletions are not detected]) at {time_}')
-	await channel.send(file=discord.File(fp=io.BytesIO(entry_data['content'].encode('utf8')),filename=title+'.html'))
+	await channel.send(file=discord.File(fp=io.BytesIO(entry_data['content'].encode('utf8')), filename=title + '.html'))
 	if entry_data.get('image', False):
 		await channel.send(content=entry_data.get('image')['src'])
+
 
 async def log_view(title, time):
 	channel = client.get_channel(770468271195553823)
