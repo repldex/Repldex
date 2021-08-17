@@ -114,6 +114,7 @@ class BetterBot:
 				return_args = []
 			for attempt in range(10):
 				try:
+                                    print(return_args)
                                     return await func(ctx, *return_args)
 				except TypeError:
 					if pad_none:

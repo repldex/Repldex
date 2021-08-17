@@ -182,7 +182,11 @@ async def user_info(ctx, ctxMember): #utils.Context
 	message = ctx.message
 	#if message.author.id not in ADMIN_IDS:
     #    return
-	member = if ctxMember:ctxMember else message.author
+	member = None
+	if ctxMember:
+	    member = ctxMember
+	else:
+		member = message.author
 	embed = discord.Embed(title='user info', description=f'info on <@{member.id}>', color=0x00FF00)
 	editor = False
 	if member.id in EDITOR_IDS:
