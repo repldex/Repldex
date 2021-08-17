@@ -11,35 +11,35 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 	for (const anchor of document.querySelectorAll('article.content a')) {
-    let popup;
+    let popup
 		anchor.addEventListener('mouseover', async () => {
       if (!popup) {
-        const resp = await fetch(`/api/website-title?url=${anchor.href}`).then(r => r.json()).catch((err) => err);
-        if (!resp.title) resp.title = 'Failed To Fetch Entry';
-        popup = document.createElement('div');
-        const popupTitleEl = document.createElement('p');
-        popup.classList.add('popupContainer');
-        popupTitleEl.classList.add('popupTitle');
-        popup.appendChild(popupTitleEl);
-        popupTitleEl.innerText = resp.title;
+        const resp = await fetch(`/api/website-title?url=${anchor.href}`).then(r => r.json()).catch((err) => err)
+        if (!resp.title) resp.title = 'Failed to fetch entry'
+        popup = document.createElement('div')
+        const popupTitleEl = document.createElement('p')
+        popup.classList.add('popupContainer')
+        popupTitleEl.classList.add('popupTitle')
+        popup.appendChild(popupTitleEl)
+        popupTitleEl.innerText = resp.title
         if (resp.favicon) {
-          const popupFaviconEl = document.createElement('img');
-          popupFaviconEl.classList.add('popupFavicon');
-          popup.appendChild(popupFaviconEl);
-          popupFaviconEl.src = resp.favicon;
+          const popupFaviconEl = document.createElement('img')
+          popupFaviconEl.classList.add('popupFavicon')
+          popup.appendChild(popupFaviconEl)
+          popupFaviconEl.src = resp.favicon
         }
         if (resp.content) {
-          const popupContentEl = document.createElement('p');
-          popupContentEl.classList.add('popupContent');
-          popup.appendChild(popupContentEl);
-          popupContentEl.innerText = resp.content.substr(0, 200);
+          const popupContentEl = document.createElement('p')
+          popupContentEl.classList.add('popupContent')
+          popup.appendChild(popupContentEl)
+          popupContentEl.innerText = resp.content.substr(0, 200)
         }
-        anchor.parentElement.insertBefore(popup, anchor);
+        anchor.parentElement.insertBefore(popup, anchor)
       }
-      popup.classList.remove('hidden');
+      popup.classList.remove('hidden')
 		})
     anchor.addEventListener('mouseout', () => {
-      if (popup) popup.classList.add('hidden');
+      if (popup) popup.classList.add('hidden')
     })
 	}
 })
