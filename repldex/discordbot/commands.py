@@ -178,9 +178,11 @@ async def personal_entry(message, search_query: str):
 
 
 @betterbot.command(name='userinfo')
-async def user_info(message, member: utils.Member):
-	if message.author.id not in ADMIN_IDS:
-		return
+async def user_info(ctx, ctxMember): #utils.Context
+	message = ctx.message
+	#if message.author.id not in ADMIN_IDS:
+    #    return
+	member = if ctxMember:ctxMember else message.author
 	embed = discord.Embed(title='user info', description=f'info on <@{member.id}>', color=0x00FF00)
 	editor = False
 	if member.id in EDITOR_IDS:
@@ -199,7 +201,7 @@ async def user_info(message, member: utils.Member):
 	embed.add_field(name='editor', value=str(editor), inline=True)
 	embed.add_field(name='admin', value=str(admin), inline=True)
 	embed.add_field(name='selfentry', value=f'`{selfentry}`', inline=False)
-	await message.send(embed=embed)
+	await message.channel.send(embed=embed, delete_after=5)
 
 
 @betterbot.command(name='view_selfentry')

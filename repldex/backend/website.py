@@ -30,7 +30,7 @@ s = aiohttp.ClientSession()
 
 template_path = os.path.join(os.path.dirname(__file__), 'templates')
 
-print(template_path)
+print('template path',template_path)
 
 jinja_env = Environment(
 	loader=FileSystemLoader(searchpath=template_path),

@@ -5,7 +5,7 @@ import os
 import io
 intents = discord.Intents.default()
 intents.members = True
-client = discord.Client(intents=intents)
+client = discord.Client(intents=intents,member_cache_flags=discord.MemberCacheFlags.none())
 
 from repldex.config import BLACKLISTED_IDS, CONFIG
 from repldex import utils
@@ -114,7 +114,7 @@ class BetterBot:
 				return_args = []
 			for attempt in range(10):
 				try:
-					return await func(ctx, *return_args)
+                                    return await func(ctx, *return_args)
 				except TypeError:
 					if pad_none:
 						return_args.append(None)
@@ -217,12 +217,12 @@ prefix = CONFIG.get('prefix', '^')
 
 @client.event
 async def on_ready():
-	print('ready')
+	print('on_ready')
 	await client.change_presence(activity=discord.Game(name=prefix + 'help'))
 
 
 def discord_id_to_user(user_id):
-	user = client.get_user(user_id)
+	user = client.fetch_user(user_id)
 	return str(user) if user else None
 
 

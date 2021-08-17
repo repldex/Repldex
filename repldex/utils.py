@@ -47,11 +47,13 @@ def check_member_id(ctx, arg):
 
 
 def check_user_id(ctx, arg):
+	print('oof')
 	try:
-		arg = re.sub('[^0-9]', '', arg)
-		member = ctx.client.fetch_user(int(arg))
-		if member is not None:
-			return member
+            arg = re.sub('[^0-9]', '', arg)
+            raise Exception
+            member = ctx.client.fetch_user(int(arg))
+            if member is not None:
+                return member
 	except ValueError:
 		pass
 
