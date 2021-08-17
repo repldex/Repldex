@@ -1,14 +1,19 @@
 from datetime import datetime
 import motor.motor_asyncio
+from . import mockmotor
 import uuid
 import os
 
 connection_uri = os.getenv('dburi')
 
-client = motor.motor_asyncio.AsyncIOMotorClient(connection_uri)
+if connection_uri:
+	client = motor.motor_asyncio.AsyncIOMotorClient(connection_uri)
+else:
+	# assume we're using the mongodb if connection_uri isn't there
+	print('dburi isn\'t in env, using mock db in database folder instead. Don\'t use this in production!')
+	client = mockmotor.AsyncIOMotorClient('database')
 
 db = client['repldex']
-
 entries_coll = db['entries']
 sessions_coll = db['sessions']
 users_coll = db['users']
@@ -70,7 +75,14 @@ async def edit_entry(
 	}
 	if image is not None:
 		new_history_data['image'] = {'src': image}
-	await entries_coll.update_one({'_id': entry_id}, {'$set': new_data, '$push': {'history': new_history_data}}, upsert=True)
+	await entries_coll.update_one(
+		{'_id': entry_id},
+		{
+			'$set': new_data,
+			'$push': {'history': new_history_data}
+		},
+		upsert=True
+	)
 	return entry_id
 
 
@@ -107,17 +119,18 @@ async def get_editor_session(sid):
 	return found['discord']
 
 
-async def search_entries(query, limit=10, search_id=True, page=0, discord_id=None, unlisted=False):
+async def search_entries(query: str, limit: int = 10, search_id=True, page=0, discord_id=None, unlisted=False) -> list:
 	found = []
-	match = {'$match': {'unlisted': {'$ne': True}}}
 	if unlisted:
-		match = {'$match': {'unlisted': {'$eq': True}}}
+		match = {'unlisted': {'$eq': True}}
+	else:
+		match = {'unlisted': {'$ne': True}}
 	async for doc in entries_coll.aggregate([
 		{'$searchBeta': {'compound': {'should': [
 			{'search': {'query': query, 'path': 'nohtml_content'}},
 			{'search': {'query': query, 'path': 'title', 'score': {'boost': {'value': 20}}}},
 		]}}},
-		match,
+		{'$match': match},
 		{'$addFields': {'score': {'$meta': 'searchScore'}}},
 		{'$sort': {'score': -1}},
 		{'$skip': page * limit},
