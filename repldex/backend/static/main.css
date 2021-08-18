@@ -311,9 +311,13 @@ blockquote {
   color: #111;
   border-radius: .1em;
   box-shadow: 0 0 1px;
+  opacity: 0;
 }
 .popupContainer.hidden {
   display: none;
+}
+.popupContainer.visible {
+  animation: visible .5s;
 }
 .popupContainer * {
   margin: 0
@@ -333,6 +337,14 @@ blockquote {
    display: -webkit-box;
    -webkit-box-orient: vertical;
    -webkit-line-clamp: 5;
+}
+@keyframes visible {
+ from {
+   opacity: 0;
+ }
+ to {
+   opacity: 1;
+ }
 }
 
 /* keep these at the bottom because they ruin replit syntax highlighting */
