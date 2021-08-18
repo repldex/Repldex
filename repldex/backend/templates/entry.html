@@ -36,7 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				}
 				anchor.parentElement.insertBefore(popup, anchor)
 			}
+			popup.classList.remove('visible')
 			popup.classList.remove('hidden')
+			setTimeout(() => popup.classList.add('visible'), 250)
 		})
 		anchor.addEventListener('mouseout', () => {
 			if (popup) popup.classList.add('hidden')
