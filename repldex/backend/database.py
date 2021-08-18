@@ -1,4 +1,4 @@
-from repldex.backend.typings import DatabaseEntry, DatabaseHistoryItem
+from repldex.backend.typings import DatabaseEntry, DatabaseHistoryItem, PartialDatabaseEntry
 from typing import Any, Dict, List, Optional, Union
 from datetime import datetime
 import motor.motor_asyncio
@@ -21,7 +21,7 @@ from repldex.backend import images
 
 
 async def fix_entry(data: Any) -> Optional[DatabaseEntry]:
-	'Fix entries by adding missing fields.'
+	'''Fix entries by adding missing fields.'''
 	if data is None:
 		return
 	original_data = dict(data)
@@ -40,35 +40,35 @@ async def fix_entry(data: Any) -> Optional[DatabaseEntry]:
 
 from repldex.discordbot import bot as discordbot
 
+
 async def delete_entry(entry_data: DatabaseEntry, editor_id: int):
 	await discordbot.log_delete(entry_data, editor_id)
 	await entries_coll.delete_one({'_id': entry_data['_id']})
 
 
 async def edit_entry(
-	title,
-	content,
+	title: str,
+	content: str,
 	editor_id: int,
-	unlisted=False,
-	entry_id=None,
-	image=None
+	unlisted: bool = False,
+	entry_id: str = None,
+	image: str = None
 ):
 	t = datetime.now()
 	title = title.strip()
 	await discordbot.log_edit(editor_id, title)
 	content = utils.fix_html(content)
 	nohtml_content = utils.remove_html(content)
-	new_data = {
+	new_data: PartialDatabaseEntry = {
 		'title': title,
 		'content': content,
 		'last_edited': t,
-		'nohtml_content': nohtml_content
+		'nohtml_content': nohtml_content,
+		'unlisted': unlisted or False
 	}
-	if unlisted is not None:
-		new_data['unlisted'] = unlisted
 	if image is not None:
-		new_data['image'] = {'src': image}
-	
+		new_data['image'] = await images.get_data(image)
+
 	if not entry_id:
 		entry_id = str(uuid.uuid4())
 	new_history_data: DatabaseHistoryItem = {
@@ -90,7 +90,7 @@ async def edit_entry(
 	return entry_id
 
 
-async def get_entry(query: str=None, entry_id: int=None, search_id=True, owner=None) -> Union[DatabaseEntry, None]:
+async def get_entry(query: Optional[str] = None, entry_id: Optional[int] = None, search_id=True, owner=None) -> Union[DatabaseEntry, None]:
 	if not entry_id and query:
 		entries = await search_entries(query, limit=1, search_id=search_id)
 		if not entries:
@@ -222,15 +222,18 @@ async def get_random_entry():
 		found.append(entry)
 	return found[0]
 
+
 async def get_featured_article():
-	return await config_coll.find_one({'name': "featured"})
+	return await config_coll.find_one({'name': 'featured'})
+
 
 async def set_featured_article(entry_id):
-	featured = await config_coll.find_one({'name': "featured"})
+	featured = await config_coll.find_one({'name': 'featured'})
 	if featured:
-		await config_coll.replace_one({'name': "featured"},{'name': "featured","value":entry_id})
+		await config_coll.replace_one({'name': 'featured'}, {'name': 'featured', 'value': entry_id})
 	else:
-		await config_coll.insert_one({'name': "featured","value":entry_id})
+		await config_coll.insert_one({'name': 'featured', 'value': entry_id})
+
 
 async def disable_featured():
-	await config_coll.delete_one({'name': "featured"})
+	await config_coll.delete_one({'name': 'featured'})

@@ -157,6 +157,17 @@ pycodestyle = ">=2.7.0,<2.8.0"
 pyflakes = ">=2.3.0,<2.4.0"
 
 [[package]]
+name = "flake8-quotes"
+version = "3.2.0"
+description = "Flake8 lint for quotes."
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+flake8 = "*"
+
+[[package]]
 name = "flake8-tabs"
 version = "2.3.2"
 description = "Tab (or Spaces) indentation style checker for flake"
@@ -431,7 +442,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "95516bc02ce91d368f5c7956af841c2b127906f236ba1bbd3a016357e7109843"
+content-hash = "eaffddb7cc9aa85521ed982ac59aef3bc4640bc36191a39e4ddc680d6a0faf69"
 
 [metadata.files]
 aiodns = [
@@ -595,6 +606,9 @@ editorconfig = [
 flake8 = [
     {file = "flake8-3.9.2-py2.py3-none-any.whl", hash = "sha256:bf8fd333346d844f616e8d47905ef3a3384edae6b4e9beb0c5101e25e3110907"},
     {file = "flake8-3.9.2.tar.gz", hash = "sha256:07528381786f2a6237b061f6e96610a4167b226cb926e2aa2b6b1d78057c576b"},
+]
+flake8-quotes = [
+    {file = "flake8-quotes-3.2.0.tar.gz", hash = "sha256:3f1116e985ef437c130431ac92f9b3155f8f652fda7405ac22ffdfd7a9d1055e"},
 ]
 flake8-tabs = [
     {file = "flake8-tabs-2.3.2.tar.gz", hash = "sha256:e36c0f2038d709961510b9a80a685b28db87df6cfb1309b111d6be41e79a669b"},

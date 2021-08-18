@@ -1,6 +1,6 @@
 from repldex.backend.typings import DatabaseEntry
-import traceback
 from typing import Union
+import traceback
 import discord
 import base64
 import os
@@ -112,7 +112,7 @@ class BetterBot:
 					continue
 			else:
 				return_args = []
-			for attempt in range(10):
+			for _attempt in range(10):
 				try:
 					return await func(ctx, *return_args)
 				except TypeError:
@@ -120,7 +120,7 @@ class BetterBot:
 						return_args.append(None)
 					else:
 						break
-				except BaseException as e:
+				except BaseException:
 					print('error :(')
 					traceback.print_exc()
 					return
@@ -129,7 +129,6 @@ class BetterBot:
 		def decorator(func):
 			for command_name in [name] + aliases:
 				self.commands.append(
-					# TODO: make this a class instead of dict maybe idk
 					{
 						'name': command_name.lower(),
 						'function': func,
@@ -187,6 +186,7 @@ async def start_bot():
 	print('The Discord bot is starting up.')
 	await client.start(bot_token)
 
+
 async def log_edit(editor, title):
 	# TODO
 	channel = client.get_channel(770468229410979881)
@@ -215,6 +215,7 @@ async def log_delete(entry_data: DatabaseEntry, editor_id: int):
 		embed=embed,
 		file=discord.File(fp=io.BytesIO(entry_data['content'].encode('utf8')), filename=entry_data['title'] + '.html')
 	)
+
 
 async def log_view(title, time):
 	channel = client.get_channel(770468271195553823)

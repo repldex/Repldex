@@ -23,6 +23,7 @@ flake8 = "^3.8.4"
 flake8-tabs = "^2.2.2"
 yapf = "^0.30.0"
 python-dotenv = "^0.15.0"
+flake8-quotes = "^3.2.0"
 
 [tool.black]
 line-length=127
