@@ -317,7 +317,8 @@ blockquote {
   display: none;
 }
 .popupContainer.visible {
-  animation: visible .5s;
+ 	animation: visible .5s;
+	opacity: 1;
 }
 .popupContainer * {
   margin: 0
