@@ -40,7 +40,6 @@ async def fix_entry(data: Any) -> Optional[DatabaseEntry]:
 	return data
 
 
-
 async def delete_entry(entry_data: DatabaseEntry, editor_id: int):
 	await discordbot.log_delete(entry_data, editor_id)
 	await entries_coll.delete_one({'_id': entry_data['_id']})

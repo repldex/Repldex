@@ -171,7 +171,6 @@ class BetterBot:
 		return decorator
 
 
-
 class NothingFound(BaseException):
 	pass
 
