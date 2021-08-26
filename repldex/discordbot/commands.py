@@ -10,6 +10,7 @@ blacklist_wait = 5
 
 print('commands')
 
+
 @betterbot.command(name='help', allowed=True)
 async def help(message):
 	if message.message.author.id in BLACKLIST_IDS:
@@ -23,7 +24,7 @@ async def help(message):
 		'source': 'Links my source on github',
 		'ping': 'Gets current bot ping',
 		'selfentry': 'Gets your own entry if you have one.',
-		'featured':'Get featured article',
+		'featured': 'Get featured article',
 	}
 	if message.author.id in EDITOR_IDS:
 		commands['selfentry <name>'] = 'Links you to your entry (editor only)'
@@ -35,7 +36,9 @@ async def help(message):
 			commands['userinfo <user mention>'] = 'get info on the mentioned user (admin only)'
 			commands['unlist <article id>'] = 'Toggles unlisting of entry (admin only)'
 			commands['delete <article id>'] = 'Delete entry (admin only)'
-			commands['changefeatured <article id>'] = 'Change featured article on Repldex Main Page (admin only). Do `disabled` instead of entryid to disable featured entries'
+			commands[
+				'changefeatured <article id>'
+			] = 'Change featured article on Repldex Main Page (admin only). Do `disabled` instead of entryid to disable featured entries'
 			# commands['neweditor <user mention>'] = 'Make user editor (admin only)'
 	content = []
 	prefix = message.prefix
@@ -179,8 +182,8 @@ async def personal_entry(message, search_query: str):
 
 @betterbot.command(name='userinfo')
 async def user_info(message, member: utils.Member):
-	if message.author.id not in ADMIN_IDS:
-		return
+	if member is None:
+		member = message.author  # if no mentions default to author
 	embed = discord.Embed(title='user info', description=f'info on <@{member.id}>', color=0x00FF00)
 	editor = False
 	if member.id in EDITOR_IDS:
@@ -303,6 +306,7 @@ async def random_entry(message):
 	embed = await create_entry_embed(entry, author_id=message.author.id)
 	await message.send(embed=embed)
 
+
 @betterbot.command(name='changefeatured')
 async def change_featured(message, entry_id: str):
 	if message.author.id not in ADMIN_IDS:
@@ -318,6 +322,7 @@ async def change_featured(message, entry_id: str):
 		else:
 			await message.send("Entry ID not valid")
 
+
 @betterbot.command(name='featured')
 async def featured(message):
 	#get featured article and send
@@ -326,6 +331,7 @@ async def featured(message):
 		return await message.send("No Featured Article Set.")
 	embed = await create_entry_embed(await database.get_entry(featured['value']), author_id=message.author.id)
 	await message.send(embed=embed)
+
 
 @betterbot.command(name='delete')
 async def delete(message, entry_id: str):
@@ -340,6 +346,7 @@ async def delete(message, entry_id: str):
 			await message.send("You cannot delete non-unlisted entries")
 	else:
 		await message.send("Invalid entry id")
+
 
 @betterbot.command(name='ping', aliases=['pong', 'pung'])
 async def ping(message):

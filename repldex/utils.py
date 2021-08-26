@@ -34,6 +34,8 @@ def get_channel_members(channel_id):
 
 
 async def check_member_id(ctx, arg):
+	if not arg.isdigit():
+		return
 	if ctx.guild:
 		member = ctx.guild.get_member(int(arg)) or await ctx.guild.fetch_member(int(arg))
 	else:
