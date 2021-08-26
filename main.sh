@@ -13,5 +13,5 @@ if [ ! -d "/home/runner/.venv" ];then
     echo "Installing dependencies"
     /usr/local/bin/python3 -m poetry install --no-root --no-dev -v
 fi
-/usr/local/bin/python3 -m poetry run python main.py
+/usr/local/bin/python3 -m poetry run python -OO -X pycache_prefix='__pycache__' -X tracemalloc main.py
 #(set -o posix ; set)
