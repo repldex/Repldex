@@ -108,7 +108,7 @@ class BetterBot:
 					continue
 			else:
 				return_args = []
-			for attempt in range(10):
+			for _ in range(10):
 				try:
 					return await func(ctx, *return_args)
 				except TypeError:
@@ -116,7 +116,7 @@ class BetterBot:
 						return_args.append(None)
 					else:
 						break
-				except BaseException as e:
+				except Exception:
 					print('error :(')
 					traceback.print_exc()
 					return
@@ -220,8 +220,8 @@ async def on_ready():
 	await client.change_presence(activity=discord.Game(name=prefix + 'help'))
 
 
-def discord_id_to_user(user_id):
-	user = client.get_user(user_id)
+async def discord_id_to_user(user_id):
+	user = client.get_user(user_id) or await client.fetch_user(user_id)
 	return str(user) if user else None
 
 

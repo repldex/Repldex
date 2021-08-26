@@ -23,7 +23,7 @@
 			{% if i !=0 %}
 			<tr>
 				<th>{{i}}</th>
-				<th>{{discord_id_to_user(i)}}</th>
+				<th>{{ discord_id_to_user(i) }}</th>
 				<th>{{i in EDITOR_IDS }}</th>
 				<th>{{i in APPROVAL_IDS }}</th>
 				<th>{{i in REPORTER_IDS }}</th>
@@ -33,8 +33,6 @@
 			{% endif %}
 		{% endfor %}
 	</table>
-	<!-- <div class="center"><a href="https://discord.gg/wku7886">Join the Discord</a></div> -->
-  <!-- <iframe src="https://discordapp.com/widget?id=662039537479843850&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0"></iframe> -->
 	<script>
 		const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
 

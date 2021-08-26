@@ -33,72 +33,63 @@ def get_channel_members(channel_id):
 		return [discordbot.client.get_channel(channel_id).recipient]
 
 
-def check_member_id(ctx, arg):
-	try:
-		if ctx.guild:
-			member = ctx.guild.get_member(int(arg))
-		else:
-			member = ctx.client.get_user(int(arg))
+async def check_member_id(ctx, arg):
+	if ctx.guild:
+		member = ctx.guild.get_member(int(arg)) or await ctx.guild.fetch_member(int(arg))
+	else:
+		member = await ctx.client.fetch_user(int(arg))
 
-		if member is not None:
-			return member
-	except ValueError:
-		pass
+	if member is not None:
+		return member
 
 
-def check_user_id(ctx, arg):
-	try:
-		arg = re.sub('[^0-9]', '', arg)
-		member = ctx.client.fetch_user(int(arg))
-		if member is not None:
-			return member
-	except ValueError:
-		pass
+async def check_user_id(ctx, arg):
+	arg = re.sub('[^0-9]', '', arg)
+	member = ctx.client.get_user(int(arg)) or await ctx.client.fetch_user(int(arg))
+	if member is not None:
+		return member
 
 
-def check_mention(ctx, arg):
+async def check_mention(ctx, arg):
 	match = re.match(r'<@!?(\d+)>', arg)
 	if match:
 		user_id = match.group(1)
-		try:
-			member = ctx.guild.get_member(int(user_id))
-			if member is not None:
-				return member
-		except ValueError:
-			pass
+		member = ctx.guild.get_member(int(user_id)) or await ctx.guild.fetch_member(int(user_id))
+		if member is not None:
+			return member
 
 
-def check_name_with_discrim(ctx, arg):
+async def check_name_with_discrim(ctx, arg):
 	member = discord.utils.find(lambda m: str(m).lower() == arg.lower(), get_channel_members(ctx.channel.id))
 	return member
 
 
-def check_name_without_discrim(ctx, arg):
+async def check_name_without_discrim(ctx, arg):
 	member = discord.utils.find(lambda m: m.name.lower == arg.lower(), get_channel_members(ctx.channel.id))
 	return member
 
 
-def check_nickname(ctx, arg):
+async def check_nickname(ctx, arg):
 	member = discord.utils.find(lambda m: m.display_name.lower() == arg.lower(), get_channel_members(ctx.channel.id))
 	return member
 
 
-def check_name_starts_with(ctx, arg):
+async def check_name_starts_with(ctx, arg):
 	member = discord.utils.find(lambda m: m.name.lower().startswith(arg.lower()), get_channel_members(ctx.channel.id))
 	return member
 
 
-def check_nickname_starts_with(ctx, arg):
+async def check_nickname_starts_with(ctx, arg):
 	member = discord.utils.find(lambda m: m.display_name.lower().startswith(arg.lower()), get_channel_members(ctx.channel.id))
 	return member
 
 
-def check_name_contains(ctx, arg):
+async def check_name_contains(ctx, arg):
 	member = discord.utils.find(lambda m: arg.lower() in m.name.lower(), get_channel_members(ctx.channel.id))
 	return member
 
 
-def check_nickname_contains(ctx, arg):
+async def check_nickname_contains(ctx, arg):
 	member = discord.utils.find(lambda m: arg.lower() in m.display_name.lower(), get_channel_members(ctx.channel.id))
 	return member
 
@@ -123,7 +114,7 @@ class Member(commands.Converter):
 			check_nickname_contains,  # Nickname contains
 		]
 		for checker in CHECKERS:
-			member = checker(ctx, arg)
+			member = await checker(ctx, arg)
 			if member is not None:
 				return member
 
@@ -201,7 +192,7 @@ def html_to_markdown(inputted, prev=None):
 async def get_editor_list():
 	editor_list = []
 	for editor_id in EDITOR_IDS:
-		editor_username = discordbot.discord_id_to_user(editor_id)
+		editor_username = await discordbot.discord_id_to_user(editor_id)
 		personal_entry = await database.get_personal_entry(editor_id)
 		if personal_entry:
 			editor_html = f'<a href="/entry/{personal_entry}">{editor_username}</a>'
