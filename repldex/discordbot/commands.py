@@ -1,9 +1,9 @@
-import discord
-from .bot import betterbot, client
-import asyncio
 from repldex.config import DEV_IDS, EDITOR_IDS, BASE_URL, ADMIN_IDS, BLACKLIST_IDS
 from repldex.backend import database
+from .bot import betterbot, client
 from repldex import utils
+import discord
+import asyncio
 
 blacklist_wait = 5
 # ACTUAL COMMANDS START HERE

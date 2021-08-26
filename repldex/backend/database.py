@@ -16,8 +16,9 @@ sessions_coll = db['sessions']
 users_coll = db['users']
 config_coll = db['config']
 
-from repldex import utils
+from repldex.discordbot import bot as discordbot
 from repldex.backend import images
+from repldex import utils
 
 
 async def fix_entry(data: Any) -> Optional[DatabaseEntry]:
@@ -38,7 +39,6 @@ async def fix_entry(data: Any) -> Optional[DatabaseEntry]:
 		data['nohtml_content'] = utils.remove_html(data['content'])
 	return data
 
-from repldex.discordbot import bot as discordbot
 
 
 async def delete_entry(entry_data: DatabaseEntry, editor_id: int):

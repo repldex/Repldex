@@ -24,6 +24,7 @@ flake8-tabs = "^2.2.2"
 yapf = "^0.30.0"
 python-dotenv = "^0.15.0"
 flake8-quotes = "^3.2.0"
+pytest-asyncio = "^0.15.1"
 
 [tool.black]
 line-length=127

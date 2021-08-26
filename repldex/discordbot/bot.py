@@ -7,14 +7,44 @@ import os
 import io
 intents = discord.Intents.default()
 intents.members = True
+
+
+class Context:  # very unfinished but its fine probably
+	__slots__ = ('message', 'channel', 'guild', 'author', 'prefix', 'client')
+
+	async def send(self, *args, embed=None, **kwargs):
+		message = await self.message.channel.send(*args, **kwargs, embed=embed)
+		if embed:
+			try:
+				await message.add_reaction(utils.x_emoji)
+			except discord.errors.Forbidden:
+				pass
+			utils.commands_ran_by[message.id] = self.author.id
+			for _ in range(10):
+				await self.client.wait_for('message', check=lambda m: m.channel == message.channel)
+			await message.delete()
+		return message
+
+	def __init__(self, message, client, prefix=None):
+		self.message = message
+		self.channel = message.channel
+		self.guild = message.guild
+		self.author = message.author
+
+		self.prefix = prefix
+		self.client = client
+
+
+print('discordbot made client')
 client = discord.Client(intents=intents)
 
 from repldex.config import BLACKLISTED_IDS, CONFIG
 from repldex import utils
 
+print('discordbot')
+
 
 class BetterBot:
-
 	def __init__(self, prefix, bot_id):
 		'''
 		All the bot prefixes.
@@ -140,31 +170,6 @@ class BetterBot:
 			return func
 		return decorator
 
-
-class Context:  # very unfinished but its fine probably
-	__slots__ = ('message', 'channel', 'guild', 'author', 'prefix', 'client')
-
-	async def send(self, *args, embed=None, **kwargs):
-		message = await self.message.channel.send(*args, **kwargs, embed=embed)
-		if embed:
-			try:
-				await message.add_reaction(utils.x_emoji)
-			except discord.errors.Forbidden:
-				pass
-			utils.commands_ran_by[message.id] = self.author.id
-			for _ in range(10):
-				await self.client.wait_for('message', check=lambda m: m.channel == message.channel)
-			await message.delete()
-		return message
-
-	def __init__(self, message, client, prefix=None):
-		self.message = message
-		self.channel = message.channel
-		self.guild = message.guild
-		self.author = message.author
-
-		self.prefix = prefix
-		self.client = client
 
 
 class NothingFound(BaseException):
