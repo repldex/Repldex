@@ -17,7 +17,6 @@ with open(config_path + 'subs.json') as f:
 with open(config_path + 'config.json') as f:
 	CONFIG = json.loads(f.read())
 	CLIENT_ID = CONFIG.get('client_id', 662036612460445713)
-	DOT_ENV = CONFIG.get('dotenv', False)
 
 # this kind of makes sense as a file i guess
 with open(config_path + 'editors.txt') as f:
