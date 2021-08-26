@@ -5,7 +5,7 @@ import os
 
 connection_uri = os.getenv('dburi')
 
-client = motor.motor_asyncio.AsyncIOMotorClient(connection_uri)
+client = motor.motor_asyncio.AsyncIOMotorClient(connection_uri, connectTimeoutMS=1000)  # timeout is 1 sec
 
 db = client['repldex']
 
@@ -56,9 +56,9 @@ async def edit_entry(
 		new_data['unlisted'] = unlisted
 	if image is not None:
 		new_data['image'] = {'src': image}
-	
+
 	new_data['edited_by_minx'] = editor == 359017688867012628
-	
+
 	if not entry_id:
 		entry_id = str(uuid.uuid4())
 	new_history_data = {
@@ -206,15 +206,18 @@ async def get_random_entry():
 		found.append(entry)
 	return found[0]
 
+
 async def get_featured_article():
 	return await config_coll.find_one({'name': "featured"})
+
 
 async def set_featured_article(entry_id):
 	featured = await config_coll.find_one({'name': "featured"})
 	if featured:
-		await config_coll.replace_one({'name': "featured"},{'name': "featured","value":entry_id})
+		await config_coll.replace_one({'name': "featured"}, {'name': "featured", "value": entry_id})
 	else:
-		await config_coll.insert_one({'name': "featured","value":entry_id})
+		await config_coll.insert_one({'name': "featured", "value": entry_id})
+
 
 async def disable_featured():
 	await config_coll.delete_one({'name': "featured"})
