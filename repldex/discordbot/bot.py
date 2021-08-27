@@ -1,3 +1,5 @@
+from repldex.backend.typings import DatabaseEntry
+from typing import Union
 import traceback
 import discord
 import base64
@@ -5,14 +7,44 @@ import os
 import io
 intents = discord.Intents.default()
 intents.members = True
+
+
+class Context:  # very unfinished but its fine probably
+	__slots__ = ('message', 'channel', 'guild', 'author', 'prefix', 'client')
+
+	async def send(self, *args, embed=None, **kwargs):
+		message = await self.message.channel.send(*args, **kwargs, embed=embed)
+		if embed:
+			try:
+				await message.add_reaction(utils.x_emoji)
+			except discord.errors.Forbidden:
+				pass
+			utils.commands_ran_by[message.id] = self.author.id
+			for _ in range(10):
+				await self.client.wait_for('message', check=lambda m: m.channel == message.channel)
+			await message.delete()
+		return message
+
+	def __init__(self, message, client, prefix=None):
+		self.message = message
+		self.channel = message.channel
+		self.guild = message.guild
+		self.author = message.author
+
+		self.prefix = prefix
+		self.client = client
+
+
+print('discordbot made client')
 client = discord.Client(intents=intents)
 
 from repldex.config import BLACKLISTED_IDS, CONFIG
 from repldex import utils
 
+print('discordbot')
+
 
 class BetterBot:
-
 	def __init__(self, prefix, bot_id):
 		'''
 		All the bot prefixes.
@@ -74,13 +106,11 @@ class BetterBot:
 
 	async def process_commands(self, message):
 		parsing_remaining = message.content.replace('  ', ' ')
-		found_prefix = False
-		prefix = None
+		prefix: Union[str, None] = None
 		for prefix in self.prefixes:
 			if parsing_remaining.startswith(prefix):
-				found_prefix = True
 				break
-		if not found_prefix:
+		if not prefix:
 			# no prefix found in the message
 			return
 		parsing_remaining = parsing_remaining[len(prefix):].strip()
@@ -112,7 +142,7 @@ class BetterBot:
 					continue
 			else:
 				return_args = []
-			for attempt in range(10):
+			for _attempt in range(10):
 				try:
 					return await func(ctx, *return_args)
 				except TypeError:
@@ -120,7 +150,7 @@ class BetterBot:
 						return_args.append(None)
 					else:
 						break
-				except BaseException as e:
+				except BaseException:
 					print('error :(')
 					traceback.print_exc()
 					return
@@ -129,7 +159,6 @@ class BetterBot:
 		def decorator(func):
 			for command_name in [name] + aliases:
 				self.commands.append(
-					# TODO: make this a class instead of dict maybe idk
 					{
 						'name': command_name.lower(),
 						'function': func,
@@ -140,32 +169,6 @@ class BetterBot:
 				)
 			return func
 		return decorator
-
-
-class Context:  # very unfinished but its fine probably
-	__slots__ = ('message', 'channel', 'guild', 'author', 'prefix', 'client')
-
-	async def send(self, *args, embed=None, **kwargs):
-		message = await self.message.channel.send(*args, **kwargs, embed=embed)
-		if embed:
-			try:
-				await message.add_reaction(utils.x_emoji)
-			except discord.errors.Forbidden:
-				pass
-			utils.commands_ran_by[message.id] = self.author.id
-			for _ in range(10):
-				await self.client.wait_for('message', check=lambda m: m.channel == message.channel)
-			await message.delete()
-		return message
-
-	def __init__(self, message, client, prefix=None):
-		self.message = message
-		self.channel = message.channel
-		self.guild = message.guild
-		self.author = message.author
-
-		self.prefix = prefix
-		self.client = client
 
 
 class NothingFound(BaseException):
@@ -184,23 +187,39 @@ else:
 async def start_bot():
 	if not bot_token:
 		raise Exception('No token found')
-	print('starting bot pog')
+	print('The Discord bot is starting up.')
 	await client.start(bot_token)
 
 
-async def log_edit(editor, title, time):
+async def log_edit(editor, title):
+	# TODO
 	channel = client.get_channel(770468229410979881)
-	await channel.send(f'{time}: <@{editor}>({editor}) edited {title}')
+	if not channel:
+		return
+
+	await channel.send(f'<@{editor}>({editor}) edited {title}')
 
 
-async def log_delete(entry_data, time_):
-	# make sure content is string
+async def log_delete(entry_data: DatabaseEntry, editor_id: int):
 	channel = client.get_channel(770468181486600253)
-	title = entry_data.get('title')
-	await channel.send(f'{title} has been deleted (through Repldex [direct database deletions are not detected]) at {time_}')
-	await channel.send(file=discord.File(fp=io.BytesIO(entry_data['content'].encode('utf8')),filename=title+'.html'))
-	if entry_data.get('image', False):
-		await channel.send(content=entry_data.get('image')['src'])
+	if not channel:
+		return
+
+	title = entry_data['title']
+	embed_description = f'The entry "{title}" has been deleted by <@{editor_id}>.'
+
+	if 'image' in entry_data and entry_data['image']:
+		embed_description += f'Image url: <{entry_data["image"]["src"]}>'
+	embed = discord.Embed(
+		title='Entry deleted',
+		description=embed_description,
+	)
+
+	await channel.send(
+		embed=embed,
+		file=discord.File(fp=io.BytesIO(entry_data['content'].encode('utf8')), filename=entry_data['title'] + '.html')
+	)
+
 
 async def log_view(title, time):
 	channel = client.get_channel(770468271195553823)
