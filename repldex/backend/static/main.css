@@ -295,36 +295,34 @@ blockquote {
 }
 
 .popupContainer {
-  position: relative;
-	height: 0;
-	width: 0;
+	height: unset;
+	width: max-content;
+  max-width: 15em;
 	margin-top: -.2em;
 	pointer-events: none;
   margin: 0;
-  padding: 0;
   word-spacing: 0;
   position: absolute;
-}
-.popupInner {
+  transform: translateY(-100%);
   background-color: rgba(255,255,255,0.9);
   padding: .5em;
-	margin-left: -.2em;
-/* 	margin-top: -2.6em; */
-  bottom: 0;
-  width: max-content;
-  height: unset;
+  margin-left: -.2em;
   display: inline-block;
-  position: absolute;
   color: #111;
-/*   margin: 0 auto; */
   border-radius: .1em;
   box-shadow: 0 0 1px;
-	max-width: 15em;
+  opacity: 0;
 }
-.popupInner * {
+.popupContainer.hidden {
+  display: none;
+}
+.popupContainer.visible {
+ 	animation: visible .5s;
+	opacity: 1;
+}
+.popupContainer * {
   margin: 0
 }
-
 .popupFavicon {
 	height: 1em;
 	width: 1em;
@@ -335,12 +333,19 @@ blockquote {
 	display: inline-block;
 	font-weight: bold
 }
-
 .popupContent {
   overflow: hidden;
    display: -webkit-box;
    -webkit-box-orient: vertical;
    -webkit-line-clamp: 5;
+}
+@keyframes visible {
+ from {
+   opacity: 0;
+ }
+ to {
+   opacity: 1;
+ }
 }
 
 /* keep these at the bottom because they ruin replit syntax highlighting */
