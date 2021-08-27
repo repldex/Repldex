@@ -66,8 +66,7 @@ async def edit_entry(
 		'unlisted': unlisted or False
 	}
 	if image is not None:
-	  new_data['edited_by_minx'] = editor == 359017688867012628
-    new_data['image'] = await images.get_data(image)
+		new_data['image'] = await images.get_data(image)
 
 	if not entry_id:
 		entry_id = str(uuid.uuid4())
