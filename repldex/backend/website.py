@@ -283,11 +283,8 @@ async def edit_entry_post(request):
 	entry_id = await database.edit_entry(
 		title=title,
 		content=content,
-		entry_id=entry_id,
-		editor=request.discord_id,
-		editor_real=request.orig_id,
+		editor_id=request.discord_id,
 		unlisted=unlisted,
-		impersonate=impersonate,
 		image=image_url,
 	)
 
