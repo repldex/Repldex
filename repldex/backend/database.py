@@ -89,7 +89,7 @@ async def edit_entry(
 	return entry_id
 
 
-async def get_entry(query: Optional[str] = None, entry_id: Optional[int] = None, search_id=True, owner=None) -> Union[DatabaseEntry, None]:
+async def get_entry(query: Optional[str] = None, entry_id: Optional[str] = None, search_id=True, owner=None) -> Union[DatabaseEntry, None]:
 	if not entry_id and query:
 		entries = await search_entries(query, limit=1, search_id=search_id)
 		if not entries:
@@ -142,7 +142,7 @@ async def search_entries(query: str, limit=10, search_id=True, page=0, discord_i
 		if fixed_entry:
 			found.append(fixed_entry)
 	if len(found) == 0 and search_id:
-		found_entry = await get_entry(query)
+		found_entry = await get_entry(entry_id=query)
 		if found_entry:
 			found = [found_entry]
 	if len(found) == 0:

@@ -283,11 +283,8 @@ async def edit_entry_post(request):
 	entry_id = await database.edit_entry(
 		title=title,
 		content=content,
-		entry_id=entry_id,
-		editor=request.discord_id,
-		editor_real=request.orig_id,
+		editor_id=request.discord_id,
 		unlisted=unlisted,
-		impersonate=impersonate,
 		image=image_url,
 	)
 
@@ -418,7 +415,7 @@ async def loggedin_redirect(request):
 @routes.get('/entry/{entry}')
 async def view_entry(request):
 	entry_name = request.match_info.get('entry')
-	entry_data = await database.get_entry(name=entry_name)
+	entry_data = await database.get_entry(query=entry_name)
 
 	if entry_data:
 		entry_id = entry_data['_id']
