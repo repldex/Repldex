@@ -1,9 +1,9 @@
-import discord
-from .bot import betterbot, client
-import asyncio
 from repldex.config import DEV_IDS, EDITOR_IDS, BASE_URL, ADMIN_IDS, BLACKLIST_IDS
 from repldex.backend import database
+from .bot import betterbot, client
 from repldex import utils
+import discord
+import asyncio
 
 blacklist_wait = 5
 # ACTUAL COMMANDS START HERE
@@ -214,7 +214,7 @@ async def view_self_entry(message, member: utils.User):
 	try:
 		embed = await create_entry_embed(entry, author_id=message.author.id)
 	except:  # TODO: figure out what error happens here
-		return await message.send('no selfentry exists for dis person')
+		return await message.send('no selfentry exists for this person')
 	return await message.send(embed=embed)
 
 
@@ -240,15 +240,6 @@ async def suggest(message, request: str):
 		return await message.send('Invalid command usage.')
 
 
-"""@betterbot.command(name='role')
-async def role(message, role):
-    if message.author.id not in ADMIN_IDS: return
-    user = message.author
-    role = message.guild.get_role(int(role))
-    await role.delete()
-    #await user.remove_roles(role)"""
-
-
 @betterbot.command(name='unlist')
 async def unlist(message, entry_id: str):
 	if message.author.id not in ADMIN_IDS:
@@ -257,7 +248,13 @@ async def unlist(message, entry_id: str):
 	if entry_data is None:
 		return
 	unlist = not entry_data['unlisted']
-	await database.edit_entry(title=entry_data['title'], entry_id=entry_id, content=entry_data['content'], unlisted=unlist)
+	await database.edit_entry(
+		title=entry_data['title'],
+		entry_id=entry_id,
+		content=entry_data['content'],
+		unlisted=unlist,
+		editor_id=message.author.id
+	)
 	embed = discord.Embed(title='toggle unlist', description='toggling entry being listed/unlisted', color=0x00FF00)
 	embed.add_field(name='entry name', value=entry_data['title'], inline=True)
 	embed.add_field(name='entry id', value=entry_id, inline=True)
@@ -311,41 +308,43 @@ async def random_entry(message):
 async def change_featured(message, entry_id: str):
 	if message.author.id not in ADMIN_IDS:
 		return
-	if entry_id.lower() == "disabled":
+	if entry_id.lower() == 'disabled':
 		await database.disable_featured()
-		return await message.send("Featured articles disabled")
+		return await message.send('Featured articles disabled')
 	else:
 		entry = await database.get_entry(entry_id=entry_id, name=None, search_id=True, owner=None)
 		if entry:
 			await database.set_featured_article(entry_id)
-			await message.send("Featured Article changed")
+			await message.send('Featured Article changed')
 		else:
-			await message.send("Entry ID not valid")
+			await message.send('Entry ID is not valid')
+
 
 
 @betterbot.command(name='featured')
 async def featured(message):
-	#get featured article and send
+	# get the featured article and send it
 	featured = await database.get_featured_article()
 	if not featured or not featured['value']:
-		return await message.send("No Featured Article Set.")
+		return await message.send('No Featured Article Set.')
 	embed = await create_entry_embed(await database.get_entry(featured['value']), author_id=message.author.id)
 	await message.send(embed=embed)
 
 
 @betterbot.command(name='delete')
-async def delete(message, entry_id: str):
+async def delete(message, entry_id: int):
 	if message.author.id not in ADMIN_IDS:
 		return
 	entry = await database.get_entry(entry_id=entry_id)
 	if entry:
 		if entry['unlisted']:
 			await database.delete_entry(entry, entry_id)
-			await message.send("Entry deleted")
+			await message.send('Entry deleted')
 		else:
-			await message.send("You cannot delete non-unlisted entries")
+			await message.send('You cannot delete non-unlisted entries')
 	else:
-		await message.send("Invalid entry id")
+		await message.send('Invalid entry id')
+
 
 
 @betterbot.command(name='ping', aliases=['pong', 'pung'])

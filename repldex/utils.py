@@ -1,3 +1,4 @@
+from typing import Awaitable, Callable, List, Optional
 from bs4 import BeautifulSoup as bs
 from discord.ext import commands
 from datetime import datetime
@@ -44,13 +45,11 @@ async def check_member_id(ctx, arg):
 	if member is not None:
 		return member
 
-
 async def check_user_id(ctx, arg):
 	arg = re.sub('[^0-9]', '', arg)
 	member = ctx.client.get_user(int(arg)) or await ctx.client.fetch_user(int(arg))
 	if member is not None:
 		return member
-
 
 async def check_mention(ctx, arg):
 	match = re.match(r'<@!?(\d+)>', arg)
@@ -132,7 +131,7 @@ class User(commands.Converter):
 		# these comments suck but i dont really want to remove them
 		# also this should be a module-level constant
 		# but this module is too big already
-		CHECKERS = [
+		CHECKERS: List[Callable[[discordbot.Context, str], Awaitable[Optional[discord.Member]]]] = [
 			check_user_id,  # Check user id
 		]
 		for checker in CHECKERS:
@@ -291,7 +290,7 @@ def url_title(title):
 
 
 def datetime_to_int(t):
-	return (t - datetime.datetime(1970, 1, 1)).total_seconds()
+	return (t - datetime(1970, 1, 1)).total_seconds()
 
 
 def get_top_editors(history, limit=5):

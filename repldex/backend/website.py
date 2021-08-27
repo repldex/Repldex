@@ -1,3 +1,4 @@
+from typing import Any
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from repldex.discordbot.bot import discord_id_to_user
 from bs4 import BeautifulSoup
@@ -335,7 +336,8 @@ async def edit_entry_post(request):
 
 @routes.post('/revert')
 async def revert_edit(request):
-	'Reverts an entry to a former state'
+	'''Reverts an entry to a former state'''
+
 	if not request.is_editor:
 		return web.HTTPFound('/')
 	entry_id = request.query.get('id')
@@ -348,11 +350,11 @@ async def revert_edit(request):
 
 	entry_data = await database.get_entry(entry_id)
 
+	if not entry_data:
+		return
+
 	entry_history = entry_data['history']
 
-	old_title = entry_data['title']
-	old_image = entry_data.get('image', {}).get('src')
-	old_content = entry_data['content']
 	unlisted = entry_data.get('unlisted', False)
 
 	history_data = entry_history[reverting_to_history_number]
@@ -362,7 +364,12 @@ async def revert_edit(request):
 	new_content = history_data['content']
 
 	entry_id = await database.edit_entry(
-		title=new_title, content=new_content, entry_id=entry_id, editor=request.discord_id, unlisted=unlisted, image=new_image
+		title=new_title,
+		content=new_content,
+		entry_id=entry_id,
+		editor=request.discord_id,
+		unlisted=unlisted,
+		image=new_image
 	)
 	return web.HTTPFound(f'/entry/{entry_id}')
 

@@ -1,3 +1,5 @@
+from repldex.backend.typings import DatabaseEntry, DatabaseHistoryItem, PartialDatabaseEntry
+from typing import Any, Dict, List, Optional, Union
 from datetime import datetime
 import motor.motor_asyncio
 import uuid
@@ -15,11 +17,12 @@ users_coll = db['users']
 config_coll = db['config']
 
 from repldex.discordbot import bot as discordbot
-from repldex import utils
 from repldex.backend import images
+from repldex import utils
 
 
-async def fix_entry(data):
+async def fix_entry(data: Any) -> Optional[DatabaseEntry]:
+	'''Fix entries by adding missing fields.'''
 	if data is None:
 		return
 	original_data = dict(data)
@@ -37,46 +40,59 @@ async def fix_entry(data):
 	return data
 
 
-async def delete_entry(entry_data, entry_id, editor=None):
-	time_ = datetime.now()
-	await discordbot.log_delete(entry_data, time_)
-	await entries_coll.delete_one({'_id': entry_id})
+async def delete_entry(entry_data: DatabaseEntry, editor_id: int):
+	await discordbot.log_delete(entry_data, editor_id)
+	await entries_coll.delete_one({'_id': entry_data['_id']})
 
 
 async def edit_entry(
-	title, content, editor=None, unlisted=False, entry_id=None, image=None, editor_real=None, impersonate=None
+	title: str,
+	content: str,
+	editor_id: int,
+	unlisted: bool = False,
+	entry_id: str = None,
+	image: str = None
 ):
 	t = datetime.now()
 	title = title.strip()
-	await discordbot.log_edit(editor, title, t)
+	await discordbot.log_edit(editor_id, title)
 	content = utils.fix_html(content)
 	nohtml_content = utils.remove_html(content)
-	new_data = {'title': title, 'content': content, 'last_edited': t, 'nohtml_content': nohtml_content}
-	if unlisted is not None:
-		new_data['unlisted'] = unlisted
+	new_data: PartialDatabaseEntry = {
+		'title': title,
+		'content': content,
+		'last_edited': t,
+		'nohtml_content': nohtml_content,
+		'unlisted': unlisted or False
+	}
 	if image is not None:
-		new_data['image'] = {'src': image}
-
-	new_data['edited_by_minx'] = editor == 359017688867012628
+	  new_data['edited_by_minx'] = editor == 359017688867012628
+    new_data['image'] = await images.get_data(image)
 
 	if not entry_id:
 		entry_id = str(uuid.uuid4())
-	new_history_data = {
-		'author': editor,
+	new_history_data: DatabaseHistoryItem = {
+		'author': editor_id,
 		'content': content,
 		'title': title,
 		'time': t,
 		'unlisted': unlisted,
+		'image': None
 	}
 	if image is not None:
-		new_history_data['image'] = {'src': image}
+		new_history_data['image'] = {
+			'src': image,
+			'thumbnail_b64': None,
+			'thumbnail_content_type': None
+		}
+
 	await entries_coll.update_one({'_id': entry_id}, {'$set': new_data, '$push': {'history': new_history_data}}, upsert=True)
 	return entry_id
 
 
-async def get_entry(entry_id=None, name=None, search_id=True, owner=None):
-	if not entry_id and name:
-		entries = await search_entries(name, limit=1, search_id=search_id)
+async def get_entry(query: Optional[str] = None, entry_id: Optional[int] = None, search_id=True, owner=None) -> Union[DatabaseEntry, None]:
+	if not entry_id and query:
+		entries = await search_entries(query, limit=1, search_id=search_id)
 		if not entries:
 			return
 		return entries[0]
@@ -107,8 +123,8 @@ async def get_editor_session(sid):
 	return found['discord']
 
 
-async def search_entries(query, limit=10, search_id=True, page=0, discord_id=None, unlisted=False):
-	found = []
+async def search_entries(query: str, limit=10, search_id=True, page=0, discord_id=None, unlisted=False) -> List[DatabaseEntry]:
+	found: List[DatabaseEntry] = []
 	match = {'$match': {'unlisted': {'$ne': True}}}
 	if unlisted:
 		match = {'$match': {'unlisted': {'$eq': True}}}
@@ -123,13 +139,13 @@ async def search_entries(query, limit=10, search_id=True, page=0, discord_id=Non
 		{'$skip': page * limit},
 		{'$limit': limit},
 	]):
-		found.append(await fix_entry(doc))
+		fixed_entry = await fix_entry(doc)
+		if fixed_entry:
+			found.append(fixed_entry)
 	if len(found) == 0 and search_id:
-		found = await get_entry(query)
-		if found:
-			return [found]
-		if found is None:
-			found = []
+		found_entry = await get_entry(query)
+		if found_entry:
+			found = [found_entry]
 	if len(found) == 0:
 		searched = await entries_coll.find_one({'title': query, 'unlisted': {'$ne': True}})
 		if searched:
@@ -208,16 +224,16 @@ async def get_random_entry():
 
 
 async def get_featured_article():
-	return await config_coll.find_one({'name': "featured"})
+	return await config_coll.find_one({'name': 'featured'})
 
 
 async def set_featured_article(entry_id):
-	featured = await config_coll.find_one({'name': "featured"})
+	featured = await config_coll.find_one({'name': 'featured'})
 	if featured:
-		await config_coll.replace_one({'name': "featured"}, {'name': "featured", "value": entry_id})
+		await config_coll.replace_one({'name': 'featured'}, {'name': 'featured', 'value': entry_id})
 	else:
-		await config_coll.insert_one({'name': "featured", "value": entry_id})
+		await config_coll.insert_one({'name': 'featured', 'value': entry_id})
 
 
 async def disable_featured():
-	await config_coll.delete_one({'name': "featured"})
+	await config_coll.delete_one({'name': 'featured'})

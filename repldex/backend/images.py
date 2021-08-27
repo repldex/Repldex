@@ -1,3 +1,4 @@
+from repldex.backend.typings import DatabaseImage
 import aiohttp
 
 s = aiohttp.ClientSession()
@@ -15,7 +16,7 @@ async def upload(img):
 	return image_url
 
 
-async def get_data(url):
+async def get_data(url) -> DatabaseImage:
 	data_url = url.replace('/image/', '/json/')
 	async with s.get(data_url) as r:
 		data = await r.json()
