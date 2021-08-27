@@ -10,52 +10,38 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-	const articleEl = document.getElementsByTagName('article')[0]
-	for (const anchor of document.getElementsByTagName('a')) {
-		anchor.addEventListener('mouseover', () => {
-			if (!articleEl.contains(anchor)) return
-			const popupContainerEl = document.createElement('div')
-			const popupInnerEl = document.createElement('div')
-
-			const popupFaviconEl = document.createElement('img')
-			const popupTitleEl = document.createElement('p')
-			const popupContentEl = document.createElement('p')
-
-			popupContainerEl.classList.add('popupContainer')
-			popupInnerEl.classList.add('popupInner')
-			popupTitleEl.classList.add('popupTitle')
-			popupContentEl.classList.add('popupContent')
-			popupFaviconEl.classList.add('popupFavicon')
-			anchor.popupContainerEl = popupContainerEl
-
-			popupInnerEl.appendChild(popupTitleEl)
-			popupContainerEl.appendChild(popupInnerEl)
-
-			anchor.parentElement.insertBefore(popupContainerEl, anchor)
-
-			popupContainerEl.style.display = 'none'
-
-
-			fetch(`/api/website-title?url=${anchor.href}`).then(async(r) => {
-				resp = await r.json()
+	for (const anchor of document.querySelectorAll('article.content a')) {
+		let popup
+		anchor.addEventListener('mouseover', async () => {
+			if (!popup) {
+				const resp = await fetch(`/api/website-title?url=${anchor.href}`).then(r => r.json()).catch((err) => err)
+				if (!resp.title) resp.title = 'Failed to fetch entry'
+				popup = document.createElement('div')
+				const popupTitleEl = document.createElement('p')
+				popup.classList.add('popupContainer')
+				popupTitleEl.classList.add('popupTitle')
+				popup.appendChild(popupTitleEl)
 				popupTitleEl.innerText = resp.title
-
 				if (resp.favicon) {
-					popupInnerEl.appendChild(popupFaviconEl)
+					const popupFaviconEl = document.createElement('img')
+					popupFaviconEl.classList.add('popupFavicon')
+					popup.appendChild(popupFaviconEl)
 					popupFaviconEl.src = resp.favicon
 				}
 				if (resp.content) {
-					popupInnerEl.appendChild(popupContentEl)
+					const popupContentEl = document.createElement('p')
+					popupContentEl.classList.add('popupContent')
+					popup.appendChild(popupContentEl)
 					popupContentEl.innerText = resp.content.substr(0, 200)
 				}
-				popupContainerEl.style.display = 'inline-block'
-
-
-			})
+				anchor.parentElement.insertBefore(popup, anchor)
+			}
+			popup.classList.remove('visible')
+			popup.classList.remove('hidden')
+			setTimeout(() => popup.classList.add('visible'), 250)
 		})
 		anchor.addEventListener('mouseout', () => {
-			anchor.popupContainerEl.remove()
-			anchor.popupContainerEl = undefined
+			if (popup) popup.classList.add('hidden')
 		})
 	}
 })
