@@ -1,6 +1,5 @@
+from typing import Any
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-from ibm_watson import LanguageTranslatorV3
 from repldex.discordbot.bot import discord_id_to_user
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -13,7 +12,7 @@ import os
 
 from repldex.backend import database
 from repldex.backend import images
-from repldex import utils
+from repldex import discordbot, utils
 from repldex.config import (
 	EDITOR_IDS,
 	ADMIN_IDS,
@@ -26,102 +25,9 @@ from repldex.config import (
 	CONFIG,
 )
 
-config = CONFIG
-
 routes = web.RouteTableDef()
 
 s = aiohttp.ClientSession()
-
-ibm_token = os.getenv('IBM_TOKEN')
-ibm_url = os.getenv('IBM_URL')
-
-if ibm_token:
-	authenticator = IAMAuthenticator(ibm_token)
-	language_translator = LanguageTranslatorV3(version='2018-05-01', authenticator=authenticator)
-
-	language_translator.set_service_url(ibm_url)
-else:
-	print('no ibm translation token found, this is fine')
-	language_translator = None
-
-language_codes = {
-	'af',
-	'ar',
-	'az',
-	'ba',
-	'be',
-	'bg',
-	'bn',
-	'ca',
-	'cs',
-	'cv',
-	'cy',
-	'da',
-	'de',
-	'el',
-	'en',
-	'eo',
-	'es',
-	'et',
-	'eu',
-	'fa',
-	'fi',
-	'fr',
-	'ga',
-	'gu',
-	'he',
-	'hi',
-	'hr',
-	'ht',
-	'hu',
-	'hy',
-	'is',
-	'it',
-	'ja',
-	'ka',
-	'kk',
-	'km',
-	'ko',
-	'ku',
-	'ky',
-	'lo',
-	'lt',
-	'lv',
-	'ml',
-	'mn',
-	'mr',
-	'ms',
-	'mt',
-	'my',
-	'nb',
-	'ne',
-	'nl',
-	'nn',
-	'pa',
-	'pa-PK',
-	'pl',
-	'ps',
-	'pt',
-	'ro',
-	'ru',
-	'si',
-	'sk',
-	'sl',
-	'so',
-	'sq',
-	'sr',
-	'sv',
-	'ta',
-	'te',
-	'th',
-	'tl',
-	'tr',
-	'uk',
-	'ur',
-	'vi',
-	'zh',
-	'zh-TW',
-}  # noqa: E501
 
 template_path = os.path.join(os.path.dirname(__file__), 'templates')
 
@@ -186,8 +92,6 @@ jinja_env.globals['lazyimage'] = utils.html_image_with_thumbnail
 jinja_env.globals['name_space'] = JinjaNamespace
 jinja_env.globals['get_top_editors'] = utils.get_top_editors
 
-translated_cache = {}
-
 
 async def load_template(filename, **kwargs):
 	if not hasattr(load_template, 'template_dict'):
@@ -228,7 +132,14 @@ async def index(request):
 		discord_id = None
 	entries = await database.get_entries(sort='last_edited', discord_id=discord_id)
 	entry_count = await database.count_entries()
-	return Template('index.html', entries=entries, entry_count=entry_count)
+	featured = await database.get_featured_article()
+	if featured:
+		featured_id = featured['value']
+	else:
+		featured_id = None
+	return Template(
+		'index.html', entries=entries, entry_count=entry_count, featured_article=await database.get_entry(featured_id)
+	)
 
 
 @routes.get('/news')
@@ -297,7 +208,13 @@ async def edit_entry(request):
 				is_editor = True
 
 	return Template(
-		'edit.html', title=title, content=content, unlisted=unlisted, is_editor=is_editor, new_disabled=new_disabled
+		'edit.html',
+		title=title,
+		content=content,
+		unlisted=unlisted,
+		is_editor=is_editor,
+		new_disabled=new_disabled,
+		entry_id=entry_id
 	)
 
 
@@ -342,11 +259,6 @@ async def edit_entry_post(request):
 	image = post_data.get('image')
 	content = post_data['content']
 
-	try:
-		del translated_cache[entry_id]
-	except KeyError:
-		pass
-
 	if request.is_admin:
 		unlisted = post_data.get('unlisted', 'off') == 'on'
 	elif entry_data:
@@ -371,11 +283,8 @@ async def edit_entry_post(request):
 	entry_id = await database.edit_entry(
 		title=title,
 		content=content,
-		entry_id=entry_id,
-		editor=request.discord_id,
-		editor_real=request.orig_id,
+		editor_id=request.discord_id,
 		unlisted=unlisted,
-		impersonate=impersonate,
 		image=image_url,
 	)
 
@@ -422,21 +331,10 @@ async def edit_entry_post(request):
 	return web.HTTPFound(f'/entry/{entry_id}')
 
 
-@routes.post('/delete')
-async def delete_entry(request):
-	# 404 until I actually implement this - rediar/prussia/jetstream
-	if not request.is_admin:
-		return web.HTTPFound('/')
-	entry_id = request.query.get('id')
-	entry_data = await database.get_entry(entry_id)
-	if not entry_data:
-		return "hey man there's no entry data, get your grip together!"
-	await database.delete_entry(entry_data.get('title'), entry_data.get('content'), entry_id, editor=request.discord_id)
-
-
 @routes.post('/revert')
 async def revert_edit(request):
-	'Reverts an entry to a former state'
+	'''Reverts an entry to a former state'''
+
 	if not request.is_editor:
 		return web.HTTPFound('/')
 	entry_id = request.query.get('id')
@@ -449,11 +347,11 @@ async def revert_edit(request):
 
 	entry_data = await database.get_entry(entry_id)
 
+	if not entry_data:
+		return
+
 	entry_history = entry_data['history']
 
-	old_title = entry_data['title']
-	old_image = entry_data.get('image', {}).get('src')
-	old_content = entry_data['content']
 	unlisted = entry_data.get('unlisted', False)
 
 	history_data = entry_history[reverting_to_history_number]
@@ -463,7 +361,12 @@ async def revert_edit(request):
 	new_content = history_data['content']
 
 	entry_id = await database.edit_entry(
-		title=new_title, content=new_content, entry_id=entry_id, editor=request.discord_id, unlisted=unlisted, image=new_image
+		title=new_title,
+		content=new_content,
+		entry_id=entry_id,
+		editor=request.discord_id,
+		unlisted=unlisted,
+		image=new_image
 	)
 	return web.HTTPFound(f'/entry/{entry_id}')
 
@@ -512,7 +415,7 @@ async def loggedin_redirect(request):
 @routes.get('/entry/{entry}')
 async def view_entry(request):
 	entry_name = request.match_info.get('entry')
-	entry_data = await database.get_entry(name=entry_name)
+	entry_data = await database.get_entry(query=entry_name)
 
 	if entry_data:
 		entry_id = entry_data['_id']
@@ -543,38 +446,9 @@ async def view_entry(request):
 			is_editor = True
 
 	article_text = None
-	translated = False
 
 	# ok you figure this out imma do templating
 	article_text = None
-	translated = False
-	lang = None
-	if_lang = bool(request.query.get('lang', False))
-
-	if lang in language_codes:
-		try:
-			cached = entry_id in translated_cache
-			if cached:
-				if lang in translated_cache[entry_id]:
-					article_text = translated_cache[entry_id][lang]
-					translated = True
-					print('used lang translation cache')
-				else:
-					cached = False
-			if not cached and language_translator:
-				translation = language_translator.translate(text=nohtml_content, model_id='en-{}'.format(lang)).get_result()
-				article_text = translation['translations'][0]['translation']
-				try:
-					translated_cache[entry_id][lang] = article_text
-				except KeyError:
-					translated_cache[entry_id] = {lang: article_text}
-				translated = True
-
-		except Exception as e:
-			print(e)
-	elif if_lang:
-		translated = True
-		article_text = 'Translations are currently disabled'
 
 	return Template(
 		'entry.html',
@@ -588,7 +462,6 @@ async def view_entry(request):
 		is_editor=is_editor,
 		back_location='/',
 		article_text=article_text,
-		translated=translated,
 	)
 
 
@@ -606,17 +479,17 @@ async def api_website_title(request):
 	if url.startswith('//'):
 		url = 'https:' + url
 	elif url[0] == '/':
-		url = config.BASE_URL + url
+		url = BASE_URL + url
 
-	if url.startswith(config.BASE_URL):
+	if url.startswith(BASE_URL):
 		# fmt: off
-		url = url[len(config.BASE_URL):]
+		url = url[len(BASE_URL):]
 		if url.startswith('/entry/'):
 			entry_name = url[len('/entry/'):]
 			# fmt: on
 			entry = await database.get_entry(name=entry_name)
 			return web.json_response({
-				'title': entry['title'], 'favicon': config.BASE_URL + '/static/icon.png', 'content': entry['nohtml_content']
+				'title': entry['title'], 'favicon': BASE_URL + '/static/icon.png', 'content': entry['nohtml_content']
 			})
 		else:
 			return web.json_response({})
@@ -664,12 +537,28 @@ async def middleware(request, handler):
 	return resp
 
 
+@web.middleware
+async def error_middleware(request, handler):
+	try:
+		response = await handler(request)
+	except web.HTTPException as ex:
+		response = ex
+	# http errors can also be returned without actually raising an exception
+	if response.status in (404, 418):
+		# check if an entry exists with the same name
+		matching_entry = await database.get_entry(name=str(response.status))
+		if matching_entry and matching_entry['title'] == str(response.status):
+			return web.HTTPFound(f'/entry/{response.status}')
+
+	return response
+
+
 def start_server(loop, background_task, client):
 	global app
 	asyncio.set_event_loop(loop)
-	app = web.Application(middlewares=[middleware], client_max_size=4096**2)
+	app = web.Application(middlewares=[error_middleware, middleware], client_max_size=4096**2)
 	app.discord = client
 	app.add_routes([web.static('/static', 'repldex/backend/static')])
 	app.add_routes(routes)
 	asyncio.ensure_future(background_task, loop=loop)
-	web.run_app(app, host=config.get('host', '0.0.0.0'), port=config.get('port', 8081))
+	web.run_app(app, host=CONFIG.get('host', '0.0.0.0'), port=CONFIG.get('port', 8081))

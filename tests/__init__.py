@@ -66,7 +66,7 @@ class FakeHTTPClient():
 	async def get_gateway(self, *, encoding='json', v=6, zlib=True):
 		return 'https://discord.com'
 
-	async def send_message(self, channel_id, content, *, tts=False, embed=None, nonce=None, allowed_mentions=None):
+	async def send_message(self, channel_id, content, *, tts=False, embed=None, nonce=None, allowed_mentions=None, message_reference=None):
 		self.messages_queue.append({
 			'channel_id': channel_id,
 			'content': content,
@@ -228,7 +228,6 @@ class Tester:
 			'tts': False,
 			'content': content,
 			'nonce': None,
-			'message_reference': None,
 			'author': author._user._to_minimal_user_json(),
 			'member': author_data
 		}

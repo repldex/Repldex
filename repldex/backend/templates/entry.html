@@ -8,87 +8,44 @@
 		<meta property="og:image" content="{{ image }}">
 	{% endif %}
 
-	<script>
+<script>
 document.addEventListener('DOMContentLoaded', () => {
-const articleEl = document.getElementsByTagName('article')[0]
-for (const anchor of document.getElementsByTagName('a')) {
-anchor.addEventListener('mouseover', () => {
-	if (!articleEl.contains(anchor)) return
-	const popupContainerEl = document.createElement('div')
-	const popupInnerEl = document.createElement('div')
-
-	const popupFaviconEl = document.createElement('img')
-	const popupTitleEl = document.createElement('p')
-	const popupContentEl = document.createElement('p')
-
-	popupContainerEl.classList.add('popupContainer')
-	popupInnerEl.classList.add('popupInner')
-	popupTitleEl.classList.add('popupTitle')
-	popupContentEl.classList.add('popupContent')
-	popupFaviconEl.classList.add('popupFavicon')
-	anchor.popupContainerEl = popupContainerEl
-
-	popupInnerEl.appendChild(popupTitleEl)
-	popupContainerEl.appendChild(popupInnerEl)
-
-	anchor.parentElement.insertBefore(popupContainerEl, anchor)
-
-	popupContainerEl.style.display = 'none'
-
-
-	fetch(`/api/website-title?url=${anchor.href}`).then(async(r) => {
-		resp = await r.json()
-		popupTitleEl.innerText = resp.title
-
-		if (resp.favicon) {
-			popupInnerEl.appendChild(popupFaviconEl)
-			popupFaviconEl.src = resp.favicon
-		}
-		if (resp.content) {
-			popupInnerEl.appendChild(popupContentEl)
-			popupContentEl.innerText = resp.content.substr(0, 200)
-		}
-		popupContainerEl.style.display = 'inline-block'
-
-
-	})
-
-
+	for (const anchor of document.querySelectorAll('article.content a')) {
+		let popup
+		anchor.addEventListener('mouseover', async () => {
+			if (!popup) {
+				const resp = await fetch(`/api/website-title?url=${anchor.href}`).then(r => r.json()).catch((err) => err)
+				if (!resp.title) resp.title = 'Failed to fetch entry'
+				popup = document.createElement('div')
+				const popupTitleEl = document.createElement('p')
+				popup.classList.add('popupContainer')
+				popupTitleEl.classList.add('popupTitle')
+				popup.appendChild(popupTitleEl)
+				popupTitleEl.innerText = resp.title
+				if (resp.favicon) {
+					const popupFaviconEl = document.createElement('img')
+					popupFaviconEl.classList.add('popupFavicon')
+					popup.appendChild(popupFaviconEl)
+					popupFaviconEl.src = resp.favicon
+				}
+				if (resp.content) {
+					const popupContentEl = document.createElement('p')
+					popupContentEl.classList.add('popupContent')
+					popup.appendChild(popupContentEl)
+					popupContentEl.innerText = resp.content.substr(0, 200)
+				}
+				anchor.parentElement.insertBefore(popup, anchor)
+			}
+			popup.classList.remove('visible')
+			popup.classList.remove('hidden')
+			setTimeout(() => popup.classList.add('visible'), 250)
+		})
+		anchor.addEventListener('mouseout', () => {
+			if (popup) popup.classList.add('hidden')
+		})
+	}
 })
-anchor.addEventListener('mouseout', () => {
-	anchor.popupContainerEl.remove()
-	anchor.popupContainerEl = undefined
-})
-}
-	
-})
-
-var idkwhyineedthis=true; //dont even ask
-
-function tts(){
-	var msg=new SpeechSynthesisUtterance();
-	var voices=speechSynthesis.getVoices();
-	var voice=document.getElementById("voice").value;
-	msg.voice=voices[voice];
-	msg.text="{{nohtml_content}}";
-	if(idkwhyineedthis){idkwhyineedthis=false;return;}
-	speechSynthesis.speak(msg);
-}
-
-function translate(){
-  var language=document.getElementById("language").value;
-  let language = {1:"english", 3:"pirate", 5: "shakespeare"};
-  <option value="1" selected>English</option>
-		<option value="2">Lolcat</option>
-		<option value="3">Pirate</option>
-    <option value="4">Morse Code</option>
-    <option value="5">Shakespeare</option>
-    <option value="6">Gungan</option>
-    <option value="7">Leet</option>
-    <option value="8">Pig Latin</option>
-}
-
-	</script>
+</script>
 {% endblock %}
 
 {% block body %}
@@ -97,15 +54,15 @@ function translate(){
   <p class="contributors">
     Top entry contributors:
     {% for editor_id in top_editors %}
-			{% if editor_id|personalentry %}
-				<a class="contributor" href="/entry/{{ editor_id|personalentry }}">
-					{{ editor_id|discordid }}
-				</a>
-			{% else %}
-				<span class="contributor">
-					{{ editor_id|discordid }}
-				</span>
-			{% endif %}
+		{%- if editor_id|personalentry -%}
+			<a class="contributor" href="/entry/{{ editor_id|personalentry }}">
+				{{- editor_id|discordid or '<unknown>' -}}
+			</a>
+		{%- else -%}
+			<span class="contributor">
+				{{- editor_id|discordid or '<unknown>' -}}
+			</span>
+		{%- endif -%}
     {% endfor %}
   </p>
 
@@ -121,51 +78,8 @@ function translate(){
 	{% endif %}
 	{% if unlisted %}<i>This entry is unlisted and will not show up in search.</i>{% endif %}
 	<article class="content">
-    {% if translated %}
-      {{ article_text }}
-    {% else %}
 		  {{ content|before_show_text|safe }}
-    {% endif %}
 	</article>
-
-	<button onclick="tts()">Read it to me!</button>
-	<select id="voice">
-		<option value="5" selected>UK English Male</option>
-		<option value="4">UK English Female</option>
-		<option value="3">US English</option>
-		<!--<option value="2">Deutsch</option>
-		<option value="6">Español</option>
-		<option value="7">Español de Estados Unidos</option>
-		<option value="8">Français</option>
-		<option value="9">हिन्दी</option>
-		<option value="10">Bahasa Indonesia</option>
-		<option value="11">Italiano</option>
-		<option value="12">日本語</option>
-		<option value="13">한국의</option>
-		<option value="14">Nederlands</option>
-		<option value="15">Polski</option>
-		<option value="16">Português do Brasil</option>
-		<option value="17">Русский</option>
-		<option value="18">普通话（中国大陆）</option>
-		<option value="19">粤語（香港）</option>
-		<option value="20">國語（臺灣）</option>-->
-	</select>
-
-<script>tts();</script>
-
-  <!--
-  <button onclick="translate()">Translate</button>
-	<select id="language">
-		<option value="1" selected>English</option>
-		<option value="2">Lolcat</option>
-		<option value="3">Pirate</option>
-    <option value="4">Morse Code</option>
-    <option value="5">Shakespeare</option>
-    <option value="6">Gungan</option>
-    <option value="7">Leet</option>
-    <option value="8">Pig Latin</option>
-  </select>
-  -->
 
 	<br><br>
 	{% if is_editor %}
