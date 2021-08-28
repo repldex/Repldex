@@ -1,9 +1,8 @@
-from repldex.config import DOT_ENV
+import os
 print('starting')
 
-if DOT_ENV:
+if os.path.exists(os.path.join(os.getcwd(), '.env')): # load .env if exists
 	from dotenv import load_dotenv
-
 	load_dotenv()
 
 # Don't move this up, env must be loaded first

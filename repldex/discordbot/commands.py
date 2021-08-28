@@ -36,7 +36,9 @@ async def help(message):
 			commands['userinfo <user mention>'] = 'get info on the mentioned user (admin only)'
 			commands['unlist <article id>'] = 'Toggles unlisting of entry (admin only)'
 			commands['delete <article id>'] = 'Delete entry (admin only)'
-			commands['changefeatured <article id>'] = 'Change featured article on Repldex Main Page (admin only). Do `disabled` instead of entryid to disable featured entries'
+			commands[
+				'changefeatured <article id>'
+			] = 'Change featured article on Repldex Main Page (admin only). Do `disabled` instead of entryid to disable featured entries'
 			# commands['neweditor <user mention>'] = 'Make user editor (admin only)'
 	content = []
 	prefix = message.prefix
@@ -126,6 +128,8 @@ async def link_source(message):
 async def show_entry(message, search_query: str):
 	if message.message.author.id in BLACKLIST_IDS:
 		await asyncio.sleep(blacklist_wait)
+	if len(search_query) == 0:
+		await message.send("Empty search term", delete_after=2)
 	found = await database.search_entries(search_query, limit=1)
 	if found:
 		embed = await create_entry_embed(found[0], author_id=message.author.id)
@@ -180,8 +184,8 @@ async def personal_entry(message, search_query: str):
 
 @betterbot.command(name='userinfo')
 async def user_info(message, member: utils.Member):
-	if message.author.id not in ADMIN_IDS:
-		return
+	if member is None:
+		member = message.author  # if no mentions default to author
 	embed = discord.Embed(title='user info', description=f'info on <@{member.id}>', color=0x00FF00)
 	editor = False
 	if member.id in EDITOR_IDS:
@@ -318,6 +322,7 @@ async def change_featured(message, entry_id: str):
 			await message.send('Entry ID is not valid')
 
 
+
 @betterbot.command(name='featured')
 async def featured(message):
 	# get the featured article and send it
@@ -341,6 +346,7 @@ async def delete(message, entry_id: int):
 			await message.send('You cannot delete non-unlisted entries')
 	else:
 		await message.send('Invalid entry id')
+
 
 
 @betterbot.command(name='ping', aliases=['pong', 'pung'])

@@ -229,7 +229,7 @@ async def redirect_view_entry(request):
 @routes.get('/history/{entry}')
 async def view_entry_history(request):
 	entry = request.match_info.get('entry')
-	entry_data = await database.get_entry(name=entry)
+	entry_data = await database.get_entry(query=entry)
 	if entry_data:
 		entry_id = entry_data['_id']
 		title = entry_data.get('title', '[no title]')
@@ -487,7 +487,7 @@ async def api_website_title(request):
 		if url.startswith('/entry/'):
 			entry_name = url[len('/entry/'):]
 			# fmt: on
-			entry = await database.get_entry(name=entry_name)
+			entry = await database.get_entry(query=entry_name)
 			return web.json_response({
 				'title': entry['title'], 'favicon': BASE_URL + '/static/icon.png', 'content': entry['nohtml_content']
 			})
@@ -546,7 +546,7 @@ async def error_middleware(request, handler):
 	# http errors can also be returned without actually raising an exception
 	if response.status in (404, 418):
 		# check if an entry exists with the same name
-		matching_entry = await database.get_entry(name=str(response.status))
+		matching_entry = await database.get_entry(query=str(response.status))
 		if matching_entry and matching_entry['title'] == str(response.status):
 			return web.HTTPFound(f'/entry/{response.status}')
 

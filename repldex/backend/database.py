@@ -7,7 +7,7 @@ import os
 
 connection_uri = os.getenv('dburi')
 
-client = motor.motor_asyncio.AsyncIOMotorClient(connection_uri)
+client = motor.motor_asyncio.AsyncIOMotorClient(connection_uri, connectTimeoutMS=1000)  # timeout is 1 sec
 
 db = client['repldex']
 

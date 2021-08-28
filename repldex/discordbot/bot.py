@@ -5,8 +5,10 @@ import discord
 import base64
 import os
 import io
+from repldex.utils import lookup_user
 intents = discord.Intents.default()
 intents.members = True
+client = discord.Client(intents=intents, member_cache_flags=discord.MemberCacheFlags.none())
 
 
 class Context:  # very unfinished but its fine probably
@@ -36,7 +38,6 @@ class Context:  # very unfinished but its fine probably
 
 
 print('discordbot made client')
-client = discord.Client(intents=intents)
 
 from repldex.config import BLACKLISTED_IDS, CONFIG
 from repldex import utils
@@ -50,11 +51,7 @@ class BetterBot:
 		All the bot prefixes.
 		Also allows pings
 		'''
-		self.prefixes = [
-			prefix,
-			f'<@{bot_id}>',
-			f'<@!{bot_id}>'
-		]
+		self.prefixes = [prefix, f'<@{bot_id}>', f'<@!{bot_id}>']
 		self.commands = []
 
 	async def try_converter(self, ctx, string, converter):
@@ -142,7 +139,7 @@ class BetterBot:
 					continue
 			else:
 				return_args = []
-			for _attempt in range(10):
+			for _ in range(10):
 				try:
 					return await func(ctx, *return_args)
 				except TypeError:
@@ -150,12 +147,13 @@ class BetterBot:
 						return_args.append(None)
 					else:
 						break
-				except BaseException:
+				except Exception:
 					print('error :(')
 					traceback.print_exc()
 					return
 
 	def command(self, name, aliases=[], allowed=False, bots_allowed=False):
+
 		def decorator(func):
 			for command_name in [name] + aliases:
 				self.commands.append(
@@ -168,10 +166,11 @@ class BetterBot:
 					}
 				)
 			return func
+
 		return decorator
 
 
-class NothingFound(BaseException):
+class NothingFound(Exception):
 	pass
 
 
@@ -240,8 +239,8 @@ async def on_ready():
 	await client.change_presence(activity=discord.Game(name=prefix + 'help'))
 
 
-def discord_id_to_user(user_id):
-	user = client.get_user(user_id)
+async def discord_id_to_user(user_id):
+	user = await lookup_user(user_id)
 	return str(user) if user else None
 
 

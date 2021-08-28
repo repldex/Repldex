@@ -18,6 +18,8 @@ x_emoji = '❌'
 auto_delete_channels = {437067256049172491}  # oof-topic
 
 commands_ran_by = {}
+GUILD_MEMBER_CACHE = {}
+USER_CACHE = {}
 
 
 def embed_from_dict(dict, **kwargs):
@@ -27,6 +29,24 @@ def embed_from_dict(dict, **kwargs):
 	return embed
 
 
+async def lookup_member(ctx, uid: int):
+	if uid in GUILD_MEMBER_CACHE:
+		return GUILD_MEMBER_CACHE[uid]
+	else:
+		member = await ctx.guild.fetch_user(uid)
+		GUILD_MEMBER_CACHE[member.id] = member
+		return member
+
+
+async def lookup_user(uid: int):
+	if uid in USER_CACHE:
+		return USER_CACHE[uid]
+	else:
+		user = await discordbot.client.fetch_user(uid)
+		USER_CACHE[user.id] = user
+		return user
+
+
 def get_channel_members(channel_id):
 	try:
 		return discordbot.client.get_channel(channel_id).members
@@ -34,72 +54,64 @@ def get_channel_members(channel_id):
 		return [discordbot.client.get_channel(channel_id).recipient]
 
 
-def check_member_id(ctx, arg):
-	try:
-		if ctx.guild:
-			member = ctx.guild.get_member(int(arg))
-		else:
-			member = ctx.client.get_user(int(arg))
+async def check_member_id(ctx, arg):
+	if not arg.isdigit():
+		return
+	if ctx.guild:
+		member = await lookup_member(int(arg))
+	else:
+		member = await lookup_user(int(arg))
 
-		if member is not None:
-			return member
-	except ValueError:
-		pass
-
-
-async def check_user_id(ctx: discordbot.Context, arg: str) -> Optional[discord.Member]:
-	try:
-		arg = re.sub('[^0-9]', '', arg)
-		member = await ctx.client.fetch_user(int(arg))
-		if member is not None:
-			return member
-	except ValueError:
-		pass
+	if member is not None:
+		return member
 
 
-def check_mention(ctx, arg):
+async def check_user_id(ctx, arg):
+	arg = re.sub('[^0-9]', '', arg)
+	user = await lookup_user(int(arg))
+	return user
+
+
+async def check_mention(ctx, arg):
 	match = re.match(r'<@!?(\d+)>', arg)
 	if match:
 		user_id = match.group(1)
-		try:
-			member = ctx.guild.get_member(int(user_id))
-			if member is not None:
-				return member
-		except ValueError:
-			pass
+		member = lookup_member(ctx,int(user_id))
+		if member is not None:
+			return member
 
 
-def check_name_with_discrim(ctx, arg):
+async def check_name_with_discrim(ctx, arg):
 	member = discord.utils.find(lambda m: str(m).lower() == arg.lower(), get_channel_members(ctx.channel.id))
 	return member
 
 
-def check_name_without_discrim(ctx, arg):
+async def check_name_without_discrim(ctx, arg):
 	member = discord.utils.find(lambda m: m.name.lower == arg.lower(), get_channel_members(ctx.channel.id))
 	return member
 
 
-def check_nickname(ctx, arg):
+async def check_nickname(ctx, arg):
 	member = discord.utils.find(lambda m: m.display_name.lower() == arg.lower(), get_channel_members(ctx.channel.id))
 	return member
 
 
-def check_name_starts_with(ctx, arg):
+async def check_name_starts_with(ctx, arg):
 	member = discord.utils.find(lambda m: m.name.lower().startswith(arg.lower()), get_channel_members(ctx.channel.id))
 	return member
 
 
-def check_nickname_starts_with(ctx, arg):
+async def check_nickname_starts_with(ctx, arg):
 	member = discord.utils.find(lambda m: m.display_name.lower().startswith(arg.lower()), get_channel_members(ctx.channel.id))
 	return member
 
 
-def check_name_contains(ctx, arg):
+async def check_name_contains(ctx, arg):
 	member = discord.utils.find(lambda m: arg.lower() in m.name.lower(), get_channel_members(ctx.channel.id))
 	return member
 
 
-def check_nickname_contains(ctx, arg):
+async def check_nickname_contains(ctx, arg):
 	member = discord.utils.find(lambda m: arg.lower() in m.display_name.lower(), get_channel_members(ctx.channel.id))
 	return member
 
@@ -124,7 +136,7 @@ class Member(commands.Converter):
 			check_nickname_contains,  # Nickname contains
 		]
 		for checker in CHECKERS:
-			member = checker(ctx, arg)
+			member = await checker(ctx, arg)
 			if member is not None:
 				return member
 
@@ -202,7 +214,7 @@ def html_to_markdown(inputted, prev=None):
 async def get_editor_list():
 	editor_list = []
 	for editor_id in EDITOR_IDS:
-		editor_username = discordbot.discord_id_to_user(editor_id)
+		editor_username = await discordbot.discord_id_to_user(editor_id)
 		personal_entry = await database.get_personal_entry(editor_id)
 		if personal_entry:
 			editor_html = f'<a href="/entry/{personal_entry}">{editor_username}</a>'
