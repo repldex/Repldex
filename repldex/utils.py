@@ -18,6 +18,8 @@ x_emoji = '❌'
 auto_delete_channels = {437067256049172491}  # oof-topic
 
 commands_ran_by = {}
+GUILD_MEMBER_CACHE = {}
+USER_CACHE = {}
 
 
 def embed_from_dict(dict, **kwargs):
@@ -26,6 +28,22 @@ def embed_from_dict(dict, **kwargs):
 		embed.add_field(name=i, value=dict[i], inline=False)
 	return embed
 
+
+async def lookup_member(uid: int):
+	if uid in GUILD_MEMBER_CACHE:
+		return GUILD_MEMBER_CACHE[uid]
+	else:
+		member = await discordbot.client.fetch_user(uid)
+		GUILD_MEMBER_CACHE[member.id] = member
+		return member
+
+async def lookup_user(uid: int):
+	if uid in USER_CACHE:
+		return USER_CACHE[uid]
+	else:
+		user = await discordbot.client.fetch_user(uid)
+		USER_CACHE[user.id] = user
+		return user
 
 def get_channel_members(channel_id):
 	try:
@@ -38,18 +56,19 @@ async def check_member_id(ctx, arg):
 	if not arg.isdigit():
 		return
 	if ctx.guild:
-		member = ctx.guild.get_member(int(arg)) or await ctx.guild.fetch_member(int(arg))
+		member = await lookup_member(int(arg))
 	else:
-		member = await ctx.client.fetch_user(int(arg))
+		member = await lookup_user(int(arg))
 
 	if member is not None:
 		return member
+
 
 async def check_user_id(ctx, arg):
 	arg = re.sub('[^0-9]', '', arg)
-	member = ctx.client.get_user(int(arg)) or await ctx.client.fetch_user(int(arg))
-	if member is not None:
-		return member
+	user = await lookup_user(int(arg))
+	return user
+
 
 async def check_mention(ctx, arg):
 	match = re.match(r'<@!?(\d+)>', arg)

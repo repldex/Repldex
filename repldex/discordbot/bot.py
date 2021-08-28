@@ -5,6 +5,7 @@ import discord
 import base64
 import os
 import io
+from repldex.utils import lookup_user
 intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(intents=intents, member_cache_flags=discord.MemberCacheFlags.none())
@@ -239,7 +240,7 @@ async def on_ready():
 
 
 async def discord_id_to_user(user_id):
-	user = client.get_user(user_id) or await client.fetch_user(user_id)
+	user = await lookup_user(user_id)
 	return str(user) if user else None
 
 

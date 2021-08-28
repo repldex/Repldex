@@ -128,6 +128,8 @@ async def link_source(message):
 async def show_entry(message, search_query: str):
 	if message.message.author.id in BLACKLIST_IDS:
 		await asyncio.sleep(blacklist_wait)
+	if len(search_query) == 0:
+		await message.send("Empty search term", delete_after=2)
 	found = await database.search_entries(search_query, limit=1)
 	if found:
 		embed = await create_entry_embed(found[0], author_id=message.author.id)
