@@ -5,13 +5,15 @@ export POETRY_VIRTUALENVS_PATH='/home/runner/.venv'
 export POETRY_VIRTUALENVS_CREATE='true'
 /usr/local/bin/python3 -m pip show poetry
 if [ $? -ne 0 ]; then
-  echo "Installing poetry"
-  /usr/local/bin/python3 -m pip install poetry --user
+    echo "Installing poetry"
+    /usr/local/bin/python3 -m pip install poetry --user
 fi
 clear
 if [ ! -d "/home/runner/.venv" ];then
     echo "Installing dependencies"
-    /usr/local/bin/python3 -m poetry install --no-root --no-dev -v
+    while true;do
+        /usr/local/bin/python3 -m poetry install --no-root --no-dev -v
+    done
 fi
 /usr/local/bin/python3 -m poetry run python -OO -X pycache_prefix='__pycache__' -X tracemalloc main.py
 #(set -o posix ; set)
