@@ -169,7 +169,7 @@ class BetterBot:
 		return decorator
 
 
-class NothingFound(BaseException):
+class NothingFound(Exception):
 	pass
 
 
