@@ -29,13 +29,14 @@ def embed_from_dict(dict, **kwargs):
 	return embed
 
 
-async def lookup_member(uid: int):
+async def lookup_member(ctx, uid: int):
 	if uid in GUILD_MEMBER_CACHE:
 		return GUILD_MEMBER_CACHE[uid]
 	else:
-		member = await discordbot.client.fetch_user(uid)
+		member = await ctx.guild.fetch_user(uid)
 		GUILD_MEMBER_CACHE[member.id] = member
 		return member
+
 
 async def lookup_user(uid: int):
 	if uid in USER_CACHE:
@@ -44,6 +45,7 @@ async def lookup_user(uid: int):
 		user = await discordbot.client.fetch_user(uid)
 		USER_CACHE[user.id] = user
 		return user
+
 
 def get_channel_members(channel_id):
 	try:
@@ -74,7 +76,7 @@ async def check_mention(ctx, arg):
 	match = re.match(r'<@!?(\d+)>', arg)
 	if match:
 		user_id = match.group(1)
-		member = ctx.guild.get_member(int(user_id)) or await ctx.guild.fetch_member(int(user_id))
+		member = lookup_member(ctx,int(user_id))
 		if member is not None:
 			return member
 
