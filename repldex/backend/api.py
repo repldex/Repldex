@@ -70,7 +70,7 @@ async def create_response(entry_data, preview=False):
 @routes.get('/api/entry/{entry}')
 async def api_entry(request):
 	entry_name = utils.url_title(request.match_info.get('entry'))
-	entry_data = await database.get_entry(name=entry_name)
+	entry_data = await database.get_entry(query=entry_name)
 
 	data = await create_response(entry_data)
 	if not data:
