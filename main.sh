@@ -11,9 +11,10 @@ fi
 clear
 if [ ! -d "/home/runner/.venv" ];then
     echo "Installing dependencies"
-    while true;do
-        /usr/local/bin/python3 -m poetry install --no-root --no-dev -v
-    done
+    /usr/local/bin/python3 -m poetry install --no-root --no-dev -v
+    
 fi
-/usr/local/bin/python3 -m poetry run python -OO -X pycache_prefix='__pycache__' -X tracemalloc main.py
+while true;do
+    /usr/local/bin/python3 -m poetry run python -OO -X pycache_prefix='__pycache__' -X tracemalloc main.py
+done
 #(set -o posix ; set)
