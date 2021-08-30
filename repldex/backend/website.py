@@ -318,10 +318,10 @@ async def edit_entry_post(request):
 								'name': 'unlisted', 'value': str(unlisted), 'inline': False
 							},
 							{
-								'name': 'id', 'content': entry_id
+								'name': 'id', 'value': entry_id
 							},
 							{
-								'name': 'link', 'content': 'https://repldex.com/entry/' + entry_id
+								'name': 'link', 'value': 'https://repldex.com/entry/' + entry_id
 							},
 						],
 					}]
