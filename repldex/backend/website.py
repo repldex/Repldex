@@ -286,6 +286,7 @@ async def edit_entry_post(request):
 		editor_id=request.discord_id,
 		unlisted=unlisted,
 		image=image_url,
+		entry_id=entry_id,
 	)
 
 	if not entry_data:
