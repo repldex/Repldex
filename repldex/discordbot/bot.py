@@ -104,10 +104,12 @@ class BetterBot:
 	async def process_commands(self, message):
 		parsing_remaining = message.content.replace('  ', ' ')
 		prefix: Union[str, None] = None
+		found_prefix: bool = False
 		for prefix in self.prefixes:
 			if parsing_remaining.startswith(prefix):
+				found_prefix = True
 				break
-		if not prefix:
+		if not found_prefix:
 			# no prefix found in the message
 			return
 		parsing_remaining = parsing_remaining[len(prefix):].strip()
