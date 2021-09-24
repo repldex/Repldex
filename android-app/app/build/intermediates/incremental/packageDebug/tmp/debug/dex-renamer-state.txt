@@ -1,0 +1,4 @@
+#Fri Sep 24 03:25:33 CDT 2021
+base.0=C\:\\Garmin-Updater\\MAP\\Repldex\\app\\build\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+renamed.0=classes.dex
+path.0=classes.dex

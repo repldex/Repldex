@@ -1,0 +1,2 @@
+com/mat/repldex/BuildConfig.java
+ com.mat.repldex.BuildConfig
