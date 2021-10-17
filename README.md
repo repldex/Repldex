@@ -1,30 +1,38 @@
-[![Run on Repl.it](https://repl.it/badge/github/mat-1/ReplDex)](https://repl.it/github/mat-1/ReplDex)
+# create-svelte
 
-# Repldex
-\[Un\]official encyclopedia of user created entries for the Repl.it Community in general, but mainly the [Repl.it Discord Server](https://repl.it/discord). Contains the Discord bot source code and `aiohttp` web server (API and frontend).
+Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte);
 
+## Creating a project
 
-# Contributing
-- Fork the repository and setup your enviornment. (`git clone` or otherwise).
-- Or, click the run on repl.it badge
+If you're seeing this, you've probably already done this step. Congrats!
 
-Changing the Discord Bot:
-- Create your own bot at the [Discord Dev Portal](https://discord.com/developers/docs).
-- Create a MongoDB database (Atlas or otherwise; your URI should start with `mongodb+srv://`).
-- Set your `.env` like so:
+```bash
+# create a new project in the current directory
+npm init svelte@next
 
-```ini
-token="your-discord-bot-token"
-client_secret="your-discord-client-secret"
-dburi="mongodb-database-uri"
+# create a new project in my-app
+npm init svelte@next my-app
 ```
-- Create a pull request describing what you changed.
--wait for a reviewer to review your PR
 
-If you have any trouble, feel free to hop onto the Repldex Editors Discord Server, where other contributors can help (invite code: `wku7886`)
+> Note: the `@next` is temporary
 
-# Bugs
-Open an issue and we'll get to you ASAP.
+## Developing
 
-# License
-Repldex is licensed under the MIT license
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+
+```bash
+npm run dev
+
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
+
+## Building
+
+Before creating a production version of your app, install an [adapter](https://kit.svelte.dev/docs#adapters) for your target environment. Then:
+
+```bash
+npm run build
+```
+
+> You can preview the built app with `npm run preview`, regardless of whether you installed an adapter. This should _not_ be used to serve your app in production.

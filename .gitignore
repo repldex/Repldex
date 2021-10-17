@@ -1,8 +1,5 @@
-.env
-.local/
-*.pyc
-__pycache__/
-_test_runner_.py
-.venv/
-.vscode/
-repldex.egg-info/
+.DS_Store
+node_modules
+/build
+/.svelte-kit
+/package

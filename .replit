@@ -1,2 +1,0 @@
-#run = "POETRY_VIRTUALENVS_PATH=/home/runner/Repldex/.venv python -m poetry install --no-root --no-dev -v && python main.py"
-run = "bash main.sh"
