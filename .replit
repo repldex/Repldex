@@ -1,0 +1,30 @@
+run = "npm run dev:host"
+
+[packager]
+language = "nodejs"
+onBoot = "npm i"
+
+[packager.features]
+packageSearch = true
+guessImports = true
+
+[languages.svelte]
+pattern = "**/*.svelte"
+syntax = "svelte"
+
+[languages.svelte.languageServer]
+command = ["svelteserver", "--stdio"]
+
+[languages.javascript]
+pattern = "**/*.js"
+syntax = "javascript"
+
+[languages.javascript.languageServer]
+start = [ "typescript-language-server", "--stdio" ]
+
+[languages.typescript]
+pattern = "**/*.ts"
+syntax = "typescript"
+
+[languages.typescript.languageServer]
+start = [ "typescript-language-server", "--stdio" ]
