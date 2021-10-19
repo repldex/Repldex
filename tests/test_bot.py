@@ -17,7 +17,7 @@ async def search_entries(query, limit=10, search_id=True, page=0, discord_id=Non
 		'history': [],
 		'last_edited': datetime.datetime(2020, 7, 18, 3, 28, 7, 449000),
 		'unlisted': False,
-		'owner_id': 224588823898619905,
+		'owner_id': 856340031999311872,
 		'score': 53.651893615722656
 	}]
 
