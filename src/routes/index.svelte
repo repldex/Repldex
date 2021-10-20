@@ -2,7 +2,7 @@
 	import type { Load } from '@sveltejs/kit'
 	export const load: Load = async ({ page, fetch, session, stuff }) => {
 		const res = await fetch('/api/entries.json')
-
+  
 		return {
 			props: {
 				entries: await res.json(),
