@@ -12,7 +12,7 @@
 </script>
 
 <script lang="ts">
-	import type { Entry } from './api/entries.json.ts'
+	import type { Entry } from '$lib/database'
 	import EntryPreview from '$lib/EntryPreview.svelte'
 	export let entries: Entry[]
 </script>

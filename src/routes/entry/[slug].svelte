@@ -13,7 +13,7 @@
 </script>
 
 <script lang="ts">
-	import type { Entry } from '$lib/database.ts'
+	import type { Entry } from '$lib/database.js'
 	import EntryPreview from '$lib/EntryPreview.svelte'
 	export let entry: Entry
 </script>
