@@ -1,8 +1,8 @@
 run = "npm run dev:host"
+onBoot = "npm i"
 
 [packager]
 language = "nodejs"
-onBoot = "npm i"
 
 [packager.features]
 packageSearch = true
