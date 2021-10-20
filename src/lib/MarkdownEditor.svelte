@@ -53,11 +53,18 @@
 
 	const history: HistoryItem[] = []
 
+	function addStateToHistory(el: HTMLTextAreaElement) {
+		history.push({
+			text: el.textContent,
+			pos: el.selectionStart,
+		})
+	}
+
 	let textContent = ''
 
 	// add the current value of the textarea to the history
 	onMount(() => {
-		history.push(textContent)
+		history.push({ text: textContent, pos: 0 })
 	})
 
 	function caret(element: Node) {
@@ -87,19 +94,6 @@
 		return pos
 	}
 
-	function handleKeyDown(e: KeyboardEvent) {
-		// 	if (e.which === 9) {
-		// 		// const pos = caret(e.target) + tab.length;
-		// 		const pos = caret(e.target as Node)
-		// 		const range = window.getSelection().getRangeAt(0)
-		// 		range.deleteContents()
-		// 		range.insertNode(document.createTextNode(tab))
-		// 		textAreaEl.innerHTML = render(textAreaEl.textContent)
-		// 		setCaret(pos)
-		// 		e.preventDefault()
-		// 	}
-	}
-
 	function handleInput(e) {
 		const el = e.target as HTMLTextAreaElement
 		if (e.data && (e.data.charCodeAt(0) >= 32 || e.data.charCodeAt(0) == 0x20)) {
@@ -118,10 +112,13 @@
 	function handleBeforeInput(e) {
 		const el = e.target as HTMLTextAreaElement
 		console.log('beforeinput', el.textContent)
+
+		// ctrl z
 		if (e.inputType == 'historyUndo') {
 			e.preventDefault()
 			let pos = caret(el)
-			el.innerHTML = render(history.pop())
+			const historyItem = history.pop()
+			el.innerHTML = render(historyItem.text)
 			// if the pos is higher than the actual length, put it at the end
 			if (pos > el.textContent.length) pos = el.textContent.length
 			setCaret(pos, el)
@@ -136,8 +133,8 @@
 			if (e.inputType == 'insertText') {
 				const typedSpace = e.data === ' '
 				if (typedSpace) spacesTyped++
-				if (!typedSpace && spacesTyped > 1) history.push(el.textContent)
-				else if (typedSpace && spacesTyped === 1) history.push(el.textContent)
+				if (!typedSpace && spacesTyped > 1) addStateToHistory(el)
+				else if (typedSpace && spacesTyped === 1) addStateToHistory(el)
 
 				if (!typedSpace) spacesTyped = 0
 
@@ -162,7 +159,6 @@
 	id="editable-text-area"
 	contenteditable
 	on:paste|preventDefault={handlePaste}
-	on:keydown={handleKeyDown}
 	on:input={handleInput}
 	on:beforeinput={handleBeforeInput}
 	bind:textContent
@@ -173,7 +169,6 @@
 		border: 1px solid var(--alternate-background-color);
 		max-width: 50em;
 		min-height: 20em;
-		margin: 1em auto;
 		padding: 0.25em;
 		border-radius: 0.25em;
 	}

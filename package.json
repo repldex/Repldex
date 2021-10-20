@@ -18,13 +18,22 @@
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-svelte3": "^3.2.1",
+    "postcss": "^8.3.9",
+    "postcss-load-config": "^3.1.0",
     "prettier": "^2.4.1",
     "prettier-plugin-svelte": "^2.4.0",
     "svelte": "^3.44.0",
     "svelte-check": "^2.2.7",
     "svelte-preprocess": "^4.9.4",
     "tslib": "^2.3.1",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.3",
+    "vite-plugin-html": "^2.1.1"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@sveltejs/adapter-netlify": "^1.0.0-next.33",
+    "@sveltejs/adapter-static": "^1.0.0-next.21",
+    "@sveltejs/adapter-vercel": "^1.0.0-next.31",
+    "rollup-plugin-css-only": "^3.1.0"
+  }
 }

@@ -1,4 +1,11 @@
-import preprocess from 'svelte-preprocess';
+import preprocess from 'svelte-preprocess'
+
+import staticAdapter from '@sveltejs/adapter-static'
+import netlifyAdapter from '@sveltejs/adapter-netlify'
+import vercelAdapter from '@sveltejs/adapter-vercel'
+
+import css from 'rollup-plugin-css-only'
+import { minifyHtml } from 'vite-plugin-html'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -8,8 +15,20 @@ const config = {
 
 	kit: {
 		// hydrate the <div id="svelte"> element in src/app.html
-		target: '#svelte'
-	}
-};
+		target: '#svelte',
+		adapter: staticAdapter(),
 
-export default config;
+		// https://vitejs.dev/config/
+		vite: {
+			plugins: [css({ output: 'bundle.css' }), minifyHtml()],
+		},
+	},
+
+	// https://svelte.dev/docs#svelte_compile
+	compilerOptions: {
+		// enable ssr
+		generate: 'ssr',
+	},
+}
+
+export default config
