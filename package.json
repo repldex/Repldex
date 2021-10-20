@@ -12,6 +12,8 @@
 		"format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. ."
 	},
 	"devDependencies": {
+		"@sveltejs/adapter-static": "^1.0.0-next.21",
+		"@sveltejs/adapter-vercel": "^1.0.0-next.31",
 		"@sveltejs/kit": "^1.0.0-next.186",
 		"@typescript-eslint/eslint-plugin": "^4.33.0",
 		"@typescript-eslint/parser": "^4.33.0",
@@ -31,9 +33,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@sveltejs/adapter-netlify": "^1.0.0-next.33",
-		"@sveltejs/adapter-static": "^1.0.0-next.21",
-		"@sveltejs/adapter-vercel": "^1.0.0-next.31",
 		"cookie": "^0.4.1",
 		"rollup-plugin-css-only": "^3.1.0"
 	}

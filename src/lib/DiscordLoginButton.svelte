@@ -1,4 +1,4 @@
-<button>Log in with Discord</button>
+<button><img src="/discord.png" class="login-with-discord-icon" />Log in with Discord</button>
 
 <style>
 	button {
@@ -10,5 +10,12 @@
 		font-size: 1em;
 		cursor: pointer;
 		font-family: inherit;
+	}
+
+	.login-with-discord-icon {
+		position: relative;
+		height: 1em;
+		margin-right: .4em;
+		top: .2em
 	}
 </style>

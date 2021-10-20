@@ -1,5 +1,5 @@
 import type { GetSession, Handle } from '@sveltejs/kit'
-import * as cookie from 'cookie'
+import cookie from 'cookie'
 
 export const handle: Handle = async ({ request, resolve }) => {
 	const cookies = cookie.parse(request.headers.cookie || '')

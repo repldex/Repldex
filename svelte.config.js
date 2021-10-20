@@ -1,7 +1,6 @@
 import preprocess from 'svelte-preprocess'
 
 import staticAdapter from '@sveltejs/adapter-static'
-import netlifyAdapter from '@sveltejs/adapter-netlify'
 import vercelAdapter from '@sveltejs/adapter-vercel'
 
 import css from 'rollup-plugin-css-only'
