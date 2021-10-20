@@ -3,7 +3,7 @@
 		return {
 			props: {
 				status,
-				message: error.message
+				message: error.message,
 			},
 		}
 	}
@@ -30,18 +30,18 @@
 	}
 	h2 {
 		margin: 0;
-		opacity: .5;
-		font-weight: normal
+		opacity: 0.5;
+		font-weight: normal;
 	}
 	a {
-		margin-top: .5em;
-		display: block
+		margin-top: 0.5em;
+		display: block;
 	}
 	.error-container-container {
 		text-align: center;
 		display: grid;
 		align-items: center;
 		height: 100vh;
-		overflow: hidden
+		overflow: hidden;
 	}
 </style>

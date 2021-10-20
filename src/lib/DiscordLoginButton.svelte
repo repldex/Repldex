@@ -1,4 +1,7 @@
-<button><img src="/discord.png" class="login-with-discord-icon" />Log in with Discord</button>
+<button>
+	<img src="/discord.png" class="login-with-discord-icon" alt="Discord Clyde Logo" />
+	<span>Log in with Discord</span>
+</button>
 
 <style>
 	button {
@@ -7,7 +10,7 @@
 		border: none;
 		border-radius: 0.5em;
 		padding: 0.5em;
-		font-size: .85em;
+		font-size: 0.85em;
 		cursor: pointer;
 		font-family: inherit;
 	}

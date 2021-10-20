@@ -22,6 +22,6 @@
 	}
 
 	main {
-		margin: 1em
+		margin: 1em;
 	}
 </style>
