@@ -14,6 +14,10 @@
 	export let message
 </script>
 
+<svelte:head>
+	<title>There was an Error!</title>
+</svelte:head>
+
 <div class="error-container-container">
 	<div class="error-container">
 		<h1>{status}</h1>

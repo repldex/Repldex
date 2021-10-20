@@ -17,6 +17,10 @@
 	export let entries: Entry[]
 </script>
 
+<svelte:head>
+	<title>Repldex 3</title>
+</svelte:head>
+
 <h1>Repldex 3</h1>
 
 <div class="entry-list">

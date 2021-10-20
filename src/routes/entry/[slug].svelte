@@ -18,5 +18,9 @@
 	export let entry: Entry
 </script>
 
+<svelte:head>
+	<title>{entry.title} - Repldex</title>
+</svelte:head>
+
 <h1>{entry.title}</h1>
 <p>{entry.content}</p>
