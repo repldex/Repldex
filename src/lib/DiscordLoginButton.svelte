@@ -7,7 +7,7 @@
 		border: none;
 		border-radius: 0.5em;
 		padding: 0.5em;
-		font-size: 1em;
+		font-size: .85em;
 		cursor: pointer;
 		font-family: inherit;
 	}
