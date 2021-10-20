@@ -26,7 +26,7 @@ const config = {
 	// https://svelte.dev/docs#svelte_compile
 	compilerOptions: {
 		// enable ssr
-		generate: 'ssr',
+		// generate: 'ssr',
 	},
 }
 

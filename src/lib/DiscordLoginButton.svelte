@@ -15,7 +15,7 @@
 	.login-with-discord-icon {
 		position: relative;
 		height: 1em;
-		margin-right: .4em;
-		top: .2em
+		margin-right: 0.4em;
+		top: 0.2em;
 	}
 </style>

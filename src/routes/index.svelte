@@ -5,8 +5,8 @@
 
 		return {
 			props: {
-				entries: await res.json()
-			}
+				entries: await res.json(),
+			},
 		}
 	}
 </script>
@@ -20,15 +20,15 @@
 <h1>Repldex 3</h1>
 
 <div class="entry-list">
-{#each entries as entry}
-	<EntryPreview {entry} />
-{/each}
+	{#each entries as entry}
+		<EntryPreview {entry} />
+	{/each}
 </div>
 
 <style>
 	.entry-list {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(20em, 1fr));
-		grid-gap: .5em;
+		grid-gap: 0.5em;
 	}
 </style>
