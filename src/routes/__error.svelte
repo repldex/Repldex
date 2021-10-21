@@ -11,12 +11,12 @@
 
 <script>
 	import Head from '$lib/Head.svelte'
-	
+
 	export let status
 	export let message
 </script>
 
-<Head title="{status}" />
+<Head title={status} />
 
 <div class="error-container-container">
 	<div class="error-container">

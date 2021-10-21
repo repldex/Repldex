@@ -4,3 +4,9 @@
 </script>
 
 <input type="text" {placeholder} bind:value />
+
+<style>
+	input {
+		margin: 0;
+	}
+</style>
