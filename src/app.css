@@ -6,6 +6,8 @@
 	--link-color: #10abe8;
 }
 
+/* this file should only contain styles for html elements, not any specific classes or ids */
+
 body {
 	background-color: var(--background-color);
 	color: var(--text-color);
@@ -15,4 +17,12 @@ body {
 
 a {
 	color: var(--link-color);
+}
+
+input {
+	border: none;
+	border-radius: 0.5em;
+	background-color: var(--alternate-background-color);
+	color: var(--text-color);
+	padding: 0.5em;
 }

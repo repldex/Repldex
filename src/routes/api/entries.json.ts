@@ -1,4 +1,4 @@
-import { fetchEntries } from '$lib/database.js'
+import { fetchEntries } from '$lib/database'
 import type { RequestHandler } from '@sveltejs/kit'
 import type { JSONString } from '@sveltejs/kit/types/helper'
 

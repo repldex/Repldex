@@ -7,5 +7,7 @@
 	<title>Repldex - Edit Entry</title>
 </svelte:head>
 
-<TextInput placeholder="Title" />
+<div class="text-editor">
+	<TextInput placeholder="Title" />
+</div>
 <MarkdownEditor />
