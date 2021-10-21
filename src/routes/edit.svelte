@@ -7,12 +7,29 @@
 	let entryContent: string = ''
 
 	let initialTitle: string = ''
+
+	let pageTitle: string = 'Create entry'
+
+	const isCreatingEntry = entryTitle.length === 0
+
+	$: {
+		if (isCreatingEntry)
+			if (entryTitle.length)
+				pageTitle = `New entry "${entryTitle}"`
+			else
+				pageTitle = `New entry`
+		else
+			if (entryTitle.length)
+				pageTitle = `Edit entry`
+			else
+				pageTitle = `Edit entry "${entryTitle}"`
+	}
 </script>
 
-<Head title="Edit entry" />
+<Head title={pageTitle} />
 
 <div class="text-editor">
-	<TextInput placeholder="Title" bind:content={entryTitle} />
+	<TextInput placeholder="Title" bind:value={entryTitle} />
 </div>
-<MarkdownEditor bind:content={entryContent} />
+<MarkdownEditor bind:value={entryContent} />
 <button>Submit</button>
