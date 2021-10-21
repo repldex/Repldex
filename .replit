@@ -3,6 +3,7 @@ onBoot = "npm i"
 
 [packager]
 language = "nodejs"
+ignoredPackages = ["$lib"]
 
 [packager.features]
 packageSearch = true
