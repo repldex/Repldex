@@ -4,7 +4,7 @@
 
 <label>
 	<span class="label-text">{text}</span>
-	<div><slot /></div>
+	<div aria-label={text}><slot /></div>
 </label>
 
 <style>

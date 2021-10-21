@@ -6,6 +6,7 @@
 		"dev:host": "svelte-kit dev --host",
 		"build": "svelte-kit build",
 		"preview": "svelte-kit preview",
+		"preview:host": "svelte-kit preview --host",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
@@ -34,6 +35,7 @@
 	"type": "module",
 	"dependencies": {
 		"cookie": "^0.4.1",
+		"mongodb": "^4.1.3",
 		"rollup-plugin-css-only": "^3.1.0"
 	}
 }

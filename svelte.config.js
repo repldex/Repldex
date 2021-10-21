@@ -19,14 +19,17 @@ const config = {
 
 		// https://vitejs.dev/config/
 		vite: {
-			plugins: [css({ output: 'bundle.css' }), minifyHtml()],
+			plugins: [
+				// css({ output: 'bundle.css' }),
+				minifyHtml(),
+			],
 		},
 	},
 
 	// https://svelte.dev/docs#svelte_compile
 	compilerOptions: {
 		// enable ssr
-		// generate: 'ssr',
+		generate: 'ssr',
 	},
 }
 
