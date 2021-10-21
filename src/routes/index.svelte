@@ -19,6 +19,7 @@
 
 <svelte:head>
 	<title>Repldex 3</title>
+  <meta name="description" content="Repldex is the [Un]official encyclopedia of user created entries for the Repl.it Community in general, but mainly the Repl.it Discord Server." />
 </svelte:head>
 
 <h1>Repldex 3</h1>

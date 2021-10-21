@@ -19,7 +19,9 @@
 </script>
 
 <svelte:head>
-	<title>{entry.title} - Repldex</title>
+	<title>{entry.title}</title>
+  <meta name="description" content={entry.content} />
+  <meta property="og:site_name" content="Repldex">
 </svelte:head>
 
 <h1>{entry.title}</h1>
