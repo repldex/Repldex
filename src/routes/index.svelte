@@ -1,8 +1,10 @@
 <script lang="ts" context="module">
 	import type { Load } from '@sveltejs/kit'
+	import Head from '$lib/Head.svelte'
+
 	export const load: Load = async ({ page, fetch, session, stuff }) => {
 		const res = await fetch('/api/entries.json')
-  
+
 		return {
 			props: {
 				entries: await res.json(),
@@ -17,9 +19,7 @@
 	export let entries: Entry[]
 </script>
 
-<svelte:head>
-	<title>Repldex 3</title>
-</svelte:head>
+<Head />
 
 <h1>Repldex 3</h1>
 

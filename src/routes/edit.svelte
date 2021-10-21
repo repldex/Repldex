@@ -1,13 +1,18 @@
 <script lang="ts">
 	import MarkdownEditor from '$lib/MarkdownEditor.svelte'
 	import TextInput from '$lib/TextInput.svelte'
+	import Head from '$lib/Head.svelte'
+
+	let entryTitle: string = ''
+	let entryContent: string = ''
+
+	let initialTitle: string = ''
 </script>
 
-<svelte:head>
-	<title>Repldex - Edit Entry</title>
-</svelte:head>
+<Head title="Edit entry" />
 
 <div class="text-editor">
-	<TextInput placeholder="Title" />
+	<TextInput placeholder="Title" bind:content={entryTitle} />
 </div>
-<MarkdownEditor />
+<MarkdownEditor bind:content={entryContent} />
+<button>Submit</button>

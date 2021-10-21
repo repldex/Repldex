@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
+	export let value: string = ''
 
 	// render our markdown into html, but still showing the markdown entities
 	function render(text: string): string {
@@ -60,11 +61,9 @@
 		})
 	}
 
-	let textContent = ''
-
 	// add the current value of the textarea to the history
 	onMount(() => {
-		history.push({ text: textContent, pos: 0 })
+		history.push({ text: value, pos: 0 })
 	})
 
 	function caret(element: Node) {
@@ -161,12 +160,12 @@
 	on:paste|preventDefault={handlePaste}
 	on:input={handleInput}
 	on:beforeinput={handleBeforeInput}
-	bind:textContent
+	bind:textContent={value}
 />
 
 <style>
 	#editable-text-area {
-		border: 1px solid var(--alternate-background-color);
+		background-color: var(--alternate-background-color);
 		max-width: 50em;
 		min-height: 20em;
 		padding: 0.25em;

@@ -10,13 +10,13 @@
 </script>
 
 <script>
+	import Head from '$lib/Head.svelte'
+	
 	export let status
 	export let message
 </script>
 
-<svelte:head>
-	<title>There was an Error!</title>
-</svelte:head>
+<Head title="{status}" />
 
 <div class="error-container-container">
 	<div class="error-container">

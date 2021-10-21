@@ -1,5 +1,7 @@
 <script lang="ts" context="module">
 	import type { Load } from '@sveltejs/kit'
+	import Head from '$lib/Head.svelte'
+
 	export const load: Load = async ({ page, fetch, session, stuff }) => {
 		const entrySlug: string = page.params.slug
 		const res = await fetch(`/api/entry/${entrySlug}.json`)
@@ -18,9 +20,7 @@
 	export let entry: Entry
 </script>
 
-<svelte:head>
-	<title>{entry.title} - Repldex</title>
-</svelte:head>
+<Head title="{entry.title}" />
 
 <h1>{entry.title}</h1>
 <p>{entry.content}</p>
