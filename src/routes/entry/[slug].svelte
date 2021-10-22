@@ -15,8 +15,7 @@
 </script>
 
 <script lang="ts">
-	import type { Entry } from '$lib/database.js'
-	import EntryPreview from '$lib/EntryPreview.svelte'
+	import type { Entry } from '$lib/database/entries'
 	export let entry: Entry
 </script>
 
