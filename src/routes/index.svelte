@@ -21,7 +21,7 @@
 
 <Head />
 
-<h1>Repldex 3</h1>
+<h1><img src="/icon.png" alt="Repldex Logo" class="title-logo">Repldex</h1>
 
 <div class="entry-list">
 	{#each entries as entry}
@@ -34,5 +34,16 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(20em, 1fr));
 		grid-gap: 0.5em;
+	}
+
+	h1 {
+		text-align: center
+	}
+
+	.title-logo {
+		height: 1em;
+		margin-right: .3em;
+		position: relative;
+		top: .15em;
 	}
 </style>

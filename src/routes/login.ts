@@ -2,6 +2,8 @@
 
 import type { RequestHandler } from '@sveltejs/kit'
 import config from '$lib/config'
+import { createSession } from '$lib/database/sessions'
+import { fetchUser } from '$lib/database/users'
 
 const clientSecret = process.env['DISCORD_CLIENT_SECRET']
 if (!clientSecret) throw new Error('DISCORD_CLIENT_SECRET environment variable not set')
@@ -36,5 +38,22 @@ export const get: RequestHandler = async req => {
 		}).toString(),
 	}).then(res => res.json())
 
+	const accessToken = discordOauthTokenData.access_token
+	
+	const discordUserData = await fetch('https://discord.com/api/users/@me', {
+		headers: {
+			Authorization: `Bearer ${accessToken}`
+		}
+	}).then(res => res.json())
+
+	const existingRepldexUser = await fetchUser({
+		'accounts.discord': discordUserData.id	
+	})
+
+	// the user has a repldex account
+	if (existingRepldexUser)
+	const sessionId = await createSession({
+		use
+	})
 	console.log(discordOauthTokenData)
 }
