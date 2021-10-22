@@ -37,10 +37,12 @@
 	}
 
 	h1 {
-		text-align: center
+		text-align: center;
+		color: var(--bright-text-color)
 	}
 
 	.title-logo {
+		width: 1em;
 		height: 1em;
 		margin-right: .3em;
 		position: relative;
