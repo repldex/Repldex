@@ -34,3 +34,10 @@
 </Labelled>
 
 <button>Submit</button>
+
+<style>
+	.text-editor {
+		margin-bottom: 1rem;
+		font-size: 1.1em;
+	}
+</style>

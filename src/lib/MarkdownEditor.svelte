@@ -168,8 +168,9 @@
 		background-color: var(--alternate-background-color);
 		max-width: 50em;
 		min-height: 20em;
-		padding: 0.25em;
+		padding: 0.5em;
 		border-radius: 0.25em;
+		background-color: var(--alternate-background-color);
 	}
 
 	#editable-text-area :global(.markdown-asterisk) {

@@ -1,7 +1,9 @@
-<button>
-	<img src="/discord.png" class="login-with-discord-icon" alt="Discord Clyde Logo" />
-	<span>Log in with Discord</span>
-</button>
+<a href="/login">
+	<button>
+		<img src="/discord.png" class="login-with-discord-icon" alt="Discord Clyde Logo" />
+		<span>Log in with Discord</span>
+	</button>
+</a>
 
 <style>
 	button {

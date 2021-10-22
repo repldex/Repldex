@@ -3,8 +3,11 @@ import preprocess from 'svelte-preprocess'
 import staticAdapter from '@sveltejs/adapter-static'
 import vercelAdapter from '@sveltejs/adapter-vercel'
 
-import css from 'rollup-plugin-css-only'
 import { minifyHtml } from 'vite-plugin-html'
+
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -19,10 +22,7 @@ const config = {
 
 		// https://vitejs.dev/config/
 		vite: {
-			plugins: [
-				// css({ output: 'bundle.css' }),
-				minifyHtml(),
-			],
+			plugins: [minifyHtml()],
 		},
 	},
 
