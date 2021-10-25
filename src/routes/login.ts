@@ -18,7 +18,7 @@ export const get: RequestHandler = async req => {
 			// redirect to discord login
 			status: 302,
 			headers: {
-				location: `https://discord.com/oauth2/authorize?client_id=${config.client_id}&redirect_uri=${redirectUri}&response_type=code&scope=identify`,
+				location: `https://discord.com/oauth2/authorize?client_id=${config.discord_client_id}&redirect_uri=${redirectUri}&response_type=code&scope=identify`,
 			},
 		}
 	}
@@ -30,7 +30,7 @@ export const get: RequestHandler = async req => {
 			'Content-Type': 'application/x-www-form-urlencoded',
 		},
 		body: new URLSearchParams({
-			client_id: config.client_id,
+			client_id: config.discord_client_id,
 			client_secret: clientSecret,
 			grant_type: 'authorization_code',
 			code: discordOauthCode,
@@ -39,21 +39,23 @@ export const get: RequestHandler = async req => {
 	}).then(res => res.json())
 
 	const accessToken = discordOauthTokenData.access_token
-	
-	const discordUserData = await fetch('https://discord.com/api/users/@me', {
-		headers: {
-			Authorization: `Bearer ${accessToken}`
-		}
-	}).then(res => res.json())
 
-	const existingRepldexUser = await fetchUser({
-		'accounts.discord': discordUserData.id	
-	})
+	// const discordUserData = await fetch('https://discord.com/api/users/@me', {
+	// 	headers: {
+	// 		Authorization: `Bearer ${accessToken}`,
+	// 	},
+	// }).then(res => res.json())
 
-	// the user has a repldex account
-	if (existingRepldexUser)
-	const sessionId = await createSession({
-		use
-	})
-	console.log(discordOauthTokenData)
+	// const existingRepldexUser = await fetchUser({
+	// 	accounts: {
+	// 		discord: discordUserData.id,
+	// 	},
+	// })
+
+	// // the user has a repldex account
+	// if (existingRepldexUser)
+	// 	const sessionId = await createSession({
+	// 		use,
+	// 	})
+	// console.log(discordOauthTokenData)
 }

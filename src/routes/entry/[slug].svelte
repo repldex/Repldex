@@ -23,4 +23,4 @@
 <Head title={entry.title} />
 
 <h1>{entry.title}</h1>
-<p>{entry.content}</p>
+<article>{entry.content}</article>
