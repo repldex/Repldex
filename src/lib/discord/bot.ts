@@ -13,3 +13,5 @@ new Command({
 	.handle(i => {
 		console.log(i)
 	})
+
+console.log('bot')

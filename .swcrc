@@ -1,1 +1,14 @@
-{}
+{
+	"jsc": {
+		"parser": {
+			"syntax": "typescript"
+		},
+		"transform": null,
+		"target": "es2020",
+		"loose": false,
+		"externalHelpers": false,
+		"keepClassNames": false,
+
+		"baseUrl": "."
+	}
+}

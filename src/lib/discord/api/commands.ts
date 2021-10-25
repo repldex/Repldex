@@ -5,6 +5,7 @@ import type {
 	APIMessage,
 } from 'discord-api-types/payloads/v9'
 import type { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/rest/v9'
+import config from '../../config'
 
 export const GLOBAL_COMMAND_API_URL = `${APPLICATIONS_BASE_API_URL}/commands` as const
 
@@ -34,17 +35,19 @@ export class Command {
 		this.json = {
 			// ChatInput
 			type: 1,
+			options: [],
 			...options,
 		}
 	}
 
-	addOption(option: APIApplicationCommandOption): this {
-		this.json.options!.push(option)
+	addOption(option: Omit<APIApplicationCommandOption, 'type'> & { type: number }): this {
+		this.json.options!.push(option as APIApplicationCommandOption)
 		return this
 	}
 
 	handle(handler: (interaction: APIApplicationCommandInteraction) => void): void {
 		this.handler = handler
 		commands.push(this)
+		console.log('added command')
 	}
 }

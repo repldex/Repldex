@@ -1,9 +1,9 @@
 // https://discordapp.com/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=identify
 
 import type { RequestHandler } from '@sveltejs/kit'
-import config from '$lib/config'
-import { createSession } from '$lib/database/sessions'
-import { fetchUser } from '$lib/database/users'
+import config from '../lib/config'
+import { createSession } from '../lib/database/sessions'
+import { fetchUser } from '../lib/database/users'
 
 const clientSecret = process.env['DISCORD_CLIENT_SECRET']
 if (!clientSecret) throw new Error('DISCORD_CLIENT_SECRET environment variable not set')

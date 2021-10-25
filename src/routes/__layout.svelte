@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../AtkinsonHyperlegible.css'
 	import '../app.css'
-	import DiscordLoginButton from '$lib/DiscordLoginButton.svelte'
+	import DiscordLoginButton from '../lib/DiscordLoginButton.svelte'
 </script>
 
 <nav>

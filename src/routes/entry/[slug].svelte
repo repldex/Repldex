@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
 	import type { Load } from '@sveltejs/kit'
-	import Head from '$lib/Head.svelte'
+	import Head from '../../lib/Head.svelte'
 
 	export const load: Load = async ({ page, fetch, session, stuff }) => {
 		const entrySlug: string = page.params.slug
@@ -15,7 +15,7 @@
 </script>
 
 <script lang="ts">
-	import type { Entry } from '$lib/database/entries'
+	import type { Entry } from '../../lib/database/entries'
 	export let entry: Entry
 </script>
 

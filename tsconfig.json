@@ -22,22 +22,9 @@
 		"baseUrl": ".",
 		// "allowJs": true,
 		"checkJs": true,
-		"paths": {
-			"$lib": ["src/lib"],
-			"$lib/*": ["src/lib/*"]
-		},
 		"strictNullChecks": true,
 
-		"outDir": "dist",
-
-		"plugins": [
-			{ "transform": "typescript-transform-paths" },
-			{ "transform": "typescript-transform-paths", "afterDeclarations": true }
-		]
-	},
-	"ts-node": {
-		"transpileOnly": true,
-		"require": ["typescript-transform-paths/register"]
+		"outDir": "dist"
 	},
 	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.svelte"]
 }

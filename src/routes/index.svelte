@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
 	import type { Load } from '@sveltejs/kit'
-	import Head from '$lib/Head.svelte'
+	import Head from '../lib/Head.svelte'
 
 	export const load: Load = async ({ page, fetch, session, stuff }) => {
 		const res = await fetch('/api/entries.json')
@@ -14,8 +14,8 @@
 </script>
 
 <script lang="ts">
-	import type { Entry } from '$lib/database/entries'
-	import EntryPreview from '$lib/EntryPreview.svelte'
+	import type { Entry } from '../lib/database/entries'
+	import EntryPreview from '../lib/EntryPreview.svelte'
 	export let entries: Entry[]
 </script>
 

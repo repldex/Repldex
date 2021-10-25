@@ -1,4 +1,4 @@
-import { verifyInteraction, handleInteraction } from '$lib/discord/api/interactions'
+import { verifyInteraction, handleInteraction } from '../../lib/discord/api/interactions'
 import type { RequestHandler } from '@sveltejs/kit'
 
 export const post: RequestHandler = async req => {

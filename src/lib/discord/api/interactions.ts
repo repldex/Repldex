@@ -1,5 +1,5 @@
 import { verifyKey } from 'discord-interactions'
-import config from '$lib/config'
+import config from '../../config'
 import type { APIInteractionResponse, APIMessageInteraction } from 'discord-api-types/payloads/v9'
 
 export const APPLICATIONS_BASE_API_URL =
@@ -20,14 +20,25 @@ export function verifyInteraction(
 export async function handleInteraction(
 	data: APIMessageInteraction
 ): Promise<APIInteractionResponse> {
+	console.log(data)
 	switch (data.type) {
-		// ping
+		// Ping
 		case 1:
 			return {
 				// pong
 				type: 1,
 			}
-
+		// ApplicationCommand
+		case 2:
+			return {
+				type: 4,
+				data: {
+					content: 'ok',
+				},
+			}
+		// MessageComponent
+		// case 3:
+		// 	return {}
 		default:
 			throw new Error('Unknown interaction type')
 	}

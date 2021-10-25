@@ -10,7 +10,7 @@
 </script>
 
 <script>
-	import Head from '$lib/Head.svelte'
+	import Head from '../lib/Head.svelte'
 
 	export let status
 	export let message
