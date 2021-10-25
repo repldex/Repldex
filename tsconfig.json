@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"moduleResolution": "node",
 		"module": "esnext",
-		"lib": ["es2020", "DOM"],
+		"lib": ["esnext", "DOM"],
 		"target": "es2020",
 		/**
 			svelte-preprocess cannot figure out whether you have a value or a type, so tell TypeScript
@@ -20,24 +20,13 @@
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
 		"baseUrl": ".",
-		// "allowJs": true,
+		"allowJs": true,
 		"checkJs": true,
 		"paths": {
 			"$lib": ["src/lib"],
 			"$lib/*": ["src/lib/*"]
 		},
-		"strictNullChecks": true,
-
-		"outDir": "dist",
-
-		"plugins": [
-			{ "transform": "typescript-transform-paths" },
-			{ "transform": "typescript-transform-paths", "afterDeclarations": true }
-		]
-	},
-	"ts-node": {
-		"transpileOnly": true,
-		"require": ["typescript-transform-paths/register"]
+		"strictNullChecks": true
 	},
 	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.svelte"]
 }

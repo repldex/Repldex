@@ -21,7 +21,7 @@ export async function fetchSession(id: string): Promise<Session | null> {
 }
 
 /** Create a user session and return the id of the created session */
-export async function createSession(data: Omit<Session, '_id'>): Promise<string> {
+export async function createSession(data: Omit<Session, '_id'>): string {
 	const collection = await getCollection()
 	const insertedResponse = await collection.insertOne(data)
 	return insertedResponse.insertedId.toString()

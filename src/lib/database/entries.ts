@@ -46,12 +46,3 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
 export async function fetchEntry(slug: string): Promise<Entry | undefined> {
 	return dummyEntries.find(e => e.slug === slug)
 }
-
-/**
- * Search for a list of entries by name and content, sorted by relevance
- */
-export async function searchEntries(query: string): Promise<Entry[]> {
-	return dummyEntries
-		.filter(e => e.title.includes(query))
-		.sort((a, b) => a.title.length - b.title.length)
-}
