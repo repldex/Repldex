@@ -14,14 +14,14 @@
 </script>
 
 <script lang="ts">
-	import type { Entry } from '$lib/database'
+	import type { Entry } from '$lib/database/entries'
 	import EntryPreview from '$lib/EntryPreview.svelte'
 	export let entries: Entry[]
 </script>
 
 <Head />
 
-<h1><img src="/icon.png" alt="Repldex Logo" class="title-logo">Repldex</h1>
+<h1><img src="/icon.png" alt="Repldex Logo" class="title-logo" />Repldex</h1>
 
 <div class="entry-list">
 	{#each entries as entry}
@@ -38,14 +38,14 @@
 
 	h1 {
 		text-align: center;
-		color: var(--bright-text-color)
+		color: var(--bright-text-color);
 	}
 
 	.title-logo {
 		width: 1em;
 		height: 1em;
-		margin-right: .3em;
+		margin-right: 0.3em;
 		position: relative;
-		top: .15em;
+		top: 0.15em;
 	}
 </style>

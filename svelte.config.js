@@ -2,6 +2,7 @@ import preprocess from 'svelte-preprocess'
 
 import staticAdapter from '@sveltejs/adapter-static'
 import vercelAdapter from '@sveltejs/adapter-vercel'
+import nodeAdapter from '@sveltejs/adapter-node'
 
 import { minifyHtml } from 'vite-plugin-html'
 
@@ -18,11 +19,16 @@ const config = {
 	kit: {
 		// hydrate the <div id="svelte"> element in src/app.html
 		target: '#svelte',
-		adapter: staticAdapter(),
+		adapter: nodeAdapter(),
 
 		// https://vitejs.dev/config/
 		vite: {
 			plugins: [minifyHtml()],
+			build: {
+				rollupOptions: {
+					external: ['discord-api-types/payloads/v9', 'discord-api-types', 'discord-api-types/v9'],
+				},
+			},
 		},
 	},
 
