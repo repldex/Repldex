@@ -1,38 +1,35 @@
-# create-svelte
+# Repldex
+\[Un\]official encyclopedia of user created entries for the Repl.it Community in general, but mainly the [Repl.it Discord Server](https://repl.it/discord). Contains the Discord bot source code and `Svelte` (API and frontend).
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte);
+# WARNING
+⚠️ Repldex V3 is still under heavy development! ⚠️
 
-## Creating a project
+# Contributing
+[![Run on Repl.it](https://repl.it/badge/github/repldex/Repldex)](https://repl.it/github/repldex/Repldex)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Frepldex%2FRepldex)
 
-If you're seeing this, you've probably already done this step. Congrats!
+- Fork the repository and setup your enviornment. (`git clone` or otherwise).
+- Or, click the run on repl.it badge
 
-```bash
-# create a new project in the current directory
-npm init svelte@next
+Changing the Discord Bot:
+- Create your own bot at the [Discord Dev Portal](https://discord.com/developers/docs).
+- Create a MongoDB database (Atlas or otherwise; your URI should start with `mongodb+srv://`).
+- run `npm install` in console to install all available dependencies.
+- Set your `.env` like so:
 
-# create a new project in my-app
-npm init svelte@next my-app
+```ini
+token="your-discord-bot-token"
+client_secret="your-discord-client-secret"
+dburi="mongodb-database-uri"
 ```
 
-> Note: the `@next` is temporary
+- Create a pull request describing what you changed.
+-wait for a reviewer to review your PR
 
-## Developing
+If you have any trouble, feel free to hop onto the Repldex Editors Discord Server, where other contributors can help (invite code: `wku7886`)
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+# Bugs
+Open an issue and we'll get to you ASAP.
 
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-Before creating a production version of your app, install an [adapter](https://kit.svelte.dev/docs#adapters) for your target environment. Then:
-
-```bash
-npm run build
-```
-
-> You can preview the built app with `npm run preview`, regardless of whether you installed an adapter. This should _not_ be used to serve your app in production.
+# License
+Repldex is licensed under the MIT license
