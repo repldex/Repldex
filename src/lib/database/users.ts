@@ -3,12 +3,14 @@ import { ObjectId } from 'mongodb'
 import { getDatabase } from '.'
 
 interface LinkedAccounts {
-	// linked accounts are always ids
+	// linked accounts are always as ids
 	discord?: string
 }
 
 interface User {
+	/** The unique ID of the user. This never changes. */
 	_id: ObjectId
+	/** The username of the Repldex user. This should not be relied on to be unique or to stay the same, use the id for that. */
 	username: string
 	accounts?: LinkedAccounts
 }
