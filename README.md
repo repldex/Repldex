@@ -5,26 +5,19 @@
 ⚠️ Repldex V3 is still under heavy development! ⚠️
 
 # Contributing
-[![Run on Repl.it](https://repl.it/badge/github/repldex/Repldex)](https://repl.it/github/repldex/Repldex)
+[![Run on Replit](https://replit.com/badge/github/repldex/Repldex)](https://replit/com/github/repldex/Repldex)
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Frepldex%2FRepldex)
 
-- Fork the repository and setup your enviornment. (`git clone` or otherwise).
-- Or, click the run on repl.it badge
+If the change you'd like to make is simple enough such as fixing a tpyo, you can simply fork the repo, edit the file using GitHub's online editor, and make a pull request.
+Otherwise, use the following instructions:
 
-Changing the Discord Bot:
-- Create your own bot at the [Discord Dev Portal](https://discord.com/developers/docs).
-- Create a MongoDB database (Atlas or otherwise; your URI should start with `mongodb+srv://`).
-- run `npm install` in console to install all available dependencies.
-- Set your `.env` like so:
-
-```ini
-token="your-discord-bot-token"
-client_secret="your-discord-client-secret"
-dburi="mongodb-database-uri"
-```
-
-- Create a pull request describing what you changed.
--wait for a reviewer to review your PR
+1. Fork the repository with Git.
+2. Navigate to the directory in your terminal and run `npm i` to install the necessary packages.
+3. Create your Discord bot at the [Discord Developer Portal applications page](https://discord.com/developers/applications).
+4. Create a MongoDB database. (Tip: use [Atlas](https://www.mongodb.com/atlas/database) for a free database).
+5. Rename the [.env.example](.env.example) file to .env and fill in the fields.
+6. Make your changes, run `npm run dev` to open your server at `http://localhost:3000`. This will automatically update as you change your code.
+7. Once you're satisfied with your changes, create a commit and make a [pull request](https://github.com/repldex/Repldex/pulls).
 
 If you have any trouble, feel free to hop onto the Repldex Editors Discord Server, where other contributors can help (invite code: `wku7886`)
 
