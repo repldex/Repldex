@@ -3,7 +3,7 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import config from '../lib/config'
 import { createSession } from '../lib/database/sessions'
-import { fetchUser } from '../lib/database/users'
+import { createUser, fetchUser } from '../lib/database/users'
 
 const clientSecret = process.env['DISCORD_CLIENT_SECRET']
 if (!clientSecret) throw new Error('DISCORD_CLIENT_SECRET environment variable not set')
@@ -38,24 +38,45 @@ export const get: RequestHandler = async req => {
 		}).toString(),
 	}).then(res => res.json())
 
+	// use the user's discord access token to get their discord id
 	const accessToken = discordOauthTokenData.access_token
 
-	// const discordUserData = await fetch('https://discord.com/api/users/@me', {
-	// 	headers: {
-	// 		Authorization: `Bearer ${accessToken}`,
-	// 	},
-	// }).then(res => res.json())
+	const discordUserData = await fetch('https://discord.com/api/users/@me', {
+		headers: {
+			Authorization: `Bearer ${accessToken}`,
+		},
+	}).then(res => res.json())
 
-	// const existingRepldexUser = await fetchUser({
-	// 	accounts: {
-	// 		discord: discordUserData.id,
-	// 	},
-	// })
+	// get the existing data for the user, if they don't exist this will be null
+	const existingRepldexUser = await fetchUser({
+		'accounts.discord': discordUserData.id,
+	})
 
-	// // the user has a repldex account
-	// if (existingRepldexUser)
-	// 	const sessionId = await createSession({
-	// 		use,
-	// 	})
-	// console.log(discordOauthTokenData)
+	let sessionId: string = ''
+	if (existingRepldexUser) {
+		// the user has a repldex account, create a new session for them
+		sessionId = await createSession({
+			userId: existingRepldexUser._id
+		})
+		console.log('created new session', existingRepldexUser, sessionId)
+	} else {
+		// the user does not have a repldex account, create one for them and then create a session for them
+		const repldexUserId = await createUser({
+			username: discordUserData.username,
+			accounts: {
+				discord: discordUserData.id
+			}
+		})
+		sessionId = await createSession({
+			userId: repldexUserId
+		})
+	}
+	console.log(sessionId)
+
+	return {
+		body: 'ok',
+		header: {
+			'set-cookie': `sid=${sessionId}; Path=/; HttpOnly`
+		}
+	}
 }

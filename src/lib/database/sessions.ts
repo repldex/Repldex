@@ -1,11 +1,10 @@
-import type { Collection } from 'mongodb'
+import type { Collection, ObjectId } from 'mongodb'
 import { getDatabase } from '.'
 
 // each session is linked to one user, but each user can have multiple sessions
 interface Session {
 	/** The id of the session */
-	// TODO: make this an ObjectId
-	_id: any
+	_id: ObjectId
 	/** The Repldex user id of the Repldex user */
 	userId: string
 }
