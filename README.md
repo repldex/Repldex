@@ -20,9 +20,3 @@ Otherwise, use the following instructions:
 7. Once you're satisfied with your changes, create a commit and make a [pull request](https://github.com/repldex/Repldex/pulls).
 
 If you have any trouble, feel free to hop onto the Repldex Editors Discord Server, where other contributors can help (invite code: `wku7886`)
-
-# Bugs
-Open an issue and we'll get to you ASAP.
-
-# License
-Repldex is licensed under the MIT license
