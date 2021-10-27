@@ -1,5 +1,5 @@
 # Repldex
-\[Un\]official encyclopedia of user created entries for the Repl.it Community in general, but mainly the [Repl.it Discord Server](https://repl.it/discord). Contains the Discord bot source code and `Svelte` (API and frontend).
+\[Un\]official encyclopedia of user created entries for the Replit Community in general, but mainly the [Replit Discord Server](https://replit.com/discord). Contains the Discord bot source code and `Svelte` (API and frontend).
 
 # WARNING
 ⚠️ Repldex V3 is still under heavy development! ⚠️
