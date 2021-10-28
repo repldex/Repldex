@@ -20,7 +20,12 @@
 </script>
 
 <a href="/">Back</a>
-<Head title={entry.title} />
+
+<svelte:head>
+  <title>{entry.title}</title>
+  <meta name="description" content="{entry.content}" />
+  <meta name="theme-color" content="#FF0000" />
+</svelte:head>
 
 <h1>{entry.title}</h1>
 <article>{entry.content}</article>
