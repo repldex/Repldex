@@ -19,13 +19,9 @@
 	export let entry: Entry
 </script>
 
-<Head title={entry.title} description={entry.content} />
+<Head title={entry.title} description={entry.content} image={entry.image} />
 
 <a href="/">Back</a>
-
-<svelte:head>
-  
-</svelte:head>
 
 <h1>{entry.title}</h1>
 <article>{entry.content}</article>
