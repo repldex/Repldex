@@ -24,6 +24,7 @@
 <svelte:head>
   <title>{entry.title}</title>
   <meta name="description" content="{entry.content}" />
+  <meta name="og:site_name" content="Repldex" />
   <meta name="theme-color" content="#FF0000" />
 </svelte:head>
 
