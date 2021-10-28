@@ -22,6 +22,26 @@ if (process.env['NODE_ENV'] === 'development') {
 	clientPromise = client.connect()
 }
 
+function flattenObject(obj, sep='.') {
+	// not an object, can't be flattened
+	if (typeof obj !== 'object')
+		return obj
+
+	const result = {}
+
+	for (const [ key, value ] of Object.entries(obj)) {
+		if (typeof value === 'object') {
+			for (
+				const [ innerKey, innerValue ] of Object.entries(flattenObject(value))
+			) {
+				result[`${key}.${innerKey}`] = innerValue
+			}
+		} else
+			result[key] = value
+	}
+	return result
+}
+
 export async function getDatabase(): Promise<Db> {
 	const client = await clientPromise
 	return client.db()

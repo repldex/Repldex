@@ -15,21 +15,8 @@ interface User {
 	accounts?: LinkedAccounts
 }
 
-type Join<K, P> = K extends string | number
-	? P extends string | number
-		? `${K}${'' extends P ? '' : '.'}${P}`
-		: never
-	: never
 
-type Prev = [never, 0, 1, 2, 3, 4, ...0[]]
-
-type Leaves<T, D extends number = 5> = [D] extends [never]
-	? never
-	: T extends object
-	? { [K in keyof T]-?: Join<K, Leaves<T[K], Prev[D]>> }[keyof T]
-	: ''
-
-type FetchUserQuery = Partial<Leaves<Omit<User, '_id'> & { id: string }>>
+type FetchUserQuery = Partial<Omit<User, '_id'> & { id: string }>
 
 async function getCollection(): Promise<Collection<User>> {
 	const db = await getDatabase()
@@ -44,6 +31,7 @@ export async function fetchUser(data: FetchUserQuery): Promise<User | null> {
 	const fetchUserQuery = Object.fromEntries(
 		Object.keys(data).map(k => (k === 'id' ? ['_id', new ObjectId(data[k])] : [k, data[k]]))
 	) as Omit<FetchUserQuery, 'id'> & '_id'
+	// flatten the fetchUserQuery
 
 	return await collection.findOne(fetchUserQuery)
 }

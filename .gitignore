@@ -6,3 +6,4 @@
 .env
 /dist
 /.vercel_build_output
+.vercel
