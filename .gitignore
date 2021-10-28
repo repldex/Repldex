@@ -7,3 +7,4 @@
 /dist
 /.vercel_build_output
 .vercel
+/cache

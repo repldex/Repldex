@@ -19,9 +19,7 @@
 	export let entries: Entry[]
 </script>
 
- <title>Repldex</title>
- <meta name="description" content="Repldex is the unofficial community-editable encyclopedia of user created entries for the Replit Discord Server" />
- <meta name="theme-color" content="#FF0000" />
+ <Head title="Repldex" description="Repldex is the unofficial community-editable encyclopedia of user created entries for the Replit Discord Server" />
 <Head />
 
 <h1><img src="/icon.png" alt="Repldex Logo" class="title-logo" />Repldex</h1>

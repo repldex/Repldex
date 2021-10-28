@@ -16,8 +16,8 @@
 	export let message
 </script>
 
-<Head title={status} />
-<Head description={message} />
+<Head title={status} description={message} />
+<Head  />
 
 <div class="error-container-container">
 	<div class="error-container">
