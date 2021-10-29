@@ -19,7 +19,7 @@
 	export let entry: Entry
 </script>
 
-<Head title={entry.title} description={entry.content} image={entry.image} />
+<Head title={entry.title} description={entry.content} />
 
 <a href="/">Back</a>
 
