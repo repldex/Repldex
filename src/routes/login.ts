@@ -14,6 +14,8 @@ export const get: RequestHandler = async req => {
 	const redirectUri = new URL('/login', `https://${req.host}`).toString()
 
 	// if there's no OAuth code, redirect to Discord's authorization page
+
+	
 	if (!discordOauthCode) {
 		return {
 			// redirect to discord login

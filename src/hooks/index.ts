@@ -6,18 +6,18 @@ import { fetchUser } from '../lib/database/users'
 export const handle: Handle = async ({ request, resolve }) => {
 	const cookies = cookie.parse(request.headers.cookie ?? '')
 
-	console.log('cookies:', cookies)
-	request.locals.user = cookies.sid
+	// console.log('cookies:', cookies)
+	/*request.locals.user = cookies.sid
 		? await fetchUser({
 				id: cookies.sid,
 		  })
-		: undefined
+		: undefined*/
 
 	return await resolve(request)
 }
 
 export const getSession: GetSession = ({ locals }) => {
 	return {
-		user: locals.user,
+		//user: locals.user,
 	}
 }
