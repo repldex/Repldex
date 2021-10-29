@@ -19,8 +19,9 @@
 	export let entry: Entry
 </script>
 
+<Head title={entry.title} description={entry.content} />
+
 <a href="/">Back</a>
-<Head title={entry.title} />
 
 <h1>{entry.title}</h1>
 <article>{entry.content}</article>
