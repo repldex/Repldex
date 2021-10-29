@@ -15,7 +15,6 @@ interface User {
 	accounts?: LinkedAccounts
 }
 
-
 type FetchUserQuery = Partial<Omit<User, '_id'> & { id: string }>
 
 async function getCollection(): Promise<Collection<User>> {

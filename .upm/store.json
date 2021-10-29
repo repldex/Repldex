@@ -1,1 +1,23 @@
-{"version":2,"languages":{"nodejs-npm":{"specfileHash":"1edbb3e48c88090e6eee217b6e2df50e","lockfileHash":"50df37f6c58186bdd1e8194f984c3383","guessedImports":["vite-plugin-html","svelte","node-fetch","cookie","@sveltejs/adapter-vercel","@sveltejs/adapter-node","dotenv","mongodb","discord-interactions","svelte-preprocess","@sveltejs/adapter-static"],"guessedImportsHash":"d66d888dc8d80c8c477f1f4853797c56"}}}
+{
+	"version": 2,
+	"languages": {
+		"nodejs-npm": {
+			"specfileHash": "1edbb3e48c88090e6eee217b6e2df50e",
+			"lockfileHash": "50df37f6c58186bdd1e8194f984c3383",
+			"guessedImports": [
+				"vite-plugin-html",
+				"svelte",
+				"node-fetch",
+				"cookie",
+				"@sveltejs/adapter-vercel",
+				"@sveltejs/adapter-node",
+				"dotenv",
+				"mongodb",
+				"discord-interactions",
+				"svelte-preprocess",
+				"@sveltejs/adapter-static"
+			],
+			"guessedImportsHash": "d66d888dc8d80c8c477f1f4853797c56"
+		}
+	}
+}

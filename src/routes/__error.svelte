@@ -17,7 +17,6 @@
 </script>
 
 <Head title={status} description={message} />
-<Head  />
 
 <div class="error-container-container">
 	<div class="error-container">

@@ -19,7 +19,6 @@
 	export let entries: Entry[]
 </script>
 
- <Head title="Repldex" description="Repldex is the unofficial community-editable encyclopedia of user created entries for the Replit Discord Server" />
 <Head />
 
 <h1><img src="/icon.png" alt="Repldex Logo" class="title-logo" />Repldex</h1>

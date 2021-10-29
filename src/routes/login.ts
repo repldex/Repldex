@@ -56,7 +56,7 @@ export const get: RequestHandler = async req => {
 	if (existingRepldexUser) {
 		// the user has a repldex account, create a new session for them
 		sessionId = await createSession({
-			userId: existingRepldexUser._id
+			userId: existingRepldexUser._id,
 		})
 		console.log('created new session', existingRepldexUser, sessionId)
 	} else {
@@ -64,11 +64,11 @@ export const get: RequestHandler = async req => {
 		const repldexUserId = await createUser({
 			username: discordUserData.username,
 			accounts: {
-				discord: discordUserData.id
-			}
+				discord: discordUserData.id,
+			},
 		})
 		sessionId = await createSession({
-			userId: repldexUserId
+			userId: repldexUserId,
 		})
 	}
 	console.log(sessionId)
@@ -76,7 +76,7 @@ export const get: RequestHandler = async req => {
 	return {
 		body: 'ok',
 		header: {
-			'set-cookie': `sid=${sessionId}; Path=/; HttpOnly`
-		}
+			'set-cookie': `sid=${sessionId}; Path=/; HttpOnly`,
+		},
 	}
 }
