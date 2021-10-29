@@ -1,9 +1,10 @@
 // https://discordapp.com/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=identify
 
-import type { RequestHandler } from '@sveltejs/kit'
-import config from '../lib/config'
-import { createSession } from '../lib/database/sessions'
 import { createUser, fetchUser } from '../lib/database/users'
+import { createSession } from '../lib/database/sessions'
+import type { RequestHandler } from '@sveltejs/kit'
+import { createUuid } from '../lib/database/index'
+import config from '../lib/config'
 
 const clientSecret = process.env['DISCORD_CLIENT_SECRET']
 if (!clientSecret) throw new Error('DISCORD_CLIENT_SECRET environment variable not set')
@@ -47,36 +48,40 @@ export const get: RequestHandler = async req => {
 		},
 	}).then(res => res.json())
 
+	if (!discordUserData.id) {
+		throw new Error('Failed to get user data from Discord')
+	}
+
 	// get the existing data for the user, if they don't exist this will be null
 	const existingRepldexUser = await fetchUser({
-		'accounts.discord': discordUserData.id,
+		accounts: {
+			discord: discordUserData.id,
+		},
 	})
 
-	let sessionId: string = ''
+	let sessionId: string
 	if (existingRepldexUser) {
 		// the user has a repldex account, create a new session for them
 		sessionId = await createSession({
-			userId: existingRepldexUser._id
+			userId: createUuid(existingRepldexUser.id),
 		})
-		console.log('created new session', existingRepldexUser, sessionId)
 	} else {
 		// the user does not have a repldex account, create one for them and then create a session for them
 		const repldexUserId = await createUser({
 			username: discordUserData.username,
 			accounts: {
-				discord: discordUserData.id
-			}
+				discord: discordUserData.id,
+			},
 		})
 		sessionId = await createSession({
-			userId: repldexUserId
+			userId: createUuid(repldexUserId),
 		})
 	}
-	console.log(sessionId)
 
 	return {
 		body: 'ok',
-		header: {
-			'set-cookie': `sid=${sessionId}; Path=/; HttpOnly`
-		}
-	}
+		headers: {
+			'set-cookie': `sid=${sessionId}; Path=/; HttpOnly`,
+		},
+	} as any // we have to convert to any here because of a bug in sveltekit :(
 }

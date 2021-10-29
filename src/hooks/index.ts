@@ -1,10 +1,18 @@
 import type { GetSession, Handle } from '@sveltejs/kit'
 import cookie from 'cookie'
+import { generateToken } from '../lib/auth'
+import { fetchUser } from '../lib/database/users'
 
 export const handle: Handle = async ({ request, resolve }) => {
-	const cookies = cookie.parse(request.headers.cookie || '')
-	// const jwt = cookies.jwt && Buffer.from(cookies.jwt, 'base64').toString('utf-8')
-	// request.locals.user = jwt ? JSON.parse(jwt) : null
+	const cookies = cookie.parse(request.headers.cookie ?? '')
+
+	console.log('cookies:', cookies)
+	request.locals.user = cookies.sid
+		? await fetchUser({
+				id: cookies.sid,
+		  })
+		: undefined
+
 	return await resolve(request)
 }
 

@@ -1,4 +1,6 @@
 import { Db, MongoClient } from 'mongodb'
+import { Binary } from 'mongodb'
+import { v4 as uuidv4 } from '@lukeed/uuid/secure'
 
 const uri = process.env['MONGODB_URI']
 
@@ -22,22 +24,69 @@ if (process.env['NODE_ENV'] === 'development') {
 	clientPromise = client.connect()
 }
 
-function flattenObject(obj, sep='.') {
+/**
+ * Flatten an object like { foo: { bar: 'baz' } } to { foo.bar: 'baz' }
+ * This is useful for MongoDB queries.
+ */
+export function flattenMongoQuery(obj: object): Record<string, any> {
 	// not an object, can't be flattened
-	if (typeof obj !== 'object')
-		return obj
+	if (typeof obj !== 'object') return obj
 
 	const result = {}
 
-	for (const [ key, value ] of Object.entries(obj)) {
-		if (typeof value === 'object') {
-			for (
-				const [ innerKey, innerValue ] of Object.entries(flattenObject(value))
-			) {
+	for (const [key, value] of Object.entries(obj)) {
+		if (typeof value === 'object' && !key.startsWith('$')) {
+			for (const [innerKey, innerValue] of Object.entries(flattenMongoQuery(value))) {
 				result[`${key}.${innerKey}`] = innerValue
 			}
-		} else
+		} else result[key] = value
+	}
+	return result
+}
+
+/** Create a MongoDB UUID */
+export function createUuid(uuid?: string): Binary {
+	return new Binary(Buffer.from(uuid ?? uuidv4().replace(/-/g, ''), 'hex'), Binary.SUBTYPE_UUID)
+}
+
+/**
+ * replace "id" with "_id" and convert it to an ObjectId
+ */
+export function replaceIdWithUuid<T>(
+	data: T
+): T extends { id: string }
+	? Omit<T, 'id'> & { _id: Binary }
+	: T extends { id?: string }
+	? Omit<T, 'id'> & { _id?: Binary }
+	: T {
+	const result = {} as any
+	for (const [key, value] of Object.entries(data)) {
+		if (key === 'id') {
+			result._id = new Binary(value.replace(/-/g, ''), Binary.SUBTYPE_UUID)
+		} else {
 			result[key] = value
+		}
+	}
+	return result
+}
+
+/**
+ * replace "_id" with "id" and convert it to a string
+ */
+export function replaceUuidWithId<T extends object>(
+	data: T
+): T extends { _id: Binary }
+	? Omit<T, '_id'> & { id: string }
+	: T extends { _id?: Binary }
+	? Omit<T, '_id'> & { id?: string }
+	: T {
+	const result = {} as any
+	for (const [key, value] of Object.entries(data)) {
+		if (key === '_id') {
+			result.id = value.toString('hex')
+		} else {
+			result[key] = value
+		}
 	}
 	return result
 }
@@ -46,3 +95,5 @@ export async function getDatabase(): Promise<Db> {
 	const client = await clientPromise
 	return client.db()
 }
+
+export type ReplaceIdWithUuid<T> = Omit<T, 'id'> & { _id: Binary }
