@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { goto } from '$app/navigation'
+
 	import MarkdownEditor from '../lib/MarkdownEditor.svelte'
 	import TextInput from '../lib/TextInput.svelte'
 	import Head from '../lib/Head.svelte'
@@ -34,7 +36,12 @@
 			}),
 		}).then(response => response.json())
 
-		console.log(response)
+		if (response.error) {
+			console.error(response.error)
+			return
+		}
+
+		goto(`/entry/${response.slug}`)
 	}
 </script>
 
