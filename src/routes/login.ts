@@ -50,6 +50,7 @@ export const get: RequestHandler = async req => {
 	}).then(res => res.json())
 
 	if (!discordUserData.id) {
+		console.log(discordUserData)
 		throw new Error('Failed to get user data from Discord')
 	}
 

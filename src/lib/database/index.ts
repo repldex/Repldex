@@ -97,3 +97,10 @@ export async function getDatabase(): Promise<Db> {
 }
 
 export type ReplaceIdWithUuid<T> = Omit<T, 'id'> & { _id: Binary }
+
+export function createSlug(text: string): string {
+	return text
+		.toLowerCase()
+		.replace(/[^\w ]+/g, '')
+		.replace(/ +/g, '-')
+}

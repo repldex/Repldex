@@ -8,5 +8,6 @@
 <style>
 	input {
 		margin: 0;
+		font-size: inherit;
 	}
 </style>

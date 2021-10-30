@@ -8,13 +8,17 @@ import {
 	replaceUuidWithId,
 } from '.'
 
-/** The information exposed about a user from the API */
-export interface APIUser {
+// the id and username of a user
+export interface BasicUser {
 	/** The unique ID of the user. This never changes. */
 	id: string
 	/** The username of the Repldex user. This should not be relied on to be unique or to stay the same, use the id for that. */
 	username: string
 }
+
+/** The information exposed about a user from the API */
+// export interface APIUser extends BasicUser {}
+export type APIUser = BasicUser
 
 interface LinkedAccounts {
 	// linked accounts are always as ids
