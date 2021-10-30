@@ -1,4 +1,4 @@
-<a href="/login">
+<a href="/login" target="_self">
 	<button>
 		<img src="/discord.png" class="login-with-discord-icon" alt="Discord Clyde Logo" />
 		<span>Log in with Discord</span>

@@ -22,7 +22,6 @@ if (process.env['NODE_ENV'] === 'development') {
 	// In production mode, it's best to not use a global variable.
 	client = new MongoClient(uri, options)
 	clientPromise = client.connect()
-	console.log('created mongo client')
 }
 
 /**
@@ -36,7 +35,7 @@ export function flattenMongoQuery(obj: object): Record<string, any> {
 	const result = {}
 
 	for (const [key, value] of Object.entries(obj)) {
-		if (typeof value === 'object' && !key.startsWith('$')) {
+		if (typeof value === 'object' && value !== Object(value) && !key.startsWith('$')) {
 			for (const [innerKey, innerValue] of Object.entries(flattenMongoQuery(value))) {
 				result[`${key}.${innerKey}`] = innerValue
 			}
@@ -47,7 +46,7 @@ export function flattenMongoQuery(obj: object): Record<string, any> {
 
 /** Create a MongoDB UUID */
 export function createUuid(uuid?: string): Binary {
-	return new Binary(Buffer.from(uuid ?? uuidv4().replace(/-/g, ''), 'hex'), Binary.SUBTYPE_UUID)
+	return new Binary(Buffer.from((uuid ?? uuidv4()).replace(/-/g, ''), 'hex'), Binary.SUBTYPE_UUID)
 }
 
 /**
@@ -63,7 +62,7 @@ export function replaceIdWithUuid<T>(
 	const result = {} as any
 	for (const [key, value] of Object.entries(data)) {
 		if (key === 'id') {
-			result._id = new Binary(value.replace(/-/g, ''), Binary.SUBTYPE_UUID)
+			result._id = createUuid(value)
 		} else {
 			result[key] = value
 		}

@@ -8,16 +8,21 @@ import {
 	replaceUuidWithId,
 } from '.'
 
+/** The information exposed about a user from the API */
+export interface APIUser {
+	/** The unique ID of the user. This never changes. */
+	id: string
+	/** The username of the Repldex user. This should not be relied on to be unique or to stay the same, use the id for that. */
+	username: string
+}
+
 interface LinkedAccounts {
 	// linked accounts are always as ids
 	discord?: string
 }
 
-export interface User {
-	/** The unique ID of the user. This never changes. */
-	id: string
-	/** The username of the Repldex user. This should not be relied on to be unique or to stay the same, use the id for that. */
-	username: string
+/** All of the information about the user in the database */
+export interface User extends APIUser {
 	accounts?: LinkedAccounts
 }
 

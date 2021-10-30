@@ -18,15 +18,13 @@
 </script>
 
 <nav>
-	{#if !user}
-		<div class="discord-login-button-container">
+	<div class="discord-login-button-container">
+		{#if !user}
 			<DiscordLoginButton />
-		</div>
-	{:else}
-		<p>
+		{:else}
 			<a href="/logout">Logout</a>
-		</p>
-	{/if}
+		{/if}
+	</div>
 </nav>
 
 <main>

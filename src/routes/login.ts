@@ -15,7 +15,6 @@ export const get: RequestHandler = async req => {
 
 	// if there's no OAuth code, redirect to Discord's authorization page
 
-	
 	if (!discordOauthCode) {
 		return {
 			// redirect to discord login
@@ -81,9 +80,10 @@ export const get: RequestHandler = async req => {
 	}
 
 	return {
-		body: 'ok',
+		status: 302,
 		headers: {
 			'set-cookie': `sid=${sessionId}; Path=/; HttpOnly`,
+			'location': '/',
 		},
 	} as any // we have to convert to any here because of a bug in sveltekit :(
 }
