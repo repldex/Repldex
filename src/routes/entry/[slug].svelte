@@ -21,7 +21,15 @@
 
 <Head title={entry.title} description={entry.content} />
 
-<a href="/">Back</a>
+<a href="/" class="back-button">Back</a>
 
 <h1>{entry.title}</h1>
 <article>{entry.content}</article>
+
+<style>
+	.back-button {
+		position: absolute;
+		top: 1rem;
+		left: 1rem;
+	}
+</style>

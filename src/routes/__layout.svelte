@@ -34,11 +34,13 @@
 <style>
 	.discord-login-button-container {
 		position: absolute;
-		right: 1em;
-		top: 1em;
+		right: 1rem;
+		top: 1rem;
 	}
 
 	main {
 		margin: 1em;
+		max-width: 60rem;
+		margin: 0 auto;
 	}
 </style>

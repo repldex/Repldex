@@ -1,11 +1,11 @@
 import jwt from 'jsonwebtoken'
-import type { APIUser } from './database/users'
+import type { BasicUser } from './database/users'
 
 const secret = process.env['JWT_SECRET']
 
 if (!secret)
 	throw new Error(
-		"JWT_SECRET environment variable not set. You can generate one by running `require('crypto').randomBytes(64).toString('hex')` in Node."
+		"JWT_SECRET environment variable not set. You can generate one by running `require('crypto').randomBytes(64).toString('hex')` in the Node REPL."
 	)
 
 type Impossible<K extends keyof any> = {
@@ -13,9 +13,9 @@ type Impossible<K extends keyof any> = {
 }
 type NoExtraProperties<T, U extends T = T> = U & Impossible<Exclude<keyof U, keyof T>>
 
-export function generateToken<T extends APIUser>(
+export function generateToken<T extends BasicUser>(
 	// we don't want extra properties in the token, so we use APIUser
-	user: NoExtraProperties<APIUser, T>
+	user: NoExtraProperties<BasicUser, T>
 ): string {
 	return jwt.sign(user, secret!, { expiresIn: '90d' })
 }
