@@ -1,11 +1,13 @@
 <script lang="ts">
 	// import type { Entry } from '../routes/api/entries.json.ts'
 	export let entry
+
+	import * as markdown from './markdown'
 </script>
 
 <a class="entry-preview-container" href="/entry/{entry.slug}">
 	<h2 class="entry-preview-title">{entry.title}</h2>
-	<p class="entry-preview-content">{entry.content}</p>
+	<p class="entry-preview-content">{@html markdown.render(entry.content)}</p>
 </a>
 
 <style>

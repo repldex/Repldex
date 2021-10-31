@@ -1,45 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
+	import * as markdown from './markdown'
+
 	export let value: string = ''
-
-	// render our markdown into html, but still showing the markdown entities
-	function render(text: string): string {
-		let output = ''
-
-		// whether it's currently italicized
-		let isItalic = false
-		// whether it's currently bolded
-		let isBold = false
-
-		for (let i = 0; i < text.length; i++) {
-			let textAfter = text.substring(i)
-
-			if (textAfter.startsWith('**') && !isBold) {
-				output += '<b>'
-				output += '<span class="markdown-asterisk">**</span>'
-				isBold = true
-				i += 1
-			} else if (textAfter.startsWith('**') && isBold && !isItalic) {
-				output += '<span class="markdown-asterisk">**</span>'
-				output += '</b>'
-				isBold = false
-				i += 1
-			} else if (textAfter.startsWith('*') && !isItalic) {
-				output += '<i>'
-				output += '<span class="markdown-asterisk">*</span>'
-				isItalic = true
-			} else if (textAfter.startsWith('*') && isItalic) {
-				output += '<span class="markdown-asterisk">*</span>'
-				output += '</i>'
-				isItalic = false
-			} else {
-				output += textAfter[0].replace(/&/, '&amp;').replace(/</, '&lt;').replace(/>/, '&gt;')
-			}
-		}
-		if (isItalic) output += '</i>'
-		if (isBold) output += '</b>'
-		return '<span>' + output + '<br></span>'
-	}
 
 	function handlePaste(e: ClipboardEvent) {
 		const text = e.clipboardData.getData('text/plain')
@@ -56,7 +19,7 @@
 
 	function addStateToHistory(el: HTMLTextAreaElement) {
 		history.push({
-			text: el.textContent,
+			text: el.innerText,
 			pos: el.selectionStart,
 		})
 	}
@@ -75,59 +38,67 @@
 	}
 
 	function setCaret(pos: number, parent: Node) {
-		for (const node of parent.childNodes as unknown as Iterable<Node>)
-			if (node.nodeType == Node.TEXT_NODE)
-				if (node.textContent.length >= pos) {
+		for (const node of parent.childNodes as unknown as Iterable<Node>) {
+			if (node.nodeType == Node.TEXT_NODE) {
+				if ((node.textContent?.length ?? 0) >= pos) {
 					const range = document.createRange()
 					const sel = window.getSelection()
 					range.setStart(node, pos)
 					range.collapse(true)
-					sel.removeAllRanges()
-					sel.addRange(range)
+					sel?.removeAllRanges()
+					sel?.addRange(range)
 					return -1
-				} else pos = pos - node.textContent.length
-			else {
+				} else pos = pos - (node.textContent?.length ?? 0)
+			} else {
 				pos = setCaret(pos, node)
 				if (pos < 0) return pos
 			}
+		}
 		return pos
+	}
+
+	function handleKeyDown(e) {
+		if (e.key === 'Enter') {
+			document.execCommand('insertLineBreak')
+			e.preventDefault()
+		}
 	}
 
 	function handleInput(e) {
 		const el = e.target as HTMLTextAreaElement
 		if (e.data && (e.data.charCodeAt(0) >= 32 || e.data.charCodeAt(0) == 0x20)) {
 			const pos = caret(el)
-			el.innerHTML = render(el.textContent)
+			// we use innertext instead of textContent since innerText is aware of line breaks and textContent isn't
+			el.innerHTML = markdown.render(el.innerText, { showEntities: true })
 			setCaret(pos, el)
 		} else if (e.inputType == 'deleteContentBackward' || e.inputType == 'deleteContentForward') {
 			const pos = caret(el)
-			el.innerHTML = render(el.textContent)
+			el.innerHTML = markdown.render(el.innerText, { showEntities: true })
 			setCaret(pos, el)
 		}
+		value = el.innerText
 	}
 
 	let spacesTyped = 0
 
 	function handleBeforeInput(e) {
 		const el = e.target as HTMLTextAreaElement
-		console.log('beforeinput', el.textContent)
 
 		// ctrl z
 		if (e.inputType == 'historyUndo') {
 			e.preventDefault()
 			let pos = caret(el)
 			const historyItem = history.pop()
-			el.innerHTML = render(historyItem.text)
-			// if the pos is higher than the actual length, put it at the end
-			if (pos > el.textContent.length) pos = el.textContent.length
-			setCaret(pos, el)
-			console.log('pos', pos)
+			if (historyItem) {
+				el.innerHTML = markdown.render(historyItem.text, { showEntities: true })
+				// if the pos is higher than the actual length, put it at the end
+				if (pos > el.innerText.length) pos = el.innerText.length
+				setCaret(pos, el)
+			}
 		} else {
 			// we only add to history when at least one of the following is true:
 			// - typed a non-space character after typing more than one space
 			// - we typed a space after typing a non-space
-
-			// hello! world! asdf!    !a!
 
 			if (e.inputType == 'insertText') {
 				const typedSpace = e.data === ' '
@@ -140,7 +111,6 @@
 				// limit the history to 10 entries
 				if (history.length > 10) history.shift()
 			}
-			// history.push(el.textContent)
 		}
 	}
 </script>
@@ -160,7 +130,7 @@
 	on:paste|preventDefault={handlePaste}
 	on:input={handleInput}
 	on:beforeinput={handleBeforeInput}
-	bind:textContent={value}
+	on:keydown={handleKeyDown}
 />
 
 <style>

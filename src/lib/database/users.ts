@@ -7,6 +7,7 @@ import {
 	replaceIdWithUuid,
 	replaceUuidWithId,
 } from '.'
+import type { Entry } from './entries'
 
 // the id and username of a user
 export interface BasicUser {
@@ -25,9 +26,16 @@ interface LinkedAccounts {
 	discord?: string
 }
 
+interface UserStats {
+	/** The total number of entries edited or created by this user */
+	entriesEdited?: number
+	/** The total nubmer of edits that this user made that were lated reverted */
+}
+
 /** All of the information about the user in the database */
 export interface User extends APIUser {
 	accounts?: LinkedAccounts
+	stats?: UserStats
 }
 
 type FetchUserQuery = Partial<Omit<User, '_id'> & { id: string }>
@@ -55,4 +63,14 @@ export async function createUser(data: Omit<User, 'id'>): Promise<string> {
 		_id: userId,
 	})
 	return userId.toString('hex')
+}
+
+/** Update the user's stats after they edited an entry */
+export async function updateUserEntryEdited(userId: string): Promise<void> {
+	const collection = await getCollection()
+	await collection.updateOne(replaceIdWithUuid({ id: userId }), {
+		$inc: {
+			'stats.entriesEdited': 1,
+		},
+	})
 }

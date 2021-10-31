@@ -6,29 +6,13 @@ export interface Entry {
 	title: string
 	content: string
 	slug: string
+	createdAt: Date
 }
 
 async function getCollection(): Promise<Collection<ReplaceIdWithUuid<Entry>>> {
 	const db = await getDatabase()
 	return db.collection('entries')
 }
-
-const dummyEntries: Entry[] = [
-	{
-		id: 'a',
-		title: 'foobar',
-		slug: 'foobar',
-		content:
-			'The terms foobar (/ˈfuːbɑːr/), foo, bar, baz, and others are used as metasyntactic variables and placeholder names in computer programming or computer-related documentation. They have been used to name entities such as variables, functions, and commands whose exact identity is unimportant and serve only to demonstrate a concept.',
-	},
-	{
-		id: 'b',
-		title: 'Lorem ipsum',
-		slug: 'lorem-ipsum',
-		content:
-			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras arcu ipsum, rhoncus a augue a, auctor euismod odio. Etiam sit amet vulputate libero. Maecenas eu nulla nibh. Quisque at urna rhoncus, dignissim risus vel, congue nisl. Fusce non maximus lacus. Nunc aliquam nulla a tempor vestibulum. Maecenas laoreet pharetra diam. Donec sit amet lorem a sapien luctus suscipit. Nunc convallis scelerisque massa eu sollicitudin. Phasellus convallis tempus metus, at tempor ligula faucibus sit amet. Nam ut lectus et elit aliquet fermentum. Nullam vehicula mi in dui fermentum, sed cursus sem sollicitudin. Nam sagittis malesuada augue, et finibus est auctor eget.',
-	},
-]
 
 interface FetchEntriesOptions {
 	limit: number
@@ -74,24 +58,19 @@ export async function editEntry(
 /**
  * Create an entry
  */
-export async function createEntry(entry: Omit<Entry, 'id'>): Promise<Entry | null> {
+export async function createEntry(entry: Omit<Entry, 'id' | 'createdAt'>): Promise<Entry | null> {
 	const collection = await getCollection()
 	const entryId = createUuid()
 
 	// add the id to the entry
-	const newEntry = { ...entry, _id: entryId }
+	const newEntry: ReplaceIdWithUuid<Entry> = {
+		...entry,
+		_id: entryId,
+		createdAt: new Date(),
+	}
 
 	// insert the entry into the database
 	await collection.insertOne(newEntry)
 
 	return replaceUuidWithId(newEntry)
-}
-
-/**
- * Search for a list of entries by name and content, sorted by relevance
- */
-export async function searchEntries(query: string): Promise<Entry[]> {
-	return dummyEntries
-		.filter(e => e.title.includes(query))
-		.sort((a, b) => a.title.length - b.title.length)
 }
