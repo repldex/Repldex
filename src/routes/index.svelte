@@ -19,7 +19,7 @@
 	export let entries: Entry[]
 </script>
 
-<Head />
+<Head imageUrl="/icon.png" />
 
 <h1><img src="/icon.png" alt="Repldex Logo" class="title-logo" />Repldex</h1>
 

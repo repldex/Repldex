@@ -12,6 +12,8 @@
 			},
 		}
 	}
+
+	import * as markdown from '../../lib/markdown'
 </script>
 
 <script lang="ts">
@@ -24,7 +26,7 @@
 <a href="/" class="back-button">Back</a>
 
 <h1>{entry.title}</h1>
-<article>{entry.content}</article>
+<article>{@html markdown.render(entry.content)}</article>
 
 <style>
 	.back-button {

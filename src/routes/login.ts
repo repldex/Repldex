@@ -80,10 +80,15 @@ export const get: RequestHandler = async req => {
 		})
 	}
 
+	// expire the cookie after 90 days
+	const cookieExpiresTimestamp = new Date(
+		new Date().getTime() + 90 * 24 * 60 * 60 * 1000
+	).toUTCString()
+
 	return {
 		status: 302,
 		headers: {
-			'set-cookie': `sid=${sessionId}; Path=/; HttpOnly`,
+			'set-cookie': `sid=${sessionId}; Path=/; HttpOnly; expires=${cookieExpiresTimestamp}`,
 			'location': '/',
 		},
 	} as any // we have to convert to any here because of a bug in sveltekit :(

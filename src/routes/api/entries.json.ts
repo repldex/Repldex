@@ -3,7 +3,8 @@ import type { RequestHandler } from '@sveltejs/kit'
 import type { JSONString } from '@sveltejs/kit/types/helper'
 import { canCreateEntries } from '../../lib/perms'
 import { fetchUser } from '../../lib/database/users'
-import { createSlug } from '../../lib/database/index'
+import { createSlug, createUuid } from '../../lib/database/index'
+import { createHistoryItem } from '../../lib/database/history'
 
 export const get: RequestHandler = async req => {
 	const entries = await fetchEntries({
@@ -61,6 +62,15 @@ export const post: RequestHandler = async req => {
 		title: entryTitle,
 		slug,
 	})
+	if (entry) {
+		await createHistoryItem({
+			entryId: createUuid(entry.id),
+			content: entryContent,
+			title: entryTitle,
+			timestamp: entry.createdAt,
+			userId: createUuid(user.id),
+		})
+	}
 
 	return {
 		body: entry as any,
