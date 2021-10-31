@@ -48,4 +48,10 @@
 		position: relative;
 		top: 0.15em;
 	}
+
+	@media only screen and (max-width: 290px) {
+		h1 {
+			top: 0.73em;
+		}
+	}
 </style>
