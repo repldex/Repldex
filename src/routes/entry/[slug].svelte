@@ -5,11 +5,23 @@
 	export const load: Load = async ({ page, fetch, session, stuff }) => {
 		const entrySlug: string = page.params.slug
 		const res = await fetch(`/api/entry/${entrySlug}.json`)
+		const data = await res.json()
 
-		return {
-			props: {
-				entry: await res.json(),
-			},
+		if (data === null) {
+			return {
+				props: {
+					entry: {
+						title: '404',
+						content: 'The requested entry was not found!',
+					},
+				},
+			}
+		} else {
+			return {
+				props: {
+					entry: data,
+				},
+			}
 		}
 	}
 

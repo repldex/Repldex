@@ -48,4 +48,11 @@
 		position: relative;
 		top: 0.15em;
 	}
+
+	@media only screen and (max-width: 280px) {
+		.title-logo {
+			height: 2em;
+			width: 2em;
+		}
+	}
 </style>

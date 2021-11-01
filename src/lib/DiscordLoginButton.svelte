@@ -1,7 +1,7 @@
 <a href="/login" target="_self">
 	<button>
 		<img src="/discord.png" class="login-with-discord-icon" alt="Discord Clyde Logo" />
-		<span>Log in with Discord</span>
+		<span>Login</span>
 	</button>
 </a>
 
@@ -23,5 +23,11 @@
 		height: 1em;
 		margin-right: 0.4em;
 		top: 0.2em;
+	}
+
+	@media only screen and (max-width: 415px) {
+		.login-with-discord-icon {
+			display: none;
+		}
 	}
 </style>
