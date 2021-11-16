@@ -25,13 +25,15 @@ export const enum ApplicationCommandOptionType {
 // we don't want the user to have to specify the type here
 type CommandOptions = Omit<RESTPostAPIChatInputApplicationCommandsJSONBody, 'type'>
 
-export const commands: Command[] = []
+export const commands: { [key: string]: Command } = {}
 
 export class Command {
 	json: RESTPostAPIChatInputApplicationCommandsJSONBody
+	name: {}
 	handler: (interaction: APIApplicationCommandInteraction) => void
 
 	constructor(options: CommandOptions) {
+    this.name = options.name
 		this.json = {
 			// ChatInput
 			type: 1,
@@ -45,9 +47,9 @@ export class Command {
 		return this
 	}
 
-	handle(handler: (interaction: APIApplicationCommandInteraction) => void): void {
+	handle(handler: (interaction: APIApplicationCommandInteraction) => {}): void {
 		this.handler = handler
-		commands.push(this)
+		commands[this.name] = this
 		console.log('added command')
 	}
 }

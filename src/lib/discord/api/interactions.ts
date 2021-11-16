@@ -1,6 +1,7 @@
 import { verifyKey } from 'discord-interactions'
 import config from '../../config'
 import type { APIInteractionResponse, APIMessageInteraction } from 'discord-api-types/payloads/v9'
+import { commands } from './commands'
 
 export const APPLICATIONS_BASE_API_URL =
 	`https://discord.com/api/v9/applications/${config.discord_client_id}` as const
@@ -30,11 +31,9 @@ export async function handleInteraction(
 			}
 		// ApplicationCommand
 		case 2:
-			return {
+      return {
 				type: 4,
-				data: {
-					content: 'ok',
-				},
+				data: commands[data.data.name].handler(data),
 			}
 		// MessageComponent
 		// case 3:

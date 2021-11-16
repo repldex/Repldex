@@ -12,6 +12,9 @@ new Command({
 	})
 	.handle(i => {
 		console.log(i)
+		return {
+			content: "Ok"
+		}
 	})
 
 console.log('bot')
