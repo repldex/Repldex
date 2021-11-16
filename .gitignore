@@ -9,3 +9,4 @@
 .vercel
 /.cache
 /.upm
+.config
