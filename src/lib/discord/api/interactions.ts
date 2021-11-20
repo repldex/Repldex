@@ -31,7 +31,7 @@ export async function handleInteraction(
 			}
 		// ApplicationCommand
 		case 2:
-      return {
+			return {
 				type: 4,
 				data: commands[data.data.name].handler(data),
 			}

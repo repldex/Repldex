@@ -33,7 +33,7 @@ export class Command {
 	handler: (interaction: APIApplicationCommandInteraction) => void
 
 	constructor(options: CommandOptions) {
-    this.name = options.name
+		this.name = options.name
 		this.json = {
 			// ChatInput
 			type: 1,
