@@ -21,7 +21,16 @@
 
 <Head imageUrl="/icon.png" />
 
-<h1><img src="/icon.png" alt="Repldex Logo" class="title-logo" />Repldex</h1>
+<h1>
+	<!-- <img src="/icon.png" alt="Repldex Logo" class="title-logo" /> -->
+	<picture>
+		<source srcset="/icon.jxl" type="image/jxl" />
+		<source srcset="/icon.webp" type="image/webp" />
+		<img src="/icon.png" alt="Repldex Logo" class="title-logo" />
+	</picture>
+
+	Repldex
+</h1>
 
 <div class="entry-list">
 	{#each entries as entry}
