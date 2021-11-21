@@ -1,5 +1,7 @@
 import { Command, ApplicationCommandOptionType } from './api/commands'
 
+// NOTE: do `npm run register-commands` if you change the syntax of any command
+
 new Command({
 	name: 'entry',
 	description: 'View a Repldex entry',
@@ -9,11 +11,14 @@ new Command({
 		description: 'The name of the entry',
 		type: ApplicationCommandOptionType.String,
 		required: true,
-	})
-	.handle(i => {
-		console.log(i)
+	} as const)
+	.handle(async i => {
 		return {
-			content: "Ok"
+			embeds: [
+				{
+					title: `Entry "${i.options.name}"`,
+				},
+			],
 		}
 	})
 
