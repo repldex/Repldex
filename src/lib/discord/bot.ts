@@ -15,7 +15,7 @@ new Command({
 	})
 	.handle(async data => {
 		console.log(data)
-		let name: string = data.data.options.name
+		let name: string = data.options.name
 		let entry: Entry | null = await fetchEntry(createSlug(name))
 		if (!entry) {
 			return {
