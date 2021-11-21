@@ -10,3 +10,7 @@ Repldex is the unofficial community-editable encyclopedia of user created entrie
 # Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md)
+
+# Forking
+
+Repldex aims to be easily forkable

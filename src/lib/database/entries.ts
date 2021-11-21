@@ -74,3 +74,13 @@ export async function createEntry(entry: Omit<Entry, 'id' | 'createdAt'>): Promi
 
 	return replaceUuidWithId(newEntry)
 }
+
+/**
+ * Search for an entry, limiting and skip can be handled separately
+ */
+export async function searchEntry(query: string): Promise<Entry[]> {
+	const collection = await getCollection()
+	collection.createIndex( { title: "text", content: "text" } )
+	const entries = await collection.find({$text:{$search: query}}).toArray()
+	return entries.map(replaceUuidWithId)
+}
