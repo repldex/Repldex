@@ -7,7 +7,7 @@ export POETRY_VIRTUALENVS_CREATE='true'
 pull_git() {
     echo "git pulling"
     git reset --hard
-    git pull origin master
+    git pull origin main
 }
 if [ $? -ne 0 ]; then
     echo "Installing poetry"
