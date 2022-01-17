@@ -45,21 +45,32 @@
 	}
 </script>
 
-<Head title={pageTitle} />
+<div id="editor-container">
+	<div id="editor-container-container">
+		<Head title={pageTitle} />
 
-<div class="text-editor">
-	<Labelled text="Title">
-		<TextInput bind:value={entryTitle} />
-	</Labelled>
+		<div class="text-editor">
+			<Labelled text="Title">
+				<TextInput bind:value={entryTitle} />
+			</Labelled>
+		</div>
+		<Labelled text="Content">
+			<MarkdownEditor bind:value={entryContent} />
+		</Labelled>
+
+		<button on:click={submitEntry}>Submit</button>
+	</div>
 </div>
-<Labelled text="Content">
-	<MarkdownEditor bind:value={entryContent} />
-</Labelled>
-
-<button on:click={submitEntry}>Submit</button>
 
 <style>
 	.text-editor {
 		margin-bottom: 1rem;
+	}
+	
+	/* vertically align */
+	#editor-container {
+		display: grid;
+		align-items: center;
+		height: 100vh;
 	}
 </style>
