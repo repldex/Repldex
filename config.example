@@ -1,0 +1,4 @@
+{
+	"discord_client_id": "Discord Client ID, you can find this on the Discord Developer Portal",
+	"discord_public_key": "Discord Public Key, you can find this on the Discord Developer Portal",
+}
