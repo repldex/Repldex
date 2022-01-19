@@ -2,7 +2,7 @@
 	import type { Load } from '@sveltejs/kit'
 	import Head from '../lib/Head.svelte'
 
-	export const load: Load = async ({ page, fetch, session, stuff }) => {
+	export const load: Load = async ({ fetch }) => {
 		const res = await fetch('/api/entries.json')
 
 		return {
