@@ -10,8 +10,8 @@ const clientSecret = process.env['DISCORD_CLIENT_SECRET']
 if (!clientSecret) throw new Error('DISCORD_CLIENT_SECRET environment variable not set')
 
 export const get: RequestHandler = async req => {
-	const discordOauthCode = req.query.get('code')
-	const redirectUri = new URL('/login', `https://${req.host}`).toString()
+	const discordOauthCode = req.url.searchParams.get('code')
+	const redirectUri = new URL('/login', `https://${req.url.host}`).toString()
 
 	// if there's no OAuth code, redirect to Discord's authorization page
 

@@ -8,8 +8,8 @@ import { createHistoryItem } from '../../lib/database/history'
 
 export const get: RequestHandler = async req => {
 	const entries = await fetchEntries({
-		limit: parseInt(req.query.get('limit') ?? '20'),
-		skip: parseInt(req.query.get('skip') ?? '0'),
+		limit: parseInt(req.url.searchParams.get('limit') ?? '20'),
+		skip: parseInt(req.url.searchParams.get('skip') ?? '0'),
 	})
 
 	return {
