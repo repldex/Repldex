@@ -2,8 +2,8 @@
 	import type { Load } from '@sveltejs/kit'
 	import Head from '../../lib/Head.svelte'
 
-	export const load: Load = async ({ page, fetch, session, stuff }) => {
-		const entrySlug: string = page.params.slug
+	export const load: Load = async ({ params, fetch }) => {
+		const entrySlug: string = params.slug
 		const res = await fetch(`/api/entry/${entrySlug}.json`)
 
 		return {
