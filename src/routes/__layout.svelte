@@ -40,7 +40,7 @@
 	}
 
 	.discord-login-button-container > a {
-		margin: 0 .25rem;
+		margin: 0 0.25rem;
 	}
 
 	main {
@@ -48,6 +48,4 @@
 		max-width: 60rem;
 		margin: 0 auto;
 	}
-
-	
 </style>

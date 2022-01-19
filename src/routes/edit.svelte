@@ -66,7 +66,7 @@
 	.text-editor {
 		margin-bottom: 1rem;
 	}
-	
+
 	/* vertically align */
 	#editor-container {
 		display: grid;
