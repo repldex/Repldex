@@ -1,8 +1,6 @@
 import preprocess from 'svelte-preprocess'
 
-import staticAdapter from '@sveltejs/adapter-static'
-import vercelAdapter from '@sveltejs/adapter-vercel'
-import nodeAdapter from '@sveltejs/adapter-node'
+import adapter from '@sveltejs/adapter-auto'
 
 import { minifyHtml } from 'vite-plugin-html'
 
@@ -20,7 +18,7 @@ const config = {
 		// hydrate the <div id="svelte"> element in src/app.html
 		target: '#svelte',
 		// adapter: process.env.VERCEL ? adapterVercel() : undefined,
-		adapter: vercelAdapter(),
+		adapter: adapter(),
 
 		// https://vitejs.dev/config/
 		vite: {

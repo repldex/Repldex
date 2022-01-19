@@ -14,9 +14,6 @@
 		"register-commands": "node --experimental-specifier-resolution=node --loader ts-node/esm src/lib/discord/scripts/registerCommands.ts"
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-node": "^1.0.0-next.55",
-		"@sveltejs/adapter-static": "^1.0.0-next.21",
-		"@sveltejs/adapter-vercel": "^1.0.0-next.31",
 		"@sveltejs/kit": "^1.0.0-next.186",
 		"@types/cookie": "^0.4.1",
 		"@types/jsonwebtoken": "^8.5.5",
@@ -41,6 +38,7 @@
 	"type": "module",
 	"dependencies": {
 		"@lukeed/uuid": "^2.0.0",
+		"@sveltejs/adapter-auto": "^1.0.0-next.11",
 		"cookie": "^0.4.1",
 		"discord-api-types": "^0.24.0",
 		"discord-interactions": "^2.4.1",
