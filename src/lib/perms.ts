@@ -7,5 +7,5 @@ export async function canCreateEntries(user: User) {
 	*/
 
 	// I manually set it to true for now to make it easier on my part to test - select
-	return true;
+	return true
 }

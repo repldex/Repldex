@@ -8,8 +8,8 @@ import { ApplicationCommandOptionType, InteractionData } from './commands'
 import { verifyKey } from 'discord-interactions'
 import type { APIInteractionDataResolvedGuildMember, APIUser } from 'discord-api-types'
 
-const clientID = process.env["DISCORD_CLIENT_ID"]
-const publicKEY = process.env["DISCORD_PUBLIC_KEY"]
+const clientID = process.env['DISCORD_CLIENT_ID']
+const publicKEY = process.env['DISCORD_PUBLIC_KEY']
 
 export const APPLICATIONS_BASE_API_URL =
 	`https://discord.com/api/v9/applications/${clientID}` as const

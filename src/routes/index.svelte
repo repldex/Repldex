@@ -53,8 +53,8 @@
 		h1 {
 			margin: 0;
 			position: absolute;
-			left: .5rem;
-			top: .5rem;
+			left: 0.5rem;
+			top: 0.5rem;
 		}
 
 		.entry-list {
