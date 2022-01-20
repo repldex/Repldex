@@ -58,13 +58,29 @@
 			<MarkdownEditor bind:value={entryContent} />
 		</Labelled>
 
-		<button on:click={submitEntry}>Submit</button>
+		<button class="submit" on:click={submitEntry}>Submit</button>
 	</div>
 </div>
 
 <style>
 	.text-editor {
 		margin-bottom: 1rem;
+	}
+
+	.submit {
+		border: none;
+		padding: 6px;
+		border-radius: 2px;
+		margin-top: 1rem;
+		cursor: pointer;
+	}
+
+	@media only screen and (max-width: 768px) {
+		.submit {
+			margin: 0 auto;
+			margin-top: 14px;
+			display: block;
+		}
 	}
 
 	/* vertically align */

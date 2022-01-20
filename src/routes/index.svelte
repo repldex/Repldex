@@ -48,4 +48,17 @@
 		position: relative;
 		top: 0.15em;
 	}
+
+	@media only screen and (max-width: 768px) {
+		h1 {
+			margin: 0;
+			position: absolute;
+			left: .5rem;
+			top: .5rem;
+		}
+
+		.entry-list {
+			padding-top: 85px;
+		}
+	}
 </style>

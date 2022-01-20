@@ -25,13 +25,20 @@
 
 <a href="/" class="back-button">Back</a>
 
-<h1>{entry.title}</h1>
-<article>{@html markdown.render(entry.content)}</article>
+<div class="entry-content">
+	<h1>{entry.title}</h1>
+	<article>{@html markdown.render(entry.content)}</article>
+</div>
 
 <style>
 	.back-button {
 		position: absolute;
 		top: 1rem;
 		left: 1rem;
+	}
+
+	.entry-content {
+		padding-top: 3rem;
+		padding-left: 1rem;
 	}
 </style>
