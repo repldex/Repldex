@@ -22,8 +22,8 @@
 		{#if !user}
 			<DiscordLoginButton />
 		{:else}
-			<a rel="external" href="/logout">Logout</a>
 			<a href="/edit">New entry</a>
+			<a rel="external" href="/logout">Logout</a>
 		{/if}
 	</div>
 </nav>

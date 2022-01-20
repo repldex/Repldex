@@ -45,3 +45,25 @@ export async function createHistoryItem(entry: Omit<HistoryItem, 'id'>): Promise
 	})
 	return historyEntryId.toString('hex')
 }
+
+/**
+ * Get the history of an entry
+ * @param entryId The id of the entry
+ * @param limit The maximum number of history items to return
+ * @param page The page, starting at 0
+ */
+export async function fetchEntryHistory(
+	entryId: Binary,
+	limit: number,
+	page: number
+): Promise<HistoryItem[]> {
+	const collection = await getCollection()
+	const history = await collection
+		.find({ entryId })
+		.sort({ timestamp: -1 })
+		.skip(page * limit)
+		.limit(limit)
+		.toArray()
+
+	return history.map(replaceUuidWithId)
+}

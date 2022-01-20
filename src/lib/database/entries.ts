@@ -34,7 +34,10 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
  */
 export async function fetchEntry(slug: string): Promise<Entry | null> {
 	const collection = await getCollection()
-	const entry = await collection.findOne({ slug })
+	// fetch by the id if it looks like one, otherwise use the slug
+	const entry = await collection.findOne(
+		/^[0-9a-f]{32}$/i.test(slug) ? { _id: createUuid(slug) } : { slug }
+	)
 	return entry ? replaceUuidWithId(entry) : null
 }
 

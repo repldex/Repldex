@@ -3,12 +3,17 @@
 	import Head from '../../lib/Head.svelte'
 
 	export const load: Load = async ({ params, fetch }) => {
-		const entrySlug: string = params.slug
-		const res = await fetch(`/api/entry/${entrySlug}.json`)
+		const entryId: string = params.id
+
+		// we fetch /entry and /history concurrently
+		const entryPromise = fetch(`/api/entry/${entryId}.json`).then(res => res.json())
+		const history = await fetch(`/api/history/${entryId}.json`).then(res => res.json())
+		const entry = await entryPromise
 
 		return {
 			props: {
-				entry: await res.json(),
+				entry,
+				history,
 			},
 		}
 	}
@@ -17,8 +22,10 @@
 </script>
 
 <script lang="ts">
+	import type { HistoryItem } from '../..//lib/database/history'
 	import type { Entry } from '../../lib/database/entries'
 	export let entry: Entry
+	export let history: HistoryItem[]
 </script>
 
 <Head title={entry.title} description={entry.content} />
@@ -26,13 +33,17 @@
 <a href="/" class="back-button">Back</a>
 
 <nav class="entry-nav-links">
+	<a href="/entry/{entry.slug}">View</a>
 	<a href="/edit">Edit</a>
-	<a href="/history/{entry.id}">History</a>
 </nav>
 
-<h1>{entry.title}</h1>
-<article>{@html markdown.render(entry.content)}</article>
+{#each history as historyItem}
+	{historyItem.id}
+{/each}
 
+<h1>{entry.title}</h1>
+
+<!-- <article>{@html markdown.render(entry.content)}</article> -->
 <style>
 	.back-button {
 		position: absolute;
