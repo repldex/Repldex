@@ -1,13 +1,17 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import * as markdown from './markdown'
+	import { browser } from '$app/env'
 
 	export let value: string = ''
+	let htmlContent: string
+	let textAreaEl: HTMLDivElement
 
 	function handlePaste(e: ClipboardEvent) {
-		const text = e.clipboardData.getData('text/plain')
-		// execCommand is deprecated but idk how to do this without execCommand lol
-		document.execCommand('insertText', false, text)
+		const text = e.clipboardData?.getData('text/plain')
+		if (text)
+			// execCommand is deprecated but idk how to do this without execCommand lol
+			document.execCommand('insertText', false, text)
 	}
 
 	interface HistoryItem {
@@ -29,8 +33,15 @@
 		history.push({ text: value, pos: 0 })
 	})
 
-	function caret(element: Node) {
-		const range = window.getSelection().getRangeAt(0)
+	function caret(element: Node): number | null {
+		let range: Range | undefined
+		try {
+			range = window.getSelection()?.getRangeAt(0)
+		} catch {
+			return null
+		}
+		if (range === undefined) return null
+
 		const prefix = range.cloneRange()
 		prefix.selectNodeContents(element)
 		prefix.setEnd(range.endContainer, range.endOffset)
@@ -64,20 +75,36 @@
 		}
 	}
 
+	let isUpdatingValue = false
+
 	function handleInput(e) {
 		const el = e.target as HTMLTextAreaElement
-		if (e.data && (e.data.charCodeAt(0) >= 32 || e.data.charCodeAt(0) == 0x20)) {
-			const pos = caret(el)
+		if (
+			// if the user inputs a character or a backspace, update the content
+			(e.data && (e.data.charCodeAt(0) >= 32 || e.data.charCodeAt(0) == 0x20))
+			|| (e.inputType == 'deleteContentBackward' || e.inputType == 'deleteContentForward')
+		) {
 			// we use innertext instead of textContent since innerText is aware of line breaks and textContent isn't
-			el.innerHTML = markdown.render(el.innerText, { showEntities: true })
-			setCaret(pos, el)
-		} else if (e.inputType == 'deleteContentBackward' || e.inputType == 'deleteContentForward') {
-			const pos = caret(el)
-			el.innerHTML = markdown.render(el.innerText, { showEntities: true })
-			setCaret(pos, el)
+			setContentTo(e.innerText)
 		}
+
+		isUpdatingValue = true
 		value = el.innerText
+		isUpdatingValue = false
 	}
+
+
+	// set the content of the text area without changing the position of the user's cursor
+	function setContentTo(v: string) {
+		if (isUpdatingValue) return
+		const pos = browser ? caret(textAreaEl) : null
+		// we set the htmlContent instead of the textAreaEl.innerHTML since it works even
+		// before the element actually exists
+		htmlContent = markdown.render(v, { showEntities: true })
+		if (pos !== null)
+			setCaret(pos, textAreaEl)
+	}
+	$: setContentTo(value)
 
 	let spacesTyped = 0
 
@@ -91,9 +118,11 @@
 			const historyItem = history.pop()
 			if (historyItem) {
 				el.innerHTML = markdown.render(historyItem.text, { showEntities: true })
-				// if the pos is higher than the actual length, put it at the end
-				if (pos > el.innerText.length) pos = el.innerText.length
-				setCaret(pos, el)
+				if (pos) {
+					// if the pos is higher than the actual length, put it at the end
+					if (pos > el.innerText.length) pos = el.innerText.length
+					setCaret(pos, el)
+				}
 			}
 		} else {
 			// we only add to history when at least one of the following is true:
@@ -131,7 +160,8 @@
 	on:input={handleInput}
 	on:beforeinput={handleBeforeInput}
 	on:keydown={handleKeyDown}
-/>
+	bind:this={textAreaEl}
+>{@html htmlContent}</div>
 
 <style>
 	#editable-text-area {

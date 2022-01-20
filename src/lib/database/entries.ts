@@ -30,7 +30,7 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
 }
 
 /**
- * Fetch an entry by its slug
+ * Fetch an entry by its slug or id
  */
 export async function fetchEntry(slug: string): Promise<Entry | null> {
 	const collection = await getCollection()

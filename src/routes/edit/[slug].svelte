@@ -27,14 +27,13 @@
 	let entryContent: string = entry.content
 
 	// automatically update the page title
-	let initialTitle: string = entry.title
 	$: pageTitle = `Edit entry "${entryTitle}"`
 
 	async function submitEntry() {
-		// make a post/put request to /api/entries.json
+		// make a put request to /api/entry/<id>.json
 		// if successful, redirect to /entry/<slug>
 
-		const response = await fetch('/api/entries.json', {
+		const response = await fetch(`/api/entry/${entry.id}.json`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',

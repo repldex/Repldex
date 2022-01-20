@@ -18,7 +18,7 @@ export const get: RequestHandler = async req => {
 	}
 }
 
-// create a new entry, does the same thing as put
+// create a new entry
 export const post: RequestHandler = async req => {
 	const user = await fetchUser({ id: req.locals.user.id })
 	// if the user can't create entries, return a 403
