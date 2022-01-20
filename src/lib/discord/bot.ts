@@ -1,4 +1,4 @@
-import { Command, ApplicationCommandOptionType } from './api/commands'
+import { Command, ApplicationCommandOptionType, APIEmbed } from './api/commands'
 import { Entry, fetchEntries, fetchEntry, searchEntry } from '../database/entries'
 import { createSlug } from '../database/index'
 import { config } from '../config'
@@ -71,10 +71,56 @@ new Command({
 		type: ApplicationCommandOptionType.String,
 		required: true,
 	})
-	.handle(data => {
+	.handle(async data => {
 		console.log(data)
+		let entries = await searchEntry(data.options.query)
+		entries = entries.slice(0, 10)
+		let embed: APIEmbed = {
+			title: "Search Results for "+data.options.query,
+			fields: [],
+			footer: {
+				text: "Page 1"
+			}
+		}
+		for (const entry of entries) {
+			embed.fields.push({
+				name: entry.title,
+				value: "[Link]("+config.base_url+'/entry/'+entry.slug+")"
+			})
+		}
+		//note: as of now buttons just sit around. clicking on them does not do anything
 		return {
-			content: "Ok"
+			components: [
+				{
+					//buttons must be in an action row.... why? blame discord
+					type: 1,
+					components: {
+						//type 2 = button
+						type: 2,
+						style: 1,
+						label: "Back",
+						emoji: {
+							id: null,
+							name: "◀️"
+						},
+						//command-button-page-query
+						custom_id: "search-back-1-"+data.options.query
+					},
+					{
+						type: 2,
+						style: 1,
+						label: "Forward",
+						emoji: {
+							id: null,
+							name: "▶️"
+						},
+						custom_id: "search-forward-1-"+data.options.query
+					}
+				}
+			],
+			embeds: [
+				embed
+			]
 		}
 	})
 

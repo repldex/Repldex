@@ -3,6 +3,7 @@ import type {
 	APIApplicationCommandInteraction,
 	APIApplicationCommandOption,
 	APIMessage,
+	APIEmbed
 } from 'discord-api-types/payloads/v9'
 import type { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/rest/v9'
 import config from '../../config'
