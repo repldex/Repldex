@@ -6,11 +6,13 @@ import type {
 } from 'discord-api-types/payloads/v9'
 import { ApplicationCommandOptionType, InteractionData } from './commands'
 import { verifyKey } from 'discord-interactions'
-import config from '../../config'
 import type { APIInteractionDataResolvedGuildMember, APIUser } from 'discord-api-types'
 
+const clientID = process.env["DISCORD_CLIENT_ID"]
+const publicKEY = process.env["DISCORD_PUBLIC_KEY"]
+
 export const APPLICATIONS_BASE_API_URL =
-	`https://discord.com/api/v9/applications/${config.discord_client_id}` as const
+	`https://discord.com/api/v9/applications/${clientID}` as const
 
 export function verifyInteraction(
 	headers: Record<string, string>,
@@ -18,7 +20,7 @@ export function verifyInteraction(
 ): boolean {
 	const signature = headers['x-signature-ed25519']
 	const timestamp = headers['x-signature-timestamp']
-	return verifyKey(rawBody ?? '', signature, timestamp, config.discord_public_key)
+	return verifyKey(rawBody ?? '', signature, timestamp, String(publicKEY))
 }
 
 export async function handleInteraction(data: APIInteraction): Promise<APIInteractionResponse> {
