@@ -64,6 +64,5 @@ export async function fetchEntryHistory(
 		.skip(page * limit)
 		.limit(limit)
 		.toArray()
-
 	return history.map(replaceUuidWithId)
 }

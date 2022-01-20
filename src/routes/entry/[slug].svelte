@@ -26,7 +26,7 @@
 <a href="/" class="back-button">Back</a>
 
 <nav class="entry-nav-links">
-	<a href="/edit">Edit</a>
+	<a href="/edit/{entry.slug}">Edit</a>
 	<a href="/history/{entry.id}">History</a>
 </nav>
 

@@ -1,36 +1,46 @@
+<script lang="ts" context="module">
+	import type { Load } from '@sveltejs/kit'
+
+	export const load: Load = async ({ params, fetch }) => {
+		const entrySlug: string = params.slug
+		const res = await fetch(`/api/entry/${entrySlug}.json`)
+
+		return {
+			props: {
+				entry: await res.json(),
+			},
+		}
+	}
+</script>
+
 <script lang="ts">
+	import type { Entry } from '../../lib/database/entries'
 	import { goto } from '$app/navigation'
+	import MarkdownEditor from '../../lib/MarkdownEditor.svelte'
+	import TextInput from '../../lib/TextInput.svelte'
+	import Head from '../../lib/Head.svelte'
+	import Labelled from '../../lib/Labelled.svelte'
+	
+	export let entry: Entry
 
-	import MarkdownEditor from '../lib/MarkdownEditor.svelte'
-	import TextInput from '../lib/TextInput.svelte'
-	import Head from '../lib/Head.svelte'
-	import Labelled from '../lib/Labelled.svelte'
-
-	let entryTitle: string = ''
-	let entryContent: string = ''
+	let entryTitle: string = entry.title
+	let entryContent: string = entry.content
 
 	// automatically update the page title
-	let initialTitle: string = ''
-	let pageTitle: string = 'Create entry'
-	const isCreatingEntry = entryTitle.length === 0
-	$: {
-		if (isCreatingEntry)
-			if (entryTitle.length) pageTitle = `New entry "${entryTitle}"`
-			else pageTitle = `New entry`
-		else if (entryTitle.length) pageTitle = `Edit entry`
-		else pageTitle = `Edit entry "${entryTitle}"`
-	}
+	let initialTitle: string = entry.title
+	$: pageTitle = `Edit entry "${entryTitle}"`
 
 	async function submitEntry() {
 		// make a post/put request to /api/entries.json
 		// if successful, redirect to /entry/<slug>
 
 		const response = await fetch('/api/entries.json', {
-			method: isCreatingEntry ? 'POST' : 'PUT',
+			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
+				id: entry.id,
 				title: entryTitle,
 				content: entryContent,
 			}),

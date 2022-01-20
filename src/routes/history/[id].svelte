@@ -38,7 +38,7 @@
 </nav>
 
 {#each history as historyItem}
-	{historyItem.id}
+	history item: {historyItem.id}
 {/each}
 
 <h1>{entry.title}</h1>
