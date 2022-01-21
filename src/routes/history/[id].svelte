@@ -34,7 +34,7 @@
 
 <nav class="entry-nav-links">
 	<a href="/entry/{entry.slug}">View</a>
-	<a href="/edit">Edit</a>
+	<a href="/edit/{entry.slug}">Edit</a>
 </nav>
 
 {#each history as historyItem}

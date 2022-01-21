@@ -85,7 +85,7 @@
 			|| (e.inputType == 'deleteContentBackward' || e.inputType == 'deleteContentForward')
 		) {
 			// we use innertext instead of textContent since innerText is aware of line breaks and textContent isn't
-			setContentTo(e.innerText)
+			setContentTo(el.innerText)
 		}
 
 		isUpdatingValue = true
@@ -93,13 +93,10 @@
 		isUpdatingValue = false
 	}
 
-
 	// set the content of the text area without changing the position of the user's cursor
 	function setContentTo(v: string) {
 		if (isUpdatingValue) return
-		const pos = browser ? caret(textAreaEl) : null
-		// we set the htmlContent instead of the textAreaEl.innerHTML since it works even
-		// before the element actually exists
+		const pos = textAreaEl ? caret(textAreaEl) : null
 		htmlContent = markdown.render(v, { showEntities: true })
 		if (pos !== null)
 			setCaret(pos, textAreaEl)
