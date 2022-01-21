@@ -58,6 +58,7 @@
 		"discord-api-types": "^0.24.0",
 		"discord-interactions": "^2.4.1",
 		"dotenv": "^10.0.0",
+		"fast-myers-diff": "^3.0.1",
 		"jsonwebtoken": "^8.5.1",
 		"mongodb": "^4.1.3"
 	},

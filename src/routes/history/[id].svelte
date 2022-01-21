@@ -22,10 +22,12 @@
 </script>
 
 <script lang="ts">
-	import type { HistoryItem } from '../..//lib/database/history'
+	import type { APIHistoryItem } from '../api/history/[id].json'
 	import type { Entry } from '../../lib/database/entries'
+	import Diff from '../../lib/Diff.svelte'
+	import User from '../../lib/User.svelte'
 	export let entry: Entry
-	export let history: HistoryItem[]
+	export let history: APIHistoryItem[]
 </script>
 
 <Head title={entry.title} description={entry.content} />
@@ -37,11 +39,13 @@
 	<a href="/edit/{entry.slug}">Edit</a>
 </nav>
 
-{#each history as historyItem}
-	history item: {historyItem.id}
-{/each}
 
 <h1>{entry.title}</h1>
+{#each history.slice(0, -1) as historyItem, i}
+	{historyItem.timestamp} - <User id={historyItem.userId}></User>
+	<Diff before={history[i + 1].content.split('\n')} after={history[i].content.split('\n')} />
+	<!-- <div>history item: {JSON.stringify(historyItem)}</div> -->
+{/each}
 
 <!-- <article>{@html markdown.render(entry.content)}</article> -->
 <style>
