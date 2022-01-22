@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { APIUser } from './database/users'
 	import { fetchUser } from './utils'
 
 	/** The id of the user */
@@ -12,7 +11,7 @@
 	</span>
 {:then user}
 	<span class="user">
-		{user.username}
+		{user?.username ?? '???'}
 	</span>
 {:catch error}
 	<span class="user error">
@@ -21,6 +20,9 @@
 {/await}
 
 <style>
+	.user {
+		color: var(--bright-text-color);
+	}
 	.user.error {
 		color: red;
 	}

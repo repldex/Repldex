@@ -41,14 +41,15 @@
 {#each history.slice(0, -1) as historyItem, i}
 	<div class="history-item">
 		<User id={historyItem.userId} /> - {historyItem.timestamp}
-		<Diff before={history[i + 1].content.split('\n')} after={history[i].content.split('\n')} />
+		<div class="history-diff">
+			<Diff before={history[i + 1].content.split('\n')} after={history[i].content.split('\n')} />
+		</div>
 	</div>
 	{#if i < history.length - 2}
 		<hr />
 	{/if}
 {/each}
 
-<!-- <article>{@html markdown.render(entry.content)}</article> -->
 <style>
 	.entry-nav-links {
 		position: absolute;

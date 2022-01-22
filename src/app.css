@@ -10,6 +10,11 @@
 
 /* this file should only contain styles for html elements, not any specific classes or ids */
 
+html,
+body {
+	height: 100%;
+}
+
 body {
 	background-color: var(--background-color);
 	color: var(--text-color);

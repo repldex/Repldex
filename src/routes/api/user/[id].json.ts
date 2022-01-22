@@ -7,8 +7,6 @@ export const get: RequestHandler = async req => {
 		id: req.params.id,
 	})
 
-	console.log('fetchuser', user)
-
 	if (user === null) {
 		return {
 			status: 404,

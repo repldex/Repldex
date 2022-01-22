@@ -61,11 +61,16 @@
 			{
 				'.cm-content': {
 					fontFamily: 'var(--font)',
+					// this is so you can select below the editor when the text is short and still select the text
+					minHeight: '20rem',
 				},
-				//'.cm-activeLine': { background: 'var(--background-color-alt)' },
 				'.cm-activeLine': { background: '#0000' },
 				'.cm-cursor': { borderColor: '#fff' },
-				'&': { height: '100%', background: 'var(--alternate-background-color)' },
+				'.cm-scroller': { overflow: 'auto' },
+				'&': {
+					height: '100%',
+					background: 'var(--alternate-background-color)',
+				},
 			},
 			{ dark: true }
 		),
@@ -101,14 +106,14 @@
 	})
 
 	// update the view if the value changes
-	// $: {
-	// 	if (view) {
-	// 		if (view.state.doc.toString() !== value)
-	// 			view.dispatch({
-	// 				changes: { from: 0, to: view.state.doc.length, insert: value },
-	// 			})
-	// 	}
-	// }
+	$: {
+		if (view) {
+			if (view.state.doc.toString() !== value)
+				view.dispatch({
+					changes: { from: 0, to: view.state.doc.length, insert: value },
+				})
+		}
+	}
 </script>
 
 <noscript>
@@ -120,17 +125,13 @@
 	</style>
 </noscript>
 
-<div id="editable-text-area-container">
-	<div id="editable-text-area" bind:this={container} class="code-textarea" class:focused />
-</div>
+<div id="editable-text-area" bind:this={container} class="code-textarea" class:focused />
 
 <style>
 	#editable-text-area {
 		border-radius: 0.25em;
 		width: 100%;
 
-		/* this is so the height is always at least 20rem, but can get bigger */
-		height: min(100%, 20rem);
 		min-height: 20rem;
 
 		margin: 0;
