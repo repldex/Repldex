@@ -23,7 +23,9 @@
 		<!-- iterate between the end of this delete and the start of the next one to show the lines in between -->
 		{#if patch[0] != patch[1]}
 			<!-- delete -->
-			<p class="diff-delete">{before.slice(patch[0], patch[1])}</p>
+			{#each before.slice(patch[0], patch[1]) as part}
+				<p class="diff-delete">{part}</p>
+			{/each}
 		{/if}
 		{#if patch[2] != patch[3]}
 			<!-- insert -->
