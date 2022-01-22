@@ -1,24 +1,18 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 
-	import MarkdownEditor from '../lib/MarkdownEditor.svelte'
-	import TextInput from '../lib/TextInput.svelte'
-	import Head from '../lib/Head.svelte'
-	import Labelled from '../lib/Labelled.svelte'
+	import MarkdownEditor from '../../lib/MarkdownEditor.svelte'
+	import TextInput from '../../lib/TextInput.svelte'
+	import Head from '../../lib/Head.svelte'
+	import Labelled from '../../lib/Labelled.svelte'
 
 	let entryTitle: string = ''
 	let entryContent: string = ''
 
 	// automatically update the page title
-	let initialTitle: string = ''
 	let pageTitle: string = 'Create entry'
-	const isCreatingEntry = entryTitle.length === 0
 	$: {
-		if (isCreatingEntry)
-			if (entryTitle.length) pageTitle = `New entry "${entryTitle}"`
-			else pageTitle = `New entry`
-		else if (entryTitle.length) pageTitle = `Edit entry`
-		else pageTitle = `Edit entry "${entryTitle}"`
+		pageTitle = entryTitle.length ? `New entry "${entryTitle}"` : 'New entry'
 	}
 
 	async function submitEntry() {
@@ -26,7 +20,7 @@
 		// if successful, redirect to /entry/<slug>
 
 		const response = await fetch('/api/entries.json', {
-			method: isCreatingEntry ? 'POST' : 'PUT',
+			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
@@ -44,6 +38,8 @@
 		goto(`/entry/${response.slug}`)
 	}
 </script>
+
+<a href="/entry/{entryTitle}" class="back-button">Back</a>
 
 <div id="editor-container">
 	<div id="editor-container-container">
@@ -63,6 +59,12 @@
 </div>
 
 <style>
+	.back-button {
+		position: absolute;
+		top: 1rem;
+		left: 1rem;
+	}
+
 	.text-editor {
 		margin-bottom: 1rem;
 	}
@@ -72,5 +74,9 @@
 		display: grid;
 		align-items: center;
 		height: 100vh;
+	}
+
+	button {
+		margin-top: 0.5em;
 	}
 </style>

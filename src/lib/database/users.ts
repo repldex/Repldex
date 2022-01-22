@@ -7,7 +7,7 @@ import {
 	replaceIdWithUuid,
 	replaceUuidWithId,
 } from '.'
-import type { Entry } from './entries'
+
 
 // the id and username of a user
 export interface BasicUser {
@@ -29,7 +29,7 @@ interface LinkedAccounts {
 interface UserStats {
 	/** The total number of entries edited or created by this user */
 	entriesEdited?: number
-	/** The total nubmer of edits that this user made that were lated reverted */
+	/** The total nubmer of edits that this user made that were later reverted */
 }
 
 /** All of the information about the user in the database */
