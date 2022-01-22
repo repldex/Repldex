@@ -10,6 +10,8 @@ import { createUuid } from './database'
 
 /**
  * How the entry would look if this edit was reverted
+ *
+ * This code is very bad and buggy
  */
 async function getRevertResult(historyItem: HistoryItem) {
 	const historyItemsAfter = await fetchEntryHistoryItemsAfter(historyItem)
@@ -22,21 +24,29 @@ async function getRevertResult(historyItem: HistoryItem) {
 
 	// the difference between this edit and the previous one
 	let patch = Array.from(diff.calcPatch(historyItem.content, historyItemBefore.content))
-
 	console.log('patch', patch)
 
 	// we update the initial patch based on all the edits that occured after this one
 	let tempBefore = historyItem
-	for (const tempHistoryItem of historyItemsAfter) {
-		const tempDiff = Array.from(diff.diff(tempBefore.content, tempHistoryItem.content))
-		console.log('tempDiff', tempDiff)
-		for (const [removeStart, removeEnd, insertStart, insertEnd] of tempDiff) {
+	for (const historyItemAfter of historyItemsAfter) {
+		const diffAfter = Array.from(diff.diff(tempBefore.content, historyItemAfter.content))
+		console.log('tempDiff', diffAfter)
+		for (const [removeStart, removeEnd, insertStart, insertEnd] of diffAfter) {
 			const initialPatch = JSON.parse(JSON.stringify(patch))
 			patch = patch.map(([patchRemoveStart, patchRemoveEnd, insertSlice]) => {
 				// if the patch is removing something, subtract from the patchRemoveStart and patchRemoveEnd
-				if (removeStart !== removeEnd && patchRemoveEnd > removeEnd) {
-					patchRemoveStart -= removeEnd - removeStart
-					patchRemoveEnd -= removeEnd - removeStart
+				if (removeStart !== removeEnd) {
+					// if everything that's being removed is before the patchRemoveStart, subtract from patchRemoveStart and patchRemoveEnd
+					if (patchRemoveEnd > removeEnd) {
+						patchRemoveStart -= removeEnd - removeStart
+						patchRemoveEnd -= removeEnd - removeStart
+					}
+					// if some stuff that's being removed is after the patchRemoveStart
+					// modify insertSlice
+					else if (patchRemoveStart >= removeStart) {
+						insertSlice = insertSlice.slice(removeEnd - removeStart)
+						patchRemoveEnd -= removeEnd - removeStart
+					}
 				}
 
 				// if the patch is inserting something, add to the patchRemoveStart and patchRemoveEnd
@@ -49,14 +59,29 @@ async function getRevertResult(historyItem: HistoryItem) {
 			})
 			console.log(initialPatch, patch)
 		}
-		console.log(tempDiff)
+		console.log(diffAfter)
 		tempBefore = historyItem
 	}
 
 	// apply the patch to the current version
-	const newContent = Array.from(diff.applyPatch(historyItemsAfter[0].content, patch))
+	const newContent = Array.from(
+		diff.applyPatch(
+			historyItemsAfter[0] ? historyItemsAfter[0].content : historyItem.content,
+			patch
+		)
+	)
 		.flat()
 		.join('')
+
+	console.log(
+		'new',
+		Array.from(
+			diff.calcPatch(
+				historyItemsAfter[0] ? historyItemsAfter[0].content : historyItem.content,
+				newContent
+			)
+		)
+	)
 
 	return newContent
 }
@@ -65,5 +90,7 @@ async function getRevertResult(historyItem: HistoryItem) {
 	console.log('...')
 	const history = await fetchEntryHistory(createUuid('a8942d398dd845b28822b2c19ae443e2'), 20, 0)
 	console.log('.....', history.items.length)
-	console.log(await getRevertResult(history.items[1]))
+	const newContent = await getRevertResult(history.items[1])
+
+	console.log(newContent)
 })()
