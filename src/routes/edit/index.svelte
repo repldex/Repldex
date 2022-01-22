@@ -12,9 +12,7 @@
 	// automatically update the page title
 	let pageTitle: string = 'Create entry'
 	$: {
-		pageTitle = entryTitle.length
-			? `New entry "${entryTitle}"`
-			: 'New entry'
+		pageTitle = entryTitle.length ? `New entry "${entryTitle}"` : 'New entry'
 	}
 
 	async function submitEntry() {
@@ -41,6 +39,8 @@
 	}
 </script>
 
+<a href="/" class="back-button">Back</a>
+
 <div id="editor-container">
 	<div id="editor-container-container">
 		<Head title={pageTitle} />
@@ -59,6 +59,12 @@
 </div>
 
 <style>
+	.back-button {
+		position: absolute;
+		top: 1rem;
+		left: 1rem;
+	}
+
 	.text-editor {
 		margin-bottom: 1rem;
 	}

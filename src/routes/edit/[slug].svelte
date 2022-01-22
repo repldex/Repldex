@@ -20,7 +20,7 @@
 	import TextInput from '../../lib/TextInput.svelte'
 	import Head from '../../lib/Head.svelte'
 	import Labelled from '../../lib/Labelled.svelte'
-	
+
 	export let entry: Entry
 
 	let entryTitle: string = entry.title
@@ -54,6 +54,8 @@
 	}
 </script>
 
+<a href="/" class="back-button">Back</a>
+
 <div id="editor-container">
 	<div id="editor-container-container">
 		<Head title={pageTitle} />
@@ -72,6 +74,12 @@
 </div>
 
 <style>
+	.back-button {
+		position: absolute;
+		top: 1rem;
+		left: 1rem;
+	}
+
 	.text-editor {
 		margin-bottom: 1rem;
 	}

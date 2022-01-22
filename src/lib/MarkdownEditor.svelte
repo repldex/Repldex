@@ -7,7 +7,7 @@
 		drawSelection,
 		highlightActiveLine,
 		EditorView,
-		ViewPlugin
+		ViewPlugin,
 	} from '@codemirror/view'
 	import { closeBrackets, closeBracketsKeymap } from '@codemirror/closebrackets'
 	import { searchKeymap, highlightSelectionMatches } from '@codemirror/search'
@@ -61,25 +61,22 @@
 			{
 				'.cm-content': {
 					fontFamily: 'var(--font)',
-					// caretColor: 'var(--caret-color)',
 				},
 				//'.cm-activeLine': { background: 'var(--background-color-alt)' },
 				'.cm-activeLine': { background: '#0000' },
-				// '.cm-cursor': { borderColor: 'var(--caret-color)' },
+				'.cm-cursor': { borderColor: '#fff' },
 				'&': { height: '100%', background: 'var(--alternate-background-color)' },
 			},
 			{ dark: true }
 		),
 		ViewPlugin.define(() => ({
-			update: (u) => {
+			update: u => {
 				if (u.focusChanged) focused = view.hasFocus
 			},
 		})),
 	]
 	const languageCompartment = new Compartment()
-	extensions.push(languageCompartment.of(markdown({
-
-	})))
+	extensions.push(languageCompartment.of(markdown({})))
 	let startState = EditorState.create({
 		doc: value,
 		extensions,
@@ -91,7 +88,7 @@
 			state: startState,
 			parent: container,
 			// change value and dispatch input every time the doc changes
-			dispatch: (tr) => {
+			dispatch: tr => {
 				view.update([tr])
 				const docText = view.state.doc.toString()
 				if (docText !== actualValue) {
@@ -112,7 +109,6 @@
 	// 			})
 	// 	}
 	// }
-
 </script>
 
 <noscript>
@@ -124,18 +120,13 @@
 	</style>
 </noscript>
 
-<div
-	id="editable-text-area"
-	bind:this={container}
-	class="code-textarea"
-	class:focused
-></div>
+<div id="editable-text-area" bind:this={container} class="code-textarea" class:focused />
 
 <style>
 	#editable-text-area {
 		border-radius: 0.25em;
 		width: 50rem;
-		min-height: 20rem;
+		height: 20rem;
 		margin: 0;
 		padding: 0.5em;
 		background-color: var(--alternate-background-color);
