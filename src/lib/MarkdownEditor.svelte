@@ -120,26 +120,24 @@
 	</style>
 </noscript>
 
-<div id="editable-text-area" bind:this={container} class="code-textarea" class:focused />
+<div id="editable-text-area-container">
+	<div id="editable-text-area" bind:this={container} class="code-textarea" class:focused />
+</div>
 
 <style>
 	#editable-text-area {
 		border-radius: 0.25em;
 		width: 100%;
-		height: 20rem;
+
+		/* this is so the height is always at least 20rem, but can get bigger */
+		height: min(100%, 20rem);
+		min-height: 20rem;
+
 		margin: 0;
 		padding: 0.5em;
 		background-color: var(--alternate-background-color);
 		color: var(--text-color);
 		flex-grow: 1;
 		font-size: inherit;
-		/* white-space: pre-wrap; */
-
-		/* background-color: var(--alternate-background-color);
-		max-width: 50em;
-		min-height: 20em;
-		padding: 0.5em;
-		border-radius: 0.25em;
-		background-color: var(--alternate-background-color); */
 	}
 </style>
