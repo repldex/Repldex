@@ -1,14 +1,9 @@
 <script lang="ts">
 	import type { APIUser } from './database/users'
+	import { fetchUser } from './utils'
 
 	/** The id of the user */
 	export let id: string
-
-	async function fetchUser(userId: string): Promise<APIUser> {
-		const r = await fetch(`/api/user/${userId}.json`)
-		const u = await r.json()
-		return u
-	}
 </script>
 
 {#await fetchUser(id)}

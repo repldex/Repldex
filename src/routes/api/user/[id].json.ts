@@ -1,15 +1,10 @@
 import type { JSONString } from '@sveltejs/kit/types/helper'
-import { fetchUser } from '../../../lib/database/users'
+import { APIUser, fetchUser } from '../../../lib/database/users'
 import type { RequestHandler } from '@sveltejs/kit'
-
-export interface APIUser {
-	id: string
-	username: string
-}
 
 export const get: RequestHandler = async req => {
 	const user = await fetchUser({
-		id: req.params.id
+		id: req.params.id,
 	})
 
 	console.log('fetchuser', user)
@@ -24,7 +19,7 @@ export const get: RequestHandler = async req => {
 	return {
 		body: {
 			id: user.id,
-			username: user.username
+			username: user.username,
 		} as APIUser as unknown as JSONString,
 	}
 }
