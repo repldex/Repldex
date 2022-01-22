@@ -74,7 +74,7 @@
 {#each historyItems as historyItem, i (historyItem.id)}
 	{#if i > 0}
 		<div class="history-item">
-			<User id={historyItem.userId} /> - {formatTimeAgo(historyItem.timestamp)}
+			<User id={historyItem.userId} /> - {formatTimeAgo(historyItems[i - 1].timestamp)}
 			<RevertButton id={historyItems[i - 1].id} />
 
 			<div class="history-diff">
