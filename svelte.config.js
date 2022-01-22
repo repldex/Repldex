@@ -26,6 +26,9 @@ const config = {
 			build: {
 				rollupOptions: {
 					external: ['discord-api-types/payloads/v9', 'discord-api-types', 'discord-api-types/v9'],
+					output: {
+						manualChunks: undefined,
+					},
 				},
 			},
 		},

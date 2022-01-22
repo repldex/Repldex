@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte'
-	import { browser } from '$app/env'
 	import {
 		keymap,
 		highlightSpecialChars,
