@@ -29,6 +29,7 @@
 	import User from '../../lib/User.svelte'
 	import { format as formatTimeAgo } from 'timeago.js'
 	import { browser } from '$app/env'
+	import RevertButton from '../../lib/RevertButton.svelte'
 
 	export let entry: Entry
 	export let historyItems: APIHistoryItem[]
@@ -74,7 +75,7 @@
 	{#if i > 0}
 		<div class="history-item">
 			<User id={historyItem.userId} /> - {formatTimeAgo(historyItem.timestamp)}
-			<button class="revert-button">Revert</button>
+			<RevertButton id={historyItems[i - 1].id} />
 
 			<div class="history-diff">
 				<Diff

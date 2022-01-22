@@ -95,7 +95,7 @@ export async function fetchEntryHistoryItemsAfter(item: HistoryItem): Promise<Hi
 /**
  * Get the history item that was made right before this one, so we can calculate the diff
  */
-export async function getEntryHistoryItemBefore(item: HistoryItem): Promise<HistoryItem | null> {
+export async function fetchEntryHistoryItemBefore(item: HistoryItem): Promise<HistoryItem | null> {
 	const collection = await getCollection()
 
 	const result = await collection
@@ -106,4 +106,16 @@ export async function getEntryHistoryItemBefore(item: HistoryItem): Promise<Hist
 
 	if (result.length === 0) return null
 	return replaceUuidWithId(result[0])
+}
+
+/**
+ * Get the history item that was made right before this one, so we can calculate the diff
+ */
+export async function fetchEntryHistoryItem(id: string): Promise<HistoryItem | null> {
+	const collection = await getCollection()
+
+	const result = await collection.findOne(replaceIdWithUuid({ id }))
+
+	if (result === null) return null
+	return replaceUuidWithId(result)
 }
