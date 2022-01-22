@@ -12,6 +12,11 @@ export interface APIHistoryItem {
 	timestamp: Date
 }
 
+export interface APIHistoryResponse {
+	count: number
+	items: APIHistoryItem[]
+}
+
 // gets the history of an entry
 export const get: RequestHandler = async req => {
 	const history = await fetchEntryHistory(
@@ -20,15 +25,18 @@ export const get: RequestHandler = async req => {
 		parseInt(req.url.searchParams.get('page') ?? '0')
 	)
 	return {
-		body: history.map(
-			(h): APIHistoryItem => ({
-				id: h.id,
-				entryId: h.entryId.toString('hex'),
-				userId: h.userId.toString('hex'),
-				title: h.title,
-				content: h.content,
-				timestamp: h.timestamp,
-			})
-		) as unknown as JSONString,
+		body: {
+			count: history.count,
+			items: history.items.map(
+				(h): APIHistoryItem => ({
+					id: h.id,
+					entryId: h.entryId.toString('hex'),
+					userId: h.userId.toString('hex'),
+					title: h.title,
+					content: h.content,
+					timestamp: h.timestamp,
+				})
+			),
+		} as unknown as JSONString,
 	}
 }

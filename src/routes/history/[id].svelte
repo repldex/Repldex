@@ -7,27 +7,58 @@
 
 		// we fetch /entry and /history concurrently
 		const entryPromise = fetch(`/api/entry/${entryId}.json`).then(res => res.json())
-		const history = await fetch(`/api/history/${entryId}.json`).then(res => res.json())
+		const history: APIHistoryResponse = await fetch(`/api/history/${entryId}.json`).then(res =>
+			res.json()
+		)
 		const entry = await entryPromise
 
 		return {
 			props: {
 				entry,
-				history,
+				historyItems: history.items,
+				totalHistoryItemCount: history.count,
 			},
 		}
 	}
-
-	import * as markdown from '../../lib/markdown'
 </script>
 
 <script lang="ts">
-	import type { APIHistoryItem } from '../api/history/[id].json'
+	import type { APIHistoryItem, APIHistoryResponse } from '../api/history/[id].json'
 	import type { Entry } from '../../lib/database/entries'
 	import Diff from '../../lib/Diff.svelte'
 	import User from '../../lib/User.svelte'
+	import { browser } from '$app/env'
+
 	export let entry: Entry
-	export let history: APIHistoryItem[]
+	export let historyItems: APIHistoryItem[]
+	export let totalHistoryItemCount: number
+
+	let isFetchingNextPage = false
+	let pageNumber = 0
+
+	async function checkDoPagination() {
+		if (
+			window.innerHeight + window.pageYOffset + 500 >= document.body.offsetHeight &&
+			!isFetchingNextPage &&
+			historyItems.length < totalHistoryItemCount
+		) {
+			isFetchingNextPage = true
+			pageNumber++
+			let newHistory: APIHistoryResponse = await fetch(
+				`/api/history/${entry.id}.json?page=${pageNumber}`
+			).then(r => r.json())
+			historyItems = [...historyItems, ...newHistory.items]
+			// we update the count again just in case it changed
+			totalHistoryItemCount = newHistory.count
+			// check again! just in case
+			await checkDoPagination()
+		}
+	}
+
+	if (browser) {
+		addEventListener('scroll', checkDoPagination)
+		checkDoPagination()
+	}
 </script>
 
 <Head title={entry.title} description={entry.content} />
@@ -38,15 +69,20 @@
 </nav>
 
 <h1>{entry.title}</h1>
-{#each history.slice(0, -1) as historyItem, i}
-	<div class="history-item">
-		<User id={historyItem.userId} /> - {historyItem.timestamp}
-		<div class="history-diff">
-			<Diff before={history[i + 1].content.split('\n')} after={history[i].content.split('\n')} />
+{#each historyItems as historyItem, i (historyItem.id)}
+	{#if i > 0}
+		<div class="history-item">
+			<User id={historyItem.userId} /> - {historyItem.timestamp}
+			<div class="history-diff">
+				<Diff
+					before={historyItems[i].content.split('\n')}
+					after={historyItems[i - 1].content.split('\n')}
+				/>
+			</div>
 		</div>
-	</div>
-	{#if i < history.length - 2}
-		<hr />
+		{#if i < historyItems.length - 1}
+			<hr />
+		{/if}
 	{/if}
 {/each}
 

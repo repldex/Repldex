@@ -56,7 +56,7 @@ export async function fetchEntryHistory(
 	entryId: Binary,
 	limit: number,
 	page: number
-): Promise<HistoryItem[]> {
+): Promise<{ count: number; items: HistoryItem[] }> {
 	const collection = await getCollection()
 	const history = await collection
 		.find({ entryId })
@@ -64,5 +64,9 @@ export async function fetchEntryHistory(
 		.skip(page * limit)
 		.limit(limit)
 		.toArray()
-	return history.map(replaceUuidWithId)
+	const historyItemCount = await collection.count({ entryId })
+	return {
+		count: historyItemCount,
+		items: history.map(replaceUuidWithId),
+	}
 }
