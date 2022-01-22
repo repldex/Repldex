@@ -5,6 +5,7 @@ import { fetchUser } from '../../../lib/database/users'
 import { canCreateEntries, canEditEntry } from '../../../lib/perms'
 import { createSlug, createUuid } from '../../../lib/database'
 import { createHistoryItem } from '../../../lib/database/history'
+import '../../../lib/revert'
 
 // get an entry
 export const get: RequestHandler = async req => {

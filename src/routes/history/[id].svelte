@@ -74,6 +74,8 @@
 	{#if i > 0}
 		<div class="history-item">
 			<User id={historyItem.userId} /> - {formatTimeAgo(historyItem.timestamp)}
+			<button class="revert-button">Revert</button>
+
 			<div class="history-diff">
 				<Diff
 					before={historyItems[i].content.split('\n')}
@@ -107,6 +109,14 @@
 	hr {
 		margin-bottom: 2rem;
 		width: 99%;
+	}
+	.history-diff {
+		margin-top: 0.5em;
+	}
+
+	.revert-button {
+		margin-left: 0.25em;
+		padding: 0.25em 0.5em;
 	}
 
 	@media (max-width: 260px) {

@@ -58,15 +58,52 @@ export async function fetchEntryHistory(
 	page: number
 ): Promise<{ count: number; items: HistoryItem[] }> {
 	const collection = await getCollection()
-	const history = await collection
+
+	// get the items and count at the same time
+	const historyPromise = collection
 		.find({ entryId })
 		.sort({ timestamp: -1 })
 		.skip(page * limit)
 		.limit(limit)
 		.toArray()
 	const historyItemCount = await collection.count({ entryId })
+	const history = await historyPromise
+
 	return {
 		count: historyItemCount,
 		items: history.map(replaceUuidWithId),
 	}
+}
+
+/**
+ * Get the entire history items of an entry that occured after a certain edit.
+ * The item won't be included in the results.
+ * @param item The history item
+ */
+export async function fetchEntryHistoryItemsAfter(item: HistoryItem): Promise<HistoryItem[]> {
+	const collection = await getCollection()
+
+	// get the items and count at the same time
+	const history = await collection
+		.find({ entryId: item.entryId, timestamp: { $gt: item.timestamp } })
+		.sort({ timestamp: -1 })
+		.toArray()
+
+	return history.map(replaceUuidWithId)
+}
+
+/**
+ * Get the history item that was made right before this one, so we can calculate the diff
+ */
+export async function getEntryHistoryItemBefore(item: HistoryItem): Promise<HistoryItem | null> {
+	const collection = await getCollection()
+
+	const result = await collection
+		.find({ entryId: item.entryId, timestamp: { $lt: item.timestamp } })
+		.sort({ timestamp: -1 })
+		.limit(1)
+		.toArray()
+
+	if (result.length === 0) return null
+	return replaceUuidWithId(result[0])
 }

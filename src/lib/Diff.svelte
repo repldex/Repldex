@@ -15,7 +15,7 @@
 	{#each Array(patches[0][0]) as _, i}
 		{@const distanceFromContext = patches[0][0] - i}
 		{#if contextAmount >= distanceFromContext}
-			<p>{before[i]}</p>
+			<p class="diff-unchanged">{before[i]}</p>
 		{/if}
 	{/each}
 
@@ -64,5 +64,9 @@
 
 	.diff-insert {
 		background-color: #09d82f66;
+	}
+
+	.diff-unchanged {
+		color: var(--alternate-text-color);
 	}
 </style>
