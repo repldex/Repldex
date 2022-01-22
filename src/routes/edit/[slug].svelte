@@ -90,4 +90,8 @@
 		align-items: center;
 		height: 100vh;
 	}
+
+	button {
+		margin-top: 0.5em;
+	}
 </style>
