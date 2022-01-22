@@ -27,6 +27,7 @@
 	import type { Entry } from '../../lib/database/entries'
 	import Diff from '../../lib/Diff.svelte'
 	import User from '../../lib/User.svelte'
+	import { format as formatTimeAgo } from 'timeago.js'
 	import { browser } from '$app/env'
 
 	export let entry: Entry
@@ -72,7 +73,7 @@
 {#each historyItems as historyItem, i (historyItem.id)}
 	{#if i > 0}
 		<div class="history-item">
-			<User id={historyItem.userId} /> - {historyItem.timestamp}
+			<User id={historyItem.userId} /> - {formatTimeAgo(historyItem.timestamp)}
 			<div class="history-diff">
 				<Diff
 					before={historyItems[i].content.split('\n')}

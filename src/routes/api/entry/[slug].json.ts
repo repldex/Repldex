@@ -22,19 +22,18 @@ export const put: RequestHandler = async req => {
 	const entryId = body.id as string | null
 
 	if (
-		!body
-		|| typeof body !== 'object'
-		|| body instanceof Uint8Array
+		!body ||
+		typeof body !== 'object' ||
+		body instanceof Uint8Array ||
 		// make sure the content/title/id exist and aren't empty
-		|| !content
-		|| !title
-		|| !entryId
+		!content ||
+		!title ||
+		!entryId
 	)
 		return {
 			status: 400,
 			body: { error: 'Invalid request body' },
 		}
-
 
 	// fetch the user and entry at the same time
 	const userPromise = fetchUser({ id: req.locals.user.id })
@@ -45,10 +44,9 @@ export const put: RequestHandler = async req => {
 			status: 404,
 			body: { error: 'Not found' },
 		}
-	
+
 	const user = await userPromise
 
-	
 	// if the user isn't logged in, return a 403
 	if (!user)
 		return {
@@ -58,13 +56,15 @@ export const put: RequestHandler = async req => {
 
 	const canCreateEntriesPromise = canCreateEntries(user)
 
+	console.log('user', user, user.id)
+
 	// if the user can't edit entries, return a 403
 	if (!(await canEditEntry(user, entry)))
 		return {
 			status: 403,
 			body: { error: 'You do not have permission to edit this entry' },
 		}
-	
+
 	// if the title is different, check if they can create entries
 	if (!(await canCreateEntriesPromise))
 		return {
@@ -78,7 +78,7 @@ export const put: RequestHandler = async req => {
 	const editedEntry = await editEntry(entry.id, {
 		content,
 		slug,
-		title
+		title,
 	})
 	await createHistoryItem({
 		entryId: createUuid(entry.id),

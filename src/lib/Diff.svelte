@@ -5,12 +5,18 @@
 	export let after: unknown[]
 
 	$: patches = Array.from(diff.diff(before, after))
+
+	// how many extra lines should be shown around changes for context
+	let contextAmount = 2
 </script>
 
 <div>
 	<!-- iterate over each line -->
 	{#each Array(patches[0][0]) as _, i}
-		<p>{before[i]}</p>
+		{@const distanceFromContext = patches[0][0] - i}
+		{#if contextAmount >= distanceFromContext}
+			<p>{before[i]}</p>
+		{/if}
 	{/each}
 
 	{#each patches as patch, patchIndex}
@@ -21,13 +27,22 @@
 		{/if}
 		{#if patch[2] != patch[3]}
 			<!-- insert -->
-			<p class="diff-insert">{after.slice(patch[0], patch[1])}</p>
+			{#each after.slice(patch[2], patch[3]) as part}
+				<p class="diff-insert">
+					{part}
+				</p>
+			{/each}
 		{/if}
 
+		{@const end = patches[patchIndex + 1] ? patches[patchIndex + 1][0] : before.length}
+		{@const start = patches[patchIndex][1]}
 		{#if patchIndex < patches.length}
-			{#each Array((patches[patchIndex + 1] ? patches[patchIndex + 1][0] : before.length) - patches[patchIndex][1]) as _, unoffsetLineNumber}
+			{#each Array(end - start) as _, unoffsetLineNumber}
 				{@const lineNumber = unoffsetLineNumber + patch[1]}
-				<p>{before[lineNumber]}</p>
+				{@const distanceFromContext = Math.min(end - lineNumber, lineNumber - start)}
+				{#if contextAmount >= distanceFromContext}
+					<p>{before[lineNumber]}</p>
+				{/if}
 			{/each}
 		{/if}
 	{/each}
@@ -35,8 +50,8 @@
 
 <style>
 	p {
-		margin: 0.1em 0;
-		width: fit-content;
+		margin: 0;
+		width: 100%;
 		/* the min-height is necessary so empty lines work */
 		min-height: 1em;
 	}
