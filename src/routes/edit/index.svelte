@@ -39,7 +39,7 @@
 	}
 </script>
 
-<a href="/" class="back-button">Back</a>
+<a href="/entry/{entryTitle}" class="back-button">Back</a>
 
 <div id="editor-container">
 	<div id="editor-container-container">

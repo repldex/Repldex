@@ -43,18 +43,11 @@
 	.entry-nav-links {
 		position: absolute;
 		top: 1rem;
+		margin-right: 1rem;
 	}
 
 	.entry-nav-links > a {
 		margin-right: 0.5rem;
-	}
-
-	article,
-	h1,
-	.entry-nav-links {
-		/* we do this instead of margin: 0 1rem so the margin-top is respected */
-		margin-right: 1rem;
-		margin-left: 1rem;
 	}
 
 	h1 {
@@ -62,9 +55,9 @@
 	}
 
 	/* if entry-nav-links is too close to the back button, put it right next to it */
-	@media (max-width: 1060px) {
+	@media (max-width: 1090px) {
 		.entry-nav-links {
-			left: 3rem;
+			left: 4rem;
 		}
 	}
 
@@ -74,7 +67,7 @@
 			padding-top: 2rem;
 		}
 		.entry-nav-links {
-			left: 0;
+			left: 1em;
 			margin-right: 0;
 		}
 	}

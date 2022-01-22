@@ -44,8 +44,8 @@
 	}
 
 	main {
-		margin: 1em;
-		max-width: 60rem;
+		padding: 1em;
 		margin: 0 auto;
+		max-width: 60rem;
 	}
 </style>

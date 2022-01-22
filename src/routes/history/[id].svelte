@@ -32,29 +32,24 @@
 
 <Head title={entry.title} description={entry.content} />
 
-<a href="/" class="back-button">Back</a>
-
 <nav class="entry-nav-links">
 	<a href="/entry/{entry.slug}">View</a>
 	<a href="/edit/{entry.slug}">Edit</a>
 </nav>
 
-
 <h1>{entry.title}</h1>
 {#each history.slice(0, -1) as historyItem, i}
-	{historyItem.timestamp} - <User id={historyItem.userId}></User>
-	<Diff before={history[i + 1].content.split('\n')} after={history[i].content.split('\n')} />
-	<!-- <div>history item: {JSON.stringify(historyItem)}</div> -->
+	<div class="history-item">
+		<User id={historyItem.userId} /> - {historyItem.timestamp}
+		<Diff before={history[i + 1].content.split('\n')} after={history[i].content.split('\n')} />
+	</div>
+	{#if i < history.length - 2}
+		<hr />
+	{/if}
 {/each}
 
 <!-- <article>{@html markdown.render(entry.content)}</article> -->
 <style>
-	.back-button {
-		position: absolute;
-		top: 1rem;
-		left: 1rem;
-	}
-
 	.entry-nav-links {
 		position: absolute;
 		top: 1rem;
@@ -64,32 +59,27 @@
 		margin-right: 0.5rem;
 	}
 
-	article,
-	h1,
-	.entry-nav-links {
-		/* we do this instead of margin: 0 1rem so the margin-top is respected */
-		margin-right: 1rem;
-		margin-left: 1rem;
-	}
-
 	h1 {
 		margin-top: 3rem;
 	}
 
-	/* if entry-nav-links is too close to the back button, put it right next to it */
-	@media (max-width: 1060px) {
-		.entry-nav-links {
-			left: 3rem;
-		}
+	.history-item {
+		margin-bottom: 2rem;
+	}
+	hr {
+		margin-bottom: 2rem;
+		width: 99%;
 	}
 
-	@media (max-width: 320px) {
+	@media (max-width: 260px) {
 		.entry-nav-links,
 		h1 {
 			padding-top: 2rem;
 		}
 		.entry-nav-links {
-			left: 0;
+			right: 1em;
+		}
+		.entry-nav-links a {
 			margin-right: 0;
 		}
 	}
