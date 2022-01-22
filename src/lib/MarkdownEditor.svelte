@@ -125,7 +125,7 @@
 <style>
 	#editable-text-area {
 		border-radius: 0.25em;
-		width: 50rem;
+		width: 100%;
 		height: 20rem;
 		margin: 0;
 		padding: 0.5em;
