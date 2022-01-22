@@ -71,16 +71,21 @@
 </nav>
 
 <h1>{entry.title}</h1>
-{#each historyItems as historyItem, i (historyItem.id)}
+{#each historyItems as previousHistoryItem, i (previousHistoryItem.id)}
+	{@const historyItem = historyItems[i - 1]}
 	{#if i > 0}
 		<div class="history-item">
-			<User id={historyItem.userId} /> - {formatTimeAgo(historyItems[i - 1].timestamp)}
-			<RevertButton id={historyItems[i - 1].id} />
+			<User id={historyItem.userId} /> - {formatTimeAgo(historyItem.timestamp)}
+			{#if historyItem.reverted}
+				- Reverted
+			{:else}
+				<RevertButton id={historyItem.id} />
+			{/if}
 
 			<div class="history-diff">
 				<Diff
 					before={historyItems[i].content.split('\n')}
-					after={historyItems[i - 1].content.split('\n')}
+					after={i > 0 ? historyItems[i - 1].content.split('\n') : []}
 				/>
 			</div>
 		</div>
@@ -89,6 +94,15 @@
 		{/if}
 	{/if}
 {/each}
+<div class="history-item">
+	<User id={historyItems[historyItems.length - 1].userId} /> - {formatTimeAgo(
+		historyItems[historyItems.length - 1].timestamp
+	)} - Entry created
+
+	<div class="history-diff">
+		<Diff before={[]} after={historyItems[historyItems.length - 1].content.split('\n')} />
+	</div>
+</div>
 
 <style>
 	.entry-nav-links {
@@ -113,11 +127,6 @@
 	}
 	.history-diff {
 		margin-top: 0.5em;
-	}
-
-	.revert-button {
-		margin-left: 0.25em;
-		padding: 0.25em 0.5em;
 	}
 
 	@media (max-width: 260px) {

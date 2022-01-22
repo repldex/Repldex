@@ -3,23 +3,13 @@ import type { JSONString } from '@sveltejs/kit/types/helper'
 import { createSlug, createUuid } from '../../../lib/database'
 import { editEntry, fetchEntry } from '../../../lib/database/entries'
 import { fetchUser } from '../../../lib/database/users'
-import { canCreateEntries, canEditEntry } from '../../../lib/perms'
-import { createHistoryItem, fetchEntryHistoryItem } from '../../../lib/database/history'
+import { canEditEntry } from '../../../lib/perms'
+import {
+	createHistoryItem,
+	fetchEntryHistoryItem,
+	updateHistoryItem,
+} from '../../../lib/database/history'
 import { getRevertResult } from '../../../lib/revert'
-
-export interface APIHistoryItem {
-	id: string
-	entryId: string
-	userId: string
-	title: string
-	content: string
-	timestamp: Date
-}
-
-export interface APIHistoryResponse {
-	count: number
-	items: APIHistoryItem[]
-}
 
 // revert an entry history item
 export const post: RequestHandler = async req => {
@@ -86,6 +76,10 @@ export const post: RequestHandler = async req => {
 		title,
 		timestamp: new Date(),
 		userId: createUuid(user.id),
+	})
+
+	await updateHistoryItem(historyItemId, {
+		reverted: true,
 	})
 
 	return {

@@ -8,6 +8,7 @@ export interface HistoryItem {
 	title: string
 	content: string
 	timestamp: Date
+	reverted?: boolean
 }
 
 let hasTriedCreatingCollection = false
@@ -118,4 +119,17 @@ export async function fetchEntryHistoryItem(id: string): Promise<HistoryItem | n
 
 	if (result === null) return null
 	return replaceUuidWithId(result)
+}
+
+export async function updateHistoryItem(
+	itemId: string,
+	entry: Partial<Omit<HistoryItem, 'id'>>
+): Promise<void> {
+	const collection = await getCollection()
+
+	await collection.findOneAndUpdate(
+		{ _id: createUuid(itemId) },
+		{ $set: entry },
+		{ returnDocument: 'after' }
+	)
 }

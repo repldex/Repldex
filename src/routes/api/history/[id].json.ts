@@ -10,6 +10,7 @@ export interface APIHistoryItem {
 	title: string
 	content: string
 	timestamp: Date
+	reverted?: boolean
 }
 
 export interface APIHistoryResponse {
@@ -35,6 +36,7 @@ export const get: RequestHandler = async req => {
 					title: h.title,
 					content: h.content,
 					timestamp: h.timestamp,
+					reverted: h.reverted,
 				})
 			),
 		} as unknown as JSONString,
