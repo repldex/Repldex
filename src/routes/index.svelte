@@ -19,14 +19,10 @@
 	export let entries: Entry[]
 </script>
 
-<Head imageUrl="/icon.png" />
+<Head imageUrl="/icon-small.svg" />
 
 <h1>
-	<picture>
-		<source srcset="/icon.jxl" type="image/jxl" />
-		<source srcset="/icon.webp" type="image/webp" />
-		<img src="/icon.png" alt="Repldex Logo" class="title-logo" />
-	</picture>
+	<img src="/icon-small.svg" alt="Repldex Logo" class="title-logo" />
 
 	<span class="title-text">Repldex</span>
 </h1>
