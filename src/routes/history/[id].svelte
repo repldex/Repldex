@@ -82,6 +82,13 @@
 				<RevertButton id={historyItem.id} />
 			{/if}
 
+			{#if historyItem.title != previousHistoryItem.title}
+				<!-- renamed -->
+				<p class="renamed">
+					Entry renamed from <b>{previousHistoryItem.title}</b> to <b>{historyItem.title}</b>
+				</p>
+			{/if}
+
 			<div class="history-diff">
 				<Diff
 					before={historyItems[i].content.split('\n')}
@@ -89,7 +96,7 @@
 				/>
 			</div>
 		</div>
-		{#if i < historyItems.length - 1}
+		{#if i < historyItems.length}
 			<hr />
 		{/if}
 	{/if}
@@ -127,6 +134,15 @@
 	}
 	.history-diff {
 		margin-top: 0.5em;
+	}
+
+	.renamed {
+		margin: 0;
+		color: var(--bright-text-color);
+	}
+
+	.renamed {
+		margin-left: 0.5em;
 	}
 
 	@media (max-width: 260px) {

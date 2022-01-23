@@ -7,6 +7,7 @@ import { canEditEntry } from '../../../lib/perms'
 import {
 	createHistoryItem,
 	fetchEntryHistoryItem,
+	fetchEntryHistoryItemBefore,
 	updateHistoryItem,
 } from '../../../lib/database/history'
 import { getRevertResult } from '../../../lib/revert'
@@ -27,6 +28,8 @@ export const post: RequestHandler = async req => {
 
 	const userPromise = fetchUser({ id: req.locals.user.id })
 	const entry = await fetchEntry(historyItem.entryId.toString('hex'))
+	const historyItemBeforePromise = fetchEntryHistoryItemBefore(historyItem)
+	const historyItemBefore = await historyItemBeforePromise
 
 	if (!entry)
 		return {
@@ -52,14 +55,17 @@ export const post: RequestHandler = async req => {
 
 	const newContent = await getRevertResult(historyItem)
 
-	if (!newContent || newContent === entry.content)
+	if (
+		!newContent ||
+		(newContent === entry.content &&
+			(!historyItemBefore || historyItemBefore.title === entry.title))
+	)
 		return {
 			status: 400,
 			body: { error: 'Nothing to revert' },
 		}
 
-	// TODO: this should use the title of the previous history item
-	const title = entry.title
+	const title = historyItemBefore ? historyItemBefore.title : entry.title
 
 	const slug = createSlug(title)
 
@@ -83,9 +89,6 @@ export const post: RequestHandler = async req => {
 	})
 
 	return {
-		body: {
-			content: newContent,
-			title,
-		} as unknown as JSONString,
+		body: editedEntry as unknown as JSONString,
 	}
 }

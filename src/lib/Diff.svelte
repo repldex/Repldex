@@ -11,43 +11,45 @@
 </script>
 
 <div>
-	<!-- iterate over each line -->
-	{#each Array(patches[0][0]) as _, i}
-		{@const distanceFromContext = patches[0][0] - i}
-		{#if contextAmount >= distanceFromContext}
-			<p class="diff-unchanged">{before[i]}</p>
-		{/if}
-	{/each}
+	{#if patches.length > 0}
+		<!-- iterate over each line -->
+		{#each Array(patches[0][0]) as _, i}
+			{@const distanceFromContext = patches[0][0] - i}
+			{#if contextAmount >= distanceFromContext}
+				<p class="diff-unchanged">{before[i]}</p>
+			{/if}
+		{/each}
 
-	{#each patches as patch, patchIndex}
-		<!-- iterate between the end of this delete and the start of the next one to show the lines in between -->
-		{#if patch[0] != patch[1]}
-			<!-- delete -->
-			{#each before.slice(patch[0], patch[1]) as part}
-				<p class="diff-delete">{part}</p>
-			{/each}
-		{/if}
-		{#if patch[2] != patch[3]}
-			<!-- insert -->
-			{#each after.slice(patch[2], patch[3]) as part}
-				<p class="diff-insert">
-					{part}
-				</p>
-			{/each}
-		{/if}
+		{#each patches as patch, patchIndex}
+			<!-- iterate between the end of this delete and the start of the next one to show the lines in between -->
+			{#if patch[0] != patch[1]}
+				<!-- delete -->
+				{#each before.slice(patch[0], patch[1]) as part}
+					<p class="diff-delete">{part}</p>
+				{/each}
+			{/if}
+			{#if patch[2] != patch[3]}
+				<!-- insert -->
+				{#each after.slice(patch[2], patch[3]) as part}
+					<p class="diff-insert">
+						{part}
+					</p>
+				{/each}
+			{/if}
 
-		{@const end = patches[patchIndex + 1] ? patches[patchIndex + 1][0] : before.length}
-		{@const start = patches[patchIndex][1]}
-		{#if patchIndex < patches.length}
-			{#each Array(end - start) as _, unoffsetLineNumber}
-				{@const lineNumber = unoffsetLineNumber + patch[1]}
-				{@const distanceFromContext = Math.min(end - lineNumber, lineNumber - start)}
-				{#if contextAmount >= distanceFromContext}
-					<p>{before[lineNumber]}</p>
-				{/if}
-			{/each}
-		{/if}
-	{/each}
+			{@const end = patches[patchIndex + 1] ? patches[patchIndex + 1][0] : before.length}
+			{@const start = patches[patchIndex][1]}
+			{#if patchIndex < patches.length}
+				{#each Array(end - start) as _, unoffsetLineNumber}
+					{@const lineNumber = unoffsetLineNumber + patch[1]}
+					{@const distanceFromContext = Math.min(end - lineNumber, lineNumber - start)}
+					{#if contextAmount >= distanceFromContext}
+						<p>{before[lineNumber]}</p>
+					{/if}
+				{/each}
+			{/if}
+		{/each}
+	{/if}
 </div>
 
 <style>
