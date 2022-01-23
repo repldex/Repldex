@@ -22,7 +22,8 @@
 		{#if !user}
 			<DiscordLoginButton />
 		{:else}
-			<a href="/logout">Logout</a>
+			<a href="/edit">New entry</a>
+			<a rel="external" href="/logout">Logout</a>
 		{/if}
 	</div>
 </nav>
@@ -38,9 +39,13 @@
 		top: 1rem;
 	}
 
+	.discord-login-button-container > a {
+		margin: 0 0.25rem;
+	}
+
 	main {
-		margin: 1em;
-		max-width: 60rem;
+		padding: 1em;
 		margin: 0 auto;
+		max-width: 60rem;
 	}
 </style>

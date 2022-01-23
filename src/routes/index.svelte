@@ -2,7 +2,7 @@
 	import type { Load } from '@sveltejs/kit'
 	import Head from '../lib/Head.svelte'
 
-	export const load: Load = async ({ page, fetch, session, stuff }) => {
+	export const load: Load = async ({ fetch }) => {
 		const res = await fetch('/api/entries.json')
 
 		return {
@@ -22,14 +22,13 @@
 <Head imageUrl="/icon.png" />
 
 <h1>
-	<!-- <img src="/icon.png" alt="Repldex Logo" class="title-logo" /> -->
 	<picture>
 		<source srcset="/icon.jxl" type="image/jxl" />
 		<source srcset="/icon.webp" type="image/webp" />
 		<img src="/icon.png" alt="Repldex Logo" class="title-logo" />
 	</picture>
 
-	Repldex
+	<span class="title-text">Repldex</span>
 </h1>
 
 <div class="entry-list">
@@ -43,6 +42,7 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(20em, 1fr));
 		grid-gap: 0.5em;
+		padding: 0 1em;
 	}
 
 	h1 {
@@ -56,5 +56,26 @@
 		margin-right: 0.3em;
 		position: relative;
 		top: 0.15em;
+	}
+
+	/* move the logo to the left if the screen is less than 500px */
+	@media (max-width: 500px) {
+		h1 {
+			position: absolute;
+			left: 1rem;
+			top: 1rem;
+			margin: 0;
+		}
+
+		.entry-list {
+			padding-top: 5em;
+		}
+	}
+
+	/* hide the title text if the screen is less than 340px */
+	@media (max-width: 340px) {
+		.title-text {
+			display: none;
+		}
 	}
 </style>

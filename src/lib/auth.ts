@@ -24,6 +24,7 @@ export async function authenticateToken(token: string): Promise<jwt.JwtPayload> 
 	return new Promise((resolve, reject) => {
 		jwt.verify(token, secret!, (err, payload) => {
 			if (err) reject(err)
+			if (typeof payload === 'string') reject('The payload was not a jwt.JwtPayload')
 			else if (payload) resolve(payload)
 			else reject(new Error('No payload'))
 		})

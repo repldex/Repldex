@@ -2,8 +2,8 @@
 	import type { Load } from '@sveltejs/kit'
 	import Head from '../../lib/Head.svelte'
 
-	export const load: Load = async ({ page, fetch, session, stuff }) => {
-		const entrySlug: string = page.params.slug
+	export const load: Load = async ({ params, fetch }) => {
+		const entrySlug: string = params.slug
 		const res = await fetch(`/api/entry/${entrySlug}.json`)
 
 		return {
@@ -25,6 +25,11 @@
 
 <a href="/" class="back-button">Back</a>
 
+<nav class="entry-nav-links">
+	<a href="/edit/{entry.slug}">Edit</a>
+	<a href="/history/{entry.id}">History</a>
+</nav>
+
 <h1>{entry.title}</h1>
 <article>{@html markdown.render(entry.content)}</article>
 
@@ -33,5 +38,37 @@
 		position: absolute;
 		top: 1rem;
 		left: 1rem;
+	}
+
+	.entry-nav-links {
+		position: absolute;
+		top: 1rem;
+		margin-right: 1rem;
+	}
+
+	.entry-nav-links > a {
+		margin-right: 0.5rem;
+	}
+
+	h1 {
+		margin-top: 3rem;
+	}
+
+	/* if entry-nav-links is too close to the back button, put it right next to it */
+	@media (max-width: 1090px) {
+		.entry-nav-links {
+			left: 4rem;
+		}
+	}
+
+	@media (max-width: 320px) {
+		.entry-nav-links,
+		h1 {
+			padding-top: 2rem;
+		}
+		.entry-nav-links {
+			left: 1em;
+			margin-right: 0;
+		}
 	}
 </style>
