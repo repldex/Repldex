@@ -69,7 +69,7 @@
 			<MarkdownEditor bind:value={entryContent} />
 		</Labelled>
 
-		<button on:click={submitEntry}>Submit</button>
+		<button on:click={submitEntry}>Update</button>
 	</div>
 </div>
 
