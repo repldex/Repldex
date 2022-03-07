@@ -6,7 +6,10 @@
 	import * as markdown from './markdown'
 </script>
 
-<a class="entry-preview-container" href="/entry/{entry.slug}">
+<a
+	class="entry-preview-container"
+	href="/entry/{entry.visibility === 'hidden' ? entry.id : entry.slug}"
+>
 	{#if entry.visibility === 'unlisted'}
 		<p class="visibility-warning">Unlisted</p>
 	{:else if entry.visibility === 'hidden'}

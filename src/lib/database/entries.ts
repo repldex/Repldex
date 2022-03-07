@@ -1,5 +1,6 @@
 import type { Collection } from 'mongodb'
 import { createUuid, getDatabase, ReplaceIdWithUuid, replaceUuidWithId } from '.'
+import { isAdmin } from '../perms'
 
 export type Visibility = 'visible' | 'unlisted' | 'hidden'
 
@@ -54,7 +55,9 @@ export async function fetchEntry(slug: string): Promise<Entry | null> {
 	const collection = await getCollection()
 	// fetch by the id if it looks like one, otherwise use the slug
 	const entry = await collection.findOne(
-		/^[0-9a-f]{32}$/i.test(slug) ? { _id: createUuid(slug) } : { slug }
+		/^[0-9a-f]{32}$/i.test(slug)
+			? { _id: createUuid(slug) }
+			: { slug, visibility: { $ne: 'hidden' } }
 	)
 	return entry ? replaceUuidWithId(entry) : null
 }

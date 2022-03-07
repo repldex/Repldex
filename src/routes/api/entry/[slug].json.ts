@@ -10,6 +10,16 @@ import '../../../lib/revert'
 // get an entry
 export const get: RequestHandler = async req => {
 	const entry = await fetchEntry(req.params.slug)
+
+	if (entry) {
+		// if it's hidden, make sure we're allowed to see it
+		if (entry.visibility === 'hidden') {
+			const user = req.locals.user ? await fetchUser({ id: req.locals.user.id }) : null
+			if (!user) return { body: null }
+			if (!isAdmin(user)) return { body: null }
+		}
+	}
+
 	return {
 		body: entry as JSONValue,
 	}
@@ -32,8 +42,6 @@ export const put: RequestHandler = async req => {
 		}
 	}
 
-	console.log('visibility', visibility)
-
 	if (
 		!body ||
 		typeof body !== 'object' ||
@@ -43,7 +51,7 @@ export const put: RequestHandler = async req => {
 		!title ||
 		!entryId ||
 		!visibility ||
-		!['visible', 'unlisted', 'private'].includes(visibility)
+		!['visible', 'unlisted', 'hidden'].includes(visibility)
 	)
 		return {
 			status: 400,

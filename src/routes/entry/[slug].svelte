@@ -4,11 +4,22 @@
 
 	export const load: Load = async ({ params, fetch }) => {
 		const entrySlug: string = params.slug
-		const res = await fetch(`/api/entry/${entrySlug}.json`)
+		const entry: Entry | null = await fetch(`/api/entry/${entrySlug}.json`).then(res => res.json())
+
+		if (!entry) {
+			return { fallthrough: true }
+		}
+
+		if (entrySlug !== entry.slug && entry.visibility !== 'hidden') {
+			return {
+				redirect: `/entry/${entry.slug}`,
+				status: 301,
+			}
+		}
 
 		return {
 			props: {
-				entry: await res.json(),
+				entry,
 			},
 		}
 	}
@@ -62,7 +73,7 @@
 		border-radius: 0.2rem;
 		margin: 0;
 		margin-top: 3rem;
-		opacity: 0.5;
+		box-shadow: 0 0 0.5em #0004;
 	}
 
 	h1 {

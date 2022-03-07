@@ -47,7 +47,7 @@
 		// make a put request to /api/entry/<id>.json
 		// if successful, redirect to /entry/<slug>
 
-		const response = await fetch(`/api/entry/${entry.id}.json`, {
+		const response: Entry | { error: string } = await fetch(`/api/entry/${entry.id}.json`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -60,12 +60,12 @@
 			}),
 		}).then(response => response.json())
 
-		if (response.error) {
+		if ('error' in response) {
 			console.error(response.error)
 			return
 		}
 
-		goto(`/entry/${response.slug}`)
+		goto(visibility === 'hidden' ? `/entry/${response.id}` : `/entry/${response.slug}`)
 	}
 </script>
 
@@ -97,7 +97,7 @@
 			<MarkdownEditor bind:value={entryContent} />
 		</Labelled>
 
-		<button on:click={submitEntry}>Update</button>
+		<button on:click={submitEntry}>Save</button>
 	</div>
 </div>
 

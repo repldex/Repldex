@@ -48,3 +48,14 @@ button {
 	border-radius: 0.5em;
 	cursor: pointer;
 }
+
+select {
+	border: none;
+	border-radius: 0.5em;
+	background-color: var(--alternate-background-color);
+	color: var(--text-color);
+	padding: 0.5em;
+	font-family: inherit;
+	position: relative;
+	margin: 0;
+}
