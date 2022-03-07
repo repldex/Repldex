@@ -15,11 +15,17 @@ Otherwise, use the following instructions:
 ### Enviornment Variables (.env)
 
 ```DISCORD_CLIENT_ID``` - Discord Client ID
+
 ```DISCORD_CLIENT_SECRET``` - Discord Client Secret
-```DISCORD_PUBLIC_KEY`` - Discord Public Key
+
+```DISCORD_PUBLIC_KEY``` - Discord Public Key
+
 ```DISCORD_TOKEN``` - Discord BOT Token
+
 ```JWT_SECRET``` - JWT Secret
-```MONGODB_URI``` - MongoDB URI
+
+```MONGODB_URL``` - MongoDB URI
+
 ```NODE_ENV``` - Node Environment (this can be "production" or "development", optional)
 
 ## File structure
