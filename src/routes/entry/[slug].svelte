@@ -33,7 +33,7 @@
 	export let entry: Entry
 </script>
 
-<Head title={entry.title} description={entry.content} />
+<Head title={entry.title} description={entry.content} noIndex={entry.visibility !== 'visible'} />
 
 <a href="/" class="back-button">Back</a>
 

@@ -64,7 +64,7 @@
 	}
 </script>
 
-<Head title={entry.title} description={entry.content} />
+<Head title={entry.title} description={entry.content} noIndex />
 
 <nav class="entry-nav-links">
 	<a href={getEntryViewUrl(entry)}>View</a>
