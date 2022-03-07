@@ -169,6 +169,11 @@
 		.entry-list {
 			padding-top: 5em;
 		}
+
+		.visibility-toggles-container {
+			position: relative;
+			top: 5em;
+		}
 	}
 
 	/* hide the title text if the screen is less than 340px */
