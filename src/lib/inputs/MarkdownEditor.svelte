@@ -129,7 +129,7 @@
 <style>
 	#editable-text-area {
 		border-radius: 0.25em;
-		width: 100%;
+		width: calc(100% - 1em);
 
 		min-height: 20rem;
 

@@ -47,7 +47,7 @@ export const post: RequestHandler = async req => {
 		}
 
 	// if the user can't edit entries, return a 403
-	if (!(await canEditEntry(user, entry)))
+	if (!canEditEntry(user, entry))
 		return {
 			status: 403,
 			body: { error: 'You do not have permission to edit this entry' },

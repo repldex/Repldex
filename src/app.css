@@ -4,7 +4,9 @@
 	--alternate-background-color: #2f2f2f;
 	--text-color: #d9d9d9;
 	--alternate-text-color: #aaaaaa;
+
 	--link-color: #10abe8;
+
 	--bright-text-color: #fff;
 	--font: 'Atkinson Hyperlegible', sans-serif;
 }
@@ -44,4 +46,15 @@ button {
 	padding: 0.5em;
 	border-radius: 0.5em;
 	cursor: pointer;
+}
+
+select {
+	border: none;
+	border-radius: 0.5em;
+	background-color: var(--alternate-background-color);
+	color: var(--text-color);
+	padding: 0.5em;
+	font-family: inherit;
+	position: relative;
+	margin: 0;
 }

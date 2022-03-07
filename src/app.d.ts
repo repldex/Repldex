@@ -2,12 +2,14 @@
 
 declare namespace App {
 	interface Locals {
-		user: BasicUser
+		user: import('./lib/database/users').BasicUser | null
 	}
 
 	// interface Platform {}
 
-	// interface Session {}
+	interface Session {
+		user: import('./lib/database/users').User | null
+	}
 
 	// interface Stuff {}
 }
