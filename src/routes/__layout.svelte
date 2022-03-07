@@ -47,5 +47,6 @@
 		padding: 1em;
 		margin: 0 auto;
 		max-width: 60rem;
+		width: 100%;
 	}
 </style>

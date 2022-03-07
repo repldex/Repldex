@@ -89,9 +89,11 @@
 	}
 
 	@media (max-width: 320px) {
-		.entry-nav-links,
 		h1 {
 			padding-top: 2rem;
+		}
+		.entry-nav-links {
+			margin-top: 2rem;
 		}
 		.entry-nav-links {
 			left: 1em;

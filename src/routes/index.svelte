@@ -98,6 +98,13 @@
 		padding: 0 1em;
 	}
 
+	@media (max-width: 500px) {
+		.entry-list {
+			/* it's acceptable for previews to be a bit smaller on small screens */
+			grid-template-columns: repeat(auto-fill, minmax(15em, 1fr));
+		}
+	}
+
 	h1 {
 		text-align: center;
 		color: var(--bright-text-color);
