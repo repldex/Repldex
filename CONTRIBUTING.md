@@ -13,6 +13,7 @@ Otherwise, use the following instructions:
 8. Once you're satisfied with your changes, create a commit and make a [pull request](https://github.com/repldex/Repldex/pulls).
 
 ### Enviornment Variables (.env)
+
 ```DISCORD_CLIENT_ID``` - Discord Client ID
 ```DISCORD_CLIENT_SECRET``` - Discord Client Secret
 ```DISCORD_PUBLIC_KEY`` - Discord Public Key
