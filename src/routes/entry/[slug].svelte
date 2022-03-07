@@ -30,6 +30,11 @@
 	<a href="/history/{entry.id}">History</a>
 </nav>
 
+{#if entry.visibility === 'unlisted'}
+	<p class="visibility-warning">Unlisted</p>
+{:else if entry.visibility === 'hidden'}
+	<p class="visibility-warning">Hidden</p>
+{/if}
 <h1>{entry.title}</h1>
 <article>{@html markdown.render(entry.content)}</article>
 
@@ -48,6 +53,16 @@
 
 	.entry-nav-links > a {
 		margin-right: 0.5rem;
+	}
+
+	.visibility-warning {
+		float: right;
+		border: 2px solid var(--alternate-background-color);
+		padding: 0.2rem;
+		border-radius: 0.2rem;
+		margin: 0;
+		margin-top: 3rem;
+		opacity: 0.5;
 	}
 
 	h1 {

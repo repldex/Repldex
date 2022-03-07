@@ -1,30 +1,44 @@
 <script lang="ts" context="module">
+	import { canDeleteEntries } from '../../lib/perms'
 	import type { Load } from '@sveltejs/kit'
 
-	export const load: Load = async ({ params, fetch }) => {
+	export const load: Load = async ({ params, fetch, session }) => {
 		const entrySlug: string = params.slug
 		const res = await fetch(`/api/entry/${entrySlug}.json`)
 
+		const entry = await res.json()
+
+		if (!session.user) {
+			return {
+				error: 'You must be logged in to edit entries.',
+			}
+		}
+
 		return {
 			props: {
-				entry: await res.json(),
+				entry: entry,
+				user: session.user,
+				canDelete: await canDeleteEntries(session.user, entry),
 			},
 		}
 	}
 </script>
 
 <script lang="ts">
-	import type { Entry } from '../../lib/database/entries'
+	import type { Entry, Visibility } from '../../lib/database/entries'
 	import { goto } from '$app/navigation'
-	import MarkdownEditor from '../../lib/MarkdownEditor.svelte'
-	import TextInput from '../../lib/TextInput.svelte'
+	import MarkdownEditor from '../../lib/inputs/MarkdownEditor.svelte'
+	import TextInput from '../../lib/inputs/TextInput.svelte'
 	import Head from '../../lib/Head.svelte'
 	import Labelled from '../../lib/Labelled.svelte'
+	import type { User } from '../../lib/database/users'
 
+	export let user: User
 	export let entry: Entry
 
 	let entryTitle: string = entry.title
 	let entryContent: string = entry.content
+	let visibility: Visibility = entry.visibility
 
 	// automatically update the page title
 	$: pageTitle = `Edit entry "${entryTitle}"`
@@ -42,6 +56,7 @@
 				id: entry.id,
 				title: entryTitle,
 				content: entryContent,
+				visibility: visibility,
 			}),
 		}).then(response => response.json())
 
@@ -60,11 +75,24 @@
 	<div id="editor-container-container">
 		<Head title={pageTitle} />
 
+		<div class="visibility">
+			<Labelled text="Visibility">
+				{#if user}
+					<select bind:value={visibility}>
+						<option value="visible" selected>Visible</option>
+						<option value="unlisted">Unlisted</option>
+						<option value="hidden">Hidden</option>
+					</select>
+				{/if}
+			</Labelled>
+		</div>
+
 		<div class="text-editor">
 			<Labelled text="Title">
 				<TextInput bind:value={entryTitle} />
 			</Labelled>
 		</div>
+
 		<Labelled text="Content">
 			<MarkdownEditor bind:value={entryContent} />
 		</Labelled>
@@ -93,5 +121,9 @@
 
 	button {
 		margin-top: 0.5em;
+	}
+
+	.visibility {
+		float: right;
 	}
 </style>

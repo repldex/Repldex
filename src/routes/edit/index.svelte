@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 
-	import MarkdownEditor from '../../lib/MarkdownEditor.svelte'
-	import TextInput from '../../lib/TextInput.svelte'
+	import MarkdownEditor from '../../lib/inputs/MarkdownEditor.svelte'
+	import TextInput from '../../lib/inputs/TextInput.svelte'
 	import Head from '../../lib/Head.svelte'
 	import Labelled from '../../lib/Labelled.svelte'
 

@@ -15,5 +15,6 @@
 		bottom: -0.1em;
 		margin-left: 0.1em;
 		opacity: 0.8;
+		letter-spacing: 0.03em;
 	}
 </style>

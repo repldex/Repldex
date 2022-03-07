@@ -16,6 +16,7 @@
 <script lang="ts">
 	import type { Entry } from '../lib/database/entries'
 	import EntryPreview from '../lib/EntryPreview.svelte'
+	import Labelled from '../lib/Labelled.svelte'
 	export let entries: Entry[]
 </script>
 
@@ -26,6 +27,25 @@
 
 	<span class="title-text">Repldex</span>
 </h1>
+
+<div class="visibility-toggles-container">
+	<Labelled text="Filter">
+		<div class="visibility-toggles">
+			<label class="visible-toggle">
+				<input type="checkbox" id="show-visible" />
+				<span>Visible</span>
+			</label>
+			<label class="unlisted-toggle">
+				<input type="checkbox" id="show-unlisted" />
+				<span>Unlisted</span>
+			</label>
+			<label class="deleted-toggle">
+				<input type="checkbox" id="show-deleted" />
+				<span>Deleted</span>
+			</label>
+		</div>
+	</Labelled>
+</div>
 
 <div class="entry-list">
 	{#each entries as entry}
@@ -52,6 +72,39 @@
 		margin-right: 0.3em;
 		position: relative;
 		top: 0.15em;
+	}
+
+	.visibility-toggles-container {
+		width: 100%;
+		display: block;
+		height: fit-content;
+		display: flex;
+		justify-content: flex-end;
+	}
+	.visibility-toggles {
+		border-radius: 0.5em;
+		white-space: normal;
+		display: flex;
+		overflow: hidden;
+		width: fit-content;
+		margin-bottom: 1em;
+		border: 1px solid var(--alternate-background-color);
+	}
+	.visibility-toggles input[type='checkbox'] {
+		display: none;
+	}
+	.visibility-toggles > label > span {
+		background-color: var(--background-color);
+		padding: 0.5rem;
+		margin: 0;
+		border-radius: 0;
+		cursor: pointer;
+		display: inline-block;
+		transition: background-color 100ms;
+	}
+	.visibility-toggles input[type='checkbox']:checked ~ span {
+		background-color: var(--alternate-background-color);
+		color: var(--bright-text-color);
 	}
 
 	/* move the logo to the left if the screen is less than 500px */

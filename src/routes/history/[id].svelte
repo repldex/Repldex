@@ -29,7 +29,7 @@
 	import User from '../../lib/User.svelte'
 	import { format as formatTimeAgo } from 'timeago.js'
 	import { browser } from '$app/env'
-	import RevertButton from '../../lib/RevertButton.svelte'
+	import RevertButton from '../../lib/inputs/RevertButton.svelte'
 
 	export let entry: Entry
 	export let historyItems: APIHistoryItem[]

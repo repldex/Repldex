@@ -1,11 +1,14 @@
 import type { Collection } from 'mongodb'
 import { createUuid, getDatabase, ReplaceIdWithUuid, replaceUuidWithId } from '.'
 
+export type Visibility = 'visible' | 'unlisted' | 'hidden'
+
 export interface Entry {
 	id: string
 	title: string
 	content: string
 	slug: string
+	visibility: Visibility
 	createdAt: Date
 }
 
@@ -25,7 +28,13 @@ interface FetchEntriesOptions {
  */
 export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[]> {
 	const collection = await getCollection()
-	const entries = await collection.find({}).skip(options.skip).limit(options.limit).toArray()
+	const entries = await collection
+		.find({
+			visibility: { $eq: 'visible' },
+		})
+		.skip(options.skip)
+		.limit(options.limit)
+		.toArray()
 	return entries.map(replaceUuidWithId)
 }
 
