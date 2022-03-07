@@ -1,4 +1,4 @@
-import { canCreateEntries, isAdmin, canEditEntry } from '../../../lib/perms'
+import { canCreateEntries, isAdmin, canEditEntry, canSeeEntry } from '../../../lib/perms'
 import { editEntry, fetchEntry, Visibility } from '../../../lib/database/entries'
 import { createHistoryItem } from '../../../lib/database/history'
 import { createSlug, createUuid } from '../../../lib/database'
@@ -16,7 +16,7 @@ export const get: RequestHandler = async req => {
 		if (entry.visibility === 'hidden') {
 			const user = req.locals.user ? await fetchUser({ id: req.locals.user.id }) : null
 			if (!user) return { body: null }
-			if (!isAdmin(user)) return { body: null }
+			if (!canSeeEntry(user, entry)) return { body: null }
 		}
 	}
 
@@ -83,14 +83,14 @@ export const put: RequestHandler = async req => {
 	console.log('user', user, user.id)
 
 	// if the user can't edit entries, return a 403
-	if (!(await canEditEntry(user, entry)))
+	if (!canEditEntry(user, entry))
 		return {
 			status: 403,
 			body: { error: 'You do not have permission to edit this entry' },
 		}
 
 	// if the title is different, check if they can create entries
-	if (title !== entry.title && !(await canCreateEntriesPromise))
+	if (title !== entry.title && !canCreateEntriesPromise)
 		return {
 			status: 403,
 			body: { error: 'You do not have permission to rename this entry' },

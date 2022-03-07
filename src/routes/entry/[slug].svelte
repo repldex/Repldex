@@ -12,7 +12,7 @@
 
 		if (entrySlug !== entry.slug && entry.visibility !== 'hidden') {
 			return {
-				redirect: `/entry/${entry.slug}`,
+				redirect: getEntryViewUrl(entry),
 				status: 301,
 			}
 		}
@@ -29,6 +29,7 @@
 
 <script lang="ts">
 	import type { Entry } from '../../lib/database/entries'
+	import { getEntryEditUrl, getEntryViewUrl } from '../../lib/utils'
 	export let entry: Entry
 </script>
 
@@ -37,7 +38,7 @@
 <a href="/" class="back-button">Back</a>
 
 <nav class="entry-nav-links">
-	<a href="/edit/{entry.slug}">Edit</a>
+	<a href={getEntryEditUrl(entry)}>Edit</a>
 	<a href="/history/{entry.id}">History</a>
 </nav>
 

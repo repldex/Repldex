@@ -1,5 +1,4 @@
 <script lang="ts" context="module">
-	import { isAdmin } from '../../lib/perms'
 	import type { Load } from '@sveltejs/kit'
 
 	export const load: Load = async ({ params, fetch, session }) => {
@@ -18,7 +17,6 @@
 			props: {
 				entry: entry,
 				user: session.user,
-				canDelete: await isAdmin(session.user),
 			},
 		}
 	}
@@ -32,6 +30,8 @@
 	import Head from '../../lib/Head.svelte'
 	import Labelled from '../../lib/Labelled.svelte'
 	import type { User } from '../../lib/database/users'
+	import { getEntryViewUrl } from '../../lib/utils'
+	import { isAdmin } from '../../lib/perms'
 
 	export let user: User
 	export let entry: Entry
@@ -65,27 +65,27 @@
 			return
 		}
 
-		goto(visibility === 'hidden' ? `/entry/${response.id}` : `/entry/${response.slug}`)
+		goto(getEntryViewUrl(response))
 	}
 </script>
 
-<a href="/entry/{entry.slug}" class="back-button">Back</a>
+<a href={getEntryViewUrl(entry)} class="back-button">Back</a>
 
 <div id="editor-container">
 	<div id="editor-container-container">
 		<Head title={pageTitle} />
 
-		<div class="visibility">
-			<Labelled text="Visibility">
-				{#if user}
+		{#if isAdmin(user)}
+			<div class="visibility">
+				<Labelled text="Visibility">
 					<select bind:value={visibility}>
 						<option value="visible" selected>Visible</option>
 						<option value="unlisted">Unlisted</option>
 						<option value="hidden">Hidden</option>
 					</select>
-				{/if}
-			</Labelled>
-		</div>
+				</Labelled>
+			</div>
+		{/if}
 
 		<div class="text-editor">
 			<Labelled text="Title">

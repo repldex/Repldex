@@ -12,6 +12,12 @@ export function canCreateEntries(user: User): boolean {
 	return user.id === '719b795e705340bd82596d6cfcfa4224'
 }
 
+export function canSeeEntry(user: User, entry: Entry): boolean {
+	// admins can see all entries
+	if (isAdmin(user)) return true
+	return entry.visibility !== 'hidden'
+}
+
 export function canEditEntry(user: User, entry: Entry): boolean {
 	return user.id === '719b795e705340bd82596d6cfcfa4224'
 }

@@ -1,4 +1,4 @@
-import { createEntry, fetchEntries, fetchEntry } from '../../lib/database/entries'
+import { createEntry, fetchEntries, fetchEntry, Visibility } from '../../lib/database/entries'
 import { createSlug, createUuid } from '../../lib/database/index'
 import { createHistoryItem } from '../../lib/database/history'
 import type { JSONValue } from '@sveltejs/kit/types/helper'
@@ -51,7 +51,7 @@ export const post: RequestHandler = async req => {
 
 	const user = await fetchUser({ id: req.locals.user.id })
 	// if the user can't create entries, return a 403
-	if (!(user && (await canCreateEntries(user))))
+	if (!(user && canCreateEntries(user)))
 		return {
 			status: 403,
 			body: { error: 'You do not have permission to create entries' },
@@ -83,11 +83,20 @@ export const post: RequestHandler = async req => {
 		!entryTitle ||
 		!entryContent ||
 		typeof entryTitle !== 'string' ||
-		typeof entryContent !== 'string'
+		typeof entryContent !== 'string' ||
+		(body.visibility && !['visible', 'unlisted', 'hidden'].includes(body.visibility))
 	)
 		return {
 			status: 400,
 			body: { error: 'Invalid request body' },
+		}
+
+	const visibility: Visibility = body.visibility ?? 'unlisted'
+
+	if (visibility !== 'unlisted' && !isAdmin(user))
+		return {
+			status: 403,
+			body: { error: 'You do not have permission to set the visibility of this entry' },
 		}
 
 	// create the entry
@@ -95,8 +104,9 @@ export const post: RequestHandler = async req => {
 		content: entryContent,
 		title: entryTitle,
 		slug,
-		visibility: 'unlisted',
+		visibility,
 	})
+
 	if (entry) {
 		await createHistoryItem({
 			entryId: createUuid(entry.id),
@@ -104,7 +114,7 @@ export const post: RequestHandler = async req => {
 			title: entryTitle,
 			timestamp: entry.createdAt,
 			userId: createUuid(user.id),
-			visibility: 'unlisted',
+			visibility,
 		})
 	}
 

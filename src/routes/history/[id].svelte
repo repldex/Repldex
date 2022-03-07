@@ -30,6 +30,7 @@
 	import { format as formatTimeAgo } from 'timeago.js'
 	import { browser } from '$app/env'
 	import RevertButton from '../../lib/inputs/RevertButton.svelte'
+	import { getEntryEditUrl, getEntryViewUrl } from '../../lib/utils'
 
 	export let entry: Entry
 	export let historyItems: APIHistoryItem[]
@@ -66,8 +67,8 @@
 <Head title={entry.title} description={entry.content} />
 
 <nav class="entry-nav-links">
-	<a href="/entry/{entry.slug}">View</a>
-	<a href="/edit/{entry.slug}">Edit</a>
+	<a href={getEntryViewUrl(entry)}>View</a>
+	<a href={getEntryEditUrl(entry)}>Edit</a>
 </nav>
 
 <h1>{entry.title}</h1>
@@ -86,6 +87,14 @@
 				<!-- renamed -->
 				<p class="renamed">
 					Entry renamed from <b>{previousHistoryItem.title}</b> to <b>{historyItem.title}</b>
+				</p>
+			{/if}
+
+			{#if historyItem.visibility != previousHistoryItem.visibility}
+				<!-- visibility changed -->
+				<p class="visibility-change">
+					Visibility changed from <b>{previousHistoryItem.visibility}</b> to
+					<b>{historyItem.visibility}</b>
 				</p>
 			{/if}
 
