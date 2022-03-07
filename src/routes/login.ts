@@ -20,7 +20,7 @@ export const get: RequestHandler = async req => {
 			// redirect to discord login
 			status: 302,
 			headers: {
-				location: `https://discord.com/oauth2/authorize?client_id=${config.discord_client_id}&redirect_uri=${redirectUri}&response_type=code&scope=identify`,
+				location: `https://discord.com/oauth2/authorize?client_id=${config.DISCORD_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=identify`,
 			},
 		}
 	}
@@ -32,7 +32,7 @@ export const get: RequestHandler = async req => {
 			'Content-Type': 'application/x-www-form-urlencoded',
 		},
 		body: new URLSearchParams({
-			client_id: config.discord_client_id,
+			client_id: config.DISCORD_CLIENT_ID,
 			client_secret: clientSecret,
 			grant_type: 'authorization_code',
 			code: discordOauthCode,

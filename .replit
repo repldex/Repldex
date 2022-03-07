@@ -6,7 +6,7 @@ language = "nodejs"
 
 [packager.features]
 packageSearch = true
-guessImports = true
+guessImports = false
 
 [languages.svelte]
 pattern = "**/*.svelte"

@@ -1,4 +1,8 @@
-// we just import the config file and export it right out
-import config from '../../config.json'
+// we just go to the .env file and convert it into a JSON array for easy access
+import dotenv from 'dotenv'
+dotenv.config()
 
-export default config
+let config: JSON;
+config = JSON.parse(JSON.stringify(process.env));
+
+export default config;
