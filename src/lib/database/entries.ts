@@ -20,6 +20,9 @@ async function getCollection(): Promise<Collection<ReplaceIdWithUuid<Entry>>> {
 interface FetchEntriesOptions {
 	limit: number
 	skip: number
+	visible?: boolean
+	unlisted?: boolean
+	hidden?: boolean
 	query?: string
 }
 
@@ -30,7 +33,13 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
 	const collection = await getCollection()
 	const entries = await collection
 		.find({
-			visibility: { $eq: 'visible' },
+			visibility: {
+				$in: [
+					options.visible ?? true ? 'visible' : undefined,
+					options.unlisted ?? false ? 'unlisted' : undefined,
+					options.hidden ?? false ? 'hidden' : undefined,
+				].filter(Boolean) as Visibility[],
+			},
 		})
 		.skip(options.skip)
 		.limit(options.limit)

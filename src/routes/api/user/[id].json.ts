@@ -1,6 +1,6 @@
-import type { JSONString } from '@sveltejs/kit/types/helper'
 import { APIUser, fetchUser } from '../../../lib/database/users'
 import type { RequestHandler } from '@sveltejs/kit'
+import type { JSONValue } from '@sveltejs/kit/types/helper'
 
 export const get: RequestHandler = async req => {
 	const user = await fetchUser({
@@ -18,6 +18,6 @@ export const get: RequestHandler = async req => {
 		body: {
 			id: user.id,
 			username: user.username,
-		} as APIUser as unknown as JSONString,
+		} as APIUser as unknown as JSONValue,
 	}
 }

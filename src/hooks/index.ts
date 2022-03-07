@@ -1,6 +1,6 @@
 import { authenticateToken } from '../lib/auth'
 import type { GetSession, Handle } from '@sveltejs/kit'
-import type { BasicUser } from '../lib/database/users'
+import { BasicUser, fetchUser } from '../lib/database/users'
 import cookie from 'cookie'
 
 export const handle: Handle = async ({ event, resolve }) => {
@@ -18,8 +18,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 	return await resolve(event)
 }
 
-export const getSession: GetSession = ({ locals }) => {
+export const getSession: GetSession = async ({ locals }) => {
+	const user = locals.user ? await fetchUser({ id: locals.user.id }) : null
 	return {
-		user: locals.user,
+		user: user,
 	}
 }

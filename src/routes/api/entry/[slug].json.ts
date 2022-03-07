@@ -1,4 +1,4 @@
-import { canCreateEntries, canDeleteEntries, canEditEntry } from '../../../lib/perms'
+import { canCreateEntries, isAdmin, canEditEntry } from '../../../lib/perms'
 import { editEntry, fetchEntry, Visibility } from '../../../lib/database/entries'
 import { createHistoryItem } from '../../../lib/database/history'
 import { createSlug, createUuid } from '../../../lib/database'
@@ -18,10 +18,10 @@ export const get: RequestHandler = async req => {
 // edit an existing entry
 export const put: RequestHandler = async req => {
 	const body = (await req.request.json()) as any
-	const content = body.content as string | null
-	const title = body.title as string | null
-	const entryId = body.id as string | null
-	const visibility = body.visibility as Visibility | null
+	const content = (body.content as string) ?? null
+	const title = (body.title as string) ?? null
+	const entryId = (body.id as string) ?? null
+	const visibility = (body.visibility as Visibility) ?? null
 
 	const basicUser = req.locals.user
 
@@ -70,7 +70,7 @@ export const put: RequestHandler = async req => {
 		}
 
 	const canCreateEntriesPromise = canCreateEntries(user)
-	const canDeleteEntriesPromise = canDeleteEntries(user, entry)
+	const isAdminPromise = isAdmin(user)
 
 	console.log('user', user, user.id)
 
@@ -91,7 +91,7 @@ export const put: RequestHandler = async req => {
 	const slug = createSlug(title)
 
 	// if the visibility is different, check if they can delete entries
-	if (body.visibility !== entry.visibility && !(await canDeleteEntriesPromise))
+	if (body.visibility !== entry.visibility && !(await isAdminPromise))
 		return {
 			status: 403,
 			body: { error: 'You do not have permission to change the visibility of this entry' },

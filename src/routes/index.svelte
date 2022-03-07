@@ -1,13 +1,18 @@
 <script lang="ts" context="module">
 	import type { Load } from '@sveltejs/kit'
 	import Head from '../lib/Head.svelte'
+	import { isAdmin } from '../lib/perms'
 
-	export const load: Load = async ({ fetch }) => {
+	export const load: Load = async ({ session, fetch }) => {
 		const res = await fetch('/api/entries.json')
+
+		const admin = session.user ? isAdmin(session.user) : false
 
 		return {
 			props: {
 				entries: await res.json(),
+				canShowUnlisted: session.user ? true : false,
+				canShowHidden: admin,
 			},
 		}
 	}
@@ -17,7 +22,35 @@
 	import type { Entry } from '../lib/database/entries'
 	import EntryPreview from '../lib/EntryPreview.svelte'
 	import Labelled from '../lib/Labelled.svelte'
+	import { browser } from '$app/env'
+
 	export let entries: Entry[]
+	export let canShowUnlisted: boolean
+	export let canShowHidden: boolean
+
+	let showVisible = true
+	let showUnlisted = false
+	let showHidden = false
+
+	let fetchIndex = 0
+
+	async function updateEntries() {
+		fetchIndex += 1
+		let thisFetchIndex = fetchIndex
+		const res = await fetch(
+			`/api/entries.json?visible=${showVisible}&unlisted=${showUnlisted}&hidden=${showHidden}`
+		)
+		const newEntries = await res.json()
+
+		if (thisFetchIndex === fetchIndex) entries = newEntries
+	}
+
+	$: {
+		;[showVisible, showUnlisted, showHidden]
+		if (browser) {
+			updateEntries()
+		}
+	}
 </script>
 
 <Head imageUrl="/icon-small.svg" />
@@ -28,24 +61,28 @@
 	<span class="title-text">Repldex</span>
 </h1>
 
-<div class="visibility-toggles-container">
-	<Labelled text="Filter">
-		<div class="visibility-toggles">
-			<label class="visible-toggle">
-				<input type="checkbox" id="show-visible" />
-				<span>Visible</span>
-			</label>
-			<label class="unlisted-toggle">
-				<input type="checkbox" id="show-unlisted" />
-				<span>Unlisted</span>
-			</label>
-			<label class="deleted-toggle">
-				<input type="checkbox" id="show-deleted" />
-				<span>Deleted</span>
-			</label>
-		</div>
-	</Labelled>
-</div>
+{#if canShowUnlisted}
+	<div class="visibility-toggles-container">
+		<Labelled text="Filter">
+			<div class="visibility-toggles">
+				<label class="visible-toggle">
+					<input type="checkbox" id="show-visible" bind:checked={showVisible} />
+					<span>Visible</span>
+				</label>
+				<label class="unlisted-toggle">
+					<input type="checkbox" id="show-unlisted" bind:checked={showUnlisted} />
+					<span>Unlisted</span>
+				</label>
+				{#if canShowHidden}
+					<label class="hidden-toggle">
+						<input type="checkbox" id="show-hidden" bind:checked={showHidden} />
+						<span>Hidden</span>
+					</label>
+				{/if}
+			</div>
+		</Labelled>
+	</div>
+{/if}
 
 <div class="entry-list">
 	{#each entries as entry}
@@ -89,6 +126,8 @@
 		width: fit-content;
 		margin-bottom: 1em;
 		border: 1px solid var(--alternate-background-color);
+		box-shadow: 0 0 0.5em #0004;
+		letter-spacing: 0.05ch;
 	}
 	.visibility-toggles input[type='checkbox'] {
 		display: none;
@@ -105,6 +144,10 @@
 	.visibility-toggles input[type='checkbox']:checked ~ span {
 		background-color: var(--alternate-background-color);
 		color: var(--bright-text-color);
+	}
+
+	.visible-toggle {
+		border-right: 2px solid var(--background-color);
 	}
 
 	/* move the logo to the left if the screen is less than 500px */

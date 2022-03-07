@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-	import { canDeleteEntries } from '../../lib/perms'
+	import { isAdmin } from '../../lib/perms'
 	import type { Load } from '@sveltejs/kit'
 
 	export const load: Load = async ({ params, fetch, session }) => {
@@ -18,7 +18,7 @@
 			props: {
 				entry: entry,
 				user: session.user,
-				canDelete: await canDeleteEntries(session.user, entry),
+				canDelete: await isAdmin(session.user),
 			},
 		}
 	}
