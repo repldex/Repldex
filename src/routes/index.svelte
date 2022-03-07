@@ -125,6 +125,7 @@
 		display: flex;
 		justify-content: flex-end;
 	}
+	
 	.visibility-toggles {
 		border-radius: 0.5em;
 		white-space: normal;
@@ -136,9 +137,11 @@
 		box-shadow: 0 0 0.5em #0004;
 		letter-spacing: 0.05ch;
 	}
+	
 	.visibility-toggles input[type='checkbox'] {
 		display: none;
 	}
+	
 	.visibility-toggles > label > span {
 		background-color: var(--background-color);
 		padding: 0.5rem;
@@ -148,6 +151,7 @@
 		display: inline-block;
 		transition: background-color 100ms;
 	}
+	
 	.visibility-toggles input[type='checkbox']:checked ~ span {
 		background-color: var(--alternate-background-color);
 		color: var(--bright-text-color);
@@ -171,6 +175,34 @@
 		}
 	}
 
+	/* Change where the Filter section is, if the screen is less than 500px */
+	@media (max-width: 500px) {
+		.visibility-toggles-container {
+			width: 100%;
+			display: block;
+			height: fit-content;
+			display: flex;
+			justify-content: flex-end;
+			position: relative;
+			top: 10vh;
+			right: 30vw;
+		}
+	}
+	
+	/* move the logo to the left if the screen is less than 500px */
+	@media (max-width: 500px) {
+		h1 {
+			position: absolute;
+			left: 1rem;
+			top: 1rem;
+			margin: 0;
+		}
+
+		.entry-list {
+			padding-top: 5em;
+		}
+	}
+	
 	/* hide the title text if the screen is less than 340px */
 	@media (max-width: 340px) {
 		.title-text {
