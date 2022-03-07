@@ -146,12 +146,13 @@
 	}
 
 	.renamed {
-		margin: 0;
+		margin: 0 0 0 0.5em;
 		color: var(--bright-text-color);
 	}
 
-	.renamed {
-		margin-left: 0.5em;
+	.visibility-change {
+		margin: 0 0 0 0.5em;
+		color: var(--bright-text-color);
 	}
 
 	@media (max-width: 260px) {
