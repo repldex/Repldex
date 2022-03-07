@@ -117,6 +117,7 @@
 		display: grid;
 		align-items: center;
 		height: 100vh;
+		margin-top: 1.5rem;
 	}
 
 	button {
