@@ -9,8 +9,7 @@ import type { User } from './database/users'
  * since it often has the same effect as creating a new entry.
  */
 export function canCreateEntries(user: User): boolean {
-	return true
-	//return user.id === '719b795e705340bd82596d6cfcfa4224'
+	return user.id === '719b795e705340bd82596d6cfcfa4224'
 }
 
 export function canSeeEntry(user: User, entry: Entry): boolean {
@@ -20,8 +19,7 @@ export function canSeeEntry(user: User, entry: Entry): boolean {
 }
 
 export function canEditEntry(user: User, entry: Entry): boolean {
-	return true;
-	//return user.id === '719b795e705340bd82596d6cfcfa4224'
+	return user.id === '719b795e705340bd82596d6cfcfa4224'
 }
 
 export function isAdmin(user: User): boolean {
