@@ -1,3 +1,4 @@
+import type { Entry } from './database/entries'
 import type { APIUser } from './database/users'
 
 const ongoingFetchUserRequests: Record<string, Promise<any>> = {}
@@ -25,4 +26,12 @@ export async function fetchUser(userId: string): Promise<APIUser | null> {
 	cachedAPIUsers[userId] = user
 
 	return user
+}
+
+export function getEntryViewUrl(entry: Entry): string {
+	return entry.visibility === 'hidden' ? `/entry/${entry.id}` : `/entry/${entry.slug}`
+}
+
+export function getEntryEditUrl(entry: Entry): string {
+	return entry.visibility === 'hidden' ? `/edit/${entry.id}` : `/edit/${entry.slug}`
 }

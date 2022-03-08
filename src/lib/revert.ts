@@ -13,7 +13,7 @@ import { createUuid } from './database'
  *
  * This code is very bad and buggy
  */
-export async function getRevertResult(historyItem: HistoryItem) {
+export async function getRevertResult(historyItem: HistoryItem): Promise<string | null> {
 	const historyItemsAfter = await fetchEntryHistoryItemsAfter(historyItem)
 	const historyItemBefore = await fetchEntryHistoryItemBefore(historyItem)
 
@@ -58,8 +58,6 @@ export async function getRevertResult(historyItem: HistoryItem) {
 		}
 		tempBefore = historyItem
 	}
-
-	console.log('patch', patch)
 
 	// apply the patch to the current version
 	const newContent = Array.from(

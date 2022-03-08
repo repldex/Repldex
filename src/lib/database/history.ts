@@ -1,5 +1,6 @@
 import type { Binary, Collection } from 'mongodb'
 import { createUuid, getDatabase, replaceIdWithUuid, ReplaceIdWithUuid, replaceUuidWithId } from '.'
+import type { Visibility } from './entries'
 
 export interface HistoryItem {
 	id: string
@@ -8,6 +9,7 @@ export interface HistoryItem {
 	title: string
 	content: string
 	timestamp: Date
+	visibility: Visibility
 	reverted?: boolean
 }
 

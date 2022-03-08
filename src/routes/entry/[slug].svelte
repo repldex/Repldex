@@ -4,11 +4,22 @@
 
 	export const load: Load = async ({ params, fetch }) => {
 		const entrySlug: string = params.slug
-		const res = await fetch(`/api/entry/${entrySlug}.json`)
+		const entry: Entry | null = await fetch(`/api/entry/${entrySlug}.json`).then(res => res.json())
+
+		if (!entry) {
+			return { fallthrough: true }
+		}
+
+		if (entrySlug !== entry.slug && entry.visibility !== 'hidden') {
+			return {
+				redirect: getEntryViewUrl(entry),
+				status: 301,
+			}
+		}
 
 		return {
 			props: {
-				entry: await res.json(),
+				entry,
 			},
 		}
 	}
@@ -18,18 +29,24 @@
 
 <script lang="ts">
 	import type { Entry } from '../../lib/database/entries'
+	import { getEntryEditUrl, getEntryViewUrl } from '../../lib/utils'
 	export let entry: Entry
 </script>
 
-<Head title={entry.title} description={entry.content} />
+<Head title={entry.title} description={entry.content} noIndex={entry.visibility !== 'visible'} />
 
 <a href="/" class="back-button">Back</a>
 
 <nav class="entry-nav-links">
-	<a href="/edit/{entry.slug}">Edit</a>
+	<a href={getEntryEditUrl(entry)}>Edit</a>
 	<a href="/history/{entry.id}">History</a>
 </nav>
 
+{#if entry.visibility === 'unlisted'}
+	<p class="visibility-warning">Unlisted</p>
+{:else if entry.visibility === 'hidden'}
+	<p class="visibility-warning">Hidden</p>
+{/if}
 <h1>{entry.title}</h1>
 <article>{@html markdown.render(entry.content)}</article>
 
@@ -50,6 +67,16 @@
 		margin-right: 0.5rem;
 	}
 
+	.visibility-warning {
+		float: right;
+		border: 2px solid var(--alternate-background-color);
+		padding: 0.2rem;
+		border-radius: 0.2rem;
+		margin: 0;
+		margin-top: 3rem;
+		box-shadow: 0 0 0.5em #0004;
+	}
+
 	h1 {
 		margin-top: 3rem;
 	}
@@ -62,9 +89,11 @@
 	}
 
 	@media (max-width: 320px) {
-		.entry-nav-links,
 		h1 {
 			padding-top: 2rem;
+		}
+		.entry-nav-links {
+			margin-top: 2rem;
 		}
 		.entry-nav-links {
 			left: 1em;

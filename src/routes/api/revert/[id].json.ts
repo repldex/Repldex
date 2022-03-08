@@ -1,5 +1,4 @@
 import type { RequestHandler } from '@sveltejs/kit'
-import type { JSONString } from '@sveltejs/kit/types/helper'
 import { createSlug, createUuid } from '../../../lib/database'
 import { editEntry, fetchEntry } from '../../../lib/database/entries'
 import { fetchUser } from '../../../lib/database/users'
@@ -11,6 +10,7 @@ import {
 	updateHistoryItem,
 } from '../../../lib/database/history'
 import { getRevertResult } from '../../../lib/revert'
+import type { JSONValue } from '@sveltejs/kit/types/helper'
 
 // revert an entry history item
 export const post: RequestHandler = async req => {
@@ -25,6 +25,15 @@ export const post: RequestHandler = async req => {
 				error: 'Not found',
 			},
 		}
+
+	if (!req.locals.user) {
+		return {
+			status: 401,
+			body: {
+				error: 'You must be logged in to revert an entry.',
+			},
+		}
+	}
 
 	const userPromise = fetchUser({ id: req.locals.user.id })
 	const entry = await fetchEntry(historyItem.entryId.toString('hex'))
@@ -47,7 +56,7 @@ export const post: RequestHandler = async req => {
 		}
 
 	// if the user can't edit entries, return a 403
-	if (!(await canEditEntry(user, entry)))
+	if (!canEditEntry(user, entry))
 		return {
 			status: 403,
 			body: { error: 'You do not have permission to edit this entry' },
@@ -82,6 +91,7 @@ export const post: RequestHandler = async req => {
 		title,
 		timestamp: new Date(),
 		userId: createUuid(user.id),
+		visibility: entry.visibility,
 	})
 
 	await updateHistoryItem(historyItemId, {
@@ -89,6 +99,6 @@ export const post: RequestHandler = async req => {
 	})
 
 	return {
-		body: editedEntry as unknown as JSONString,
+		body: editedEntry as unknown as JSONValue,
 	}
 }

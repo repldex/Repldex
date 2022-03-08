@@ -29,7 +29,8 @@
 	import User from '../../lib/User.svelte'
 	import { format as formatTimeAgo } from 'timeago.js'
 	import { browser } from '$app/env'
-	import RevertButton from '../../lib/RevertButton.svelte'
+	import RevertButton from '../../lib/inputs/RevertButton.svelte'
+	import { getEntryEditUrl, getEntryViewUrl } from '../../lib/utils'
 
 	export let entry: Entry
 	export let historyItems: APIHistoryItem[]
@@ -63,11 +64,11 @@
 	}
 </script>
 
-<Head title={entry.title} description={entry.content} />
+<Head title={entry.title} description={entry.content} noIndex />
 
 <nav class="entry-nav-links">
-	<a href="/entry/{entry.slug}">View</a>
-	<a href="/edit/{entry.slug}">Edit</a>
+	<a href={getEntryViewUrl(entry)}>View</a>
+	<a href={getEntryEditUrl(entry)}>Edit</a>
 </nav>
 
 <h1>{entry.title}</h1>
@@ -86,6 +87,14 @@
 				<!-- renamed -->
 				<p class="renamed">
 					Entry renamed from <b>{previousHistoryItem.title}</b> to <b>{historyItem.title}</b>
+				</p>
+			{/if}
+
+			{#if historyItem.visibility != previousHistoryItem.visibility}
+				<!-- visibility changed -->
+				<p class="visibility-change">
+					Visibility changed from <b>{previousHistoryItem.visibility}</b> to
+					<b>{historyItem.visibility}</b>
 				</p>
 			{/if}
 
@@ -137,12 +146,13 @@
 	}
 
 	.renamed {
-		margin: 0;
+		margin: 0 0 0 0.5em;
 		color: var(--bright-text-color);
 	}
 
-	.renamed {
-		margin-left: 0.5em;
+	.visibility-change {
+		margin: 0 0 0 0.5em;
+		color: var(--bright-text-color);
 	}
 
 	@media (max-width: 260px) {

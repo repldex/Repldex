@@ -1,11 +1,15 @@
 import type { Collection } from 'mongodb'
 import { createUuid, getDatabase, ReplaceIdWithUuid, replaceUuidWithId } from '.'
+import { isAdmin } from '../perms'
+
+export type Visibility = 'visible' | 'unlisted' | 'hidden'
 
 export interface Entry {
 	id: string
 	title: string
 	content: string
 	slug: string
+	visibility: Visibility
 	createdAt: Date
 }
 
@@ -17,6 +21,9 @@ async function getCollection(): Promise<Collection<ReplaceIdWithUuid<Entry>>> {
 interface FetchEntriesOptions {
 	limit: number
 	skip: number
+	visible?: boolean
+	unlisted?: boolean
+	hidden?: boolean
 	query?: string
 }
 
@@ -25,7 +32,19 @@ interface FetchEntriesOptions {
  */
 export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[]> {
 	const collection = await getCollection()
-	const entries = await collection.find({}).skip(options.skip).limit(options.limit).toArray()
+	const entries = await collection
+		.find({
+			visibility: {
+				$in: [
+					options.visible ?? true ? 'visible' : undefined,
+					options.unlisted ?? false ? 'unlisted' : undefined,
+					options.hidden ?? false ? 'hidden' : undefined,
+				].filter(Boolean) as Visibility[],
+			},
+		})
+		.skip(options.skip)
+		.limit(options.limit)
+		.toArray()
 	return entries.map(replaceUuidWithId)
 }
 
@@ -36,7 +55,9 @@ export async function fetchEntry(slug: string): Promise<Entry | null> {
 	const collection = await getCollection()
 	// fetch by the id if it looks like one, otherwise use the slug
 	const entry = await collection.findOne(
-		/^[0-9a-f]{32}$/i.test(slug) ? { _id: createUuid(slug) } : { slug }
+		/^[0-9a-f]{32}$/i.test(slug)
+			? { _id: createUuid(slug) }
+			: { slug, visibility: { $ne: 'hidden' } }
 	)
 	return entry ? replaceUuidWithId(entry) : null
 }

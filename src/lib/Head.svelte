@@ -3,6 +3,7 @@
 	export let description: string =
 		'Repldex is the unofficial community-editable encyclopedia of user created entries for the Replit Discord Server'
 	export let imageUrl: string | undefined = undefined
+	export let noIndex = false
 </script>
 
 <svelte:head>
@@ -12,5 +13,8 @@
 	<meta property="og:description" content={description} />
 	{#if imageUrl}
 		<meta property="og:image" content={imageUrl} />
+	{/if}
+	{#if noIndex}
+		<meta name="robots" content="noindex" />
 	{/if}
 </svelte:head>

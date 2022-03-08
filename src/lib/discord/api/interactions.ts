@@ -13,11 +13,12 @@ export const APPLICATIONS_BASE_API_URL =
 	`https://discord.com/api/v9/applications/${config.discord_client_id}` as const
 
 export function verifyInteraction(
-	headers: Record<string, string>,
-	rawBody: string | Uint8Array
+	headers: Headers,
+	rawBody: string | Uint8Array | ArrayBuffer
 ): boolean {
-	const signature = headers['x-signature-ed25519']
-	const timestamp = headers['x-signature-timestamp']
+	const signature = headers.get('x-signature-ed25519')
+	const timestamp = headers.get('x-signature-timestamp')
+	if (!signature || !timestamp) return false
 	return verifyKey(rawBody ?? '', signature, timestamp, config.discord_public_key)
 }
 
