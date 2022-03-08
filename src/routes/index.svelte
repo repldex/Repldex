@@ -156,6 +156,9 @@
 	.visibility-toggles label {
 		border-right: 2px solid var(--background-color);
 	}
+	.visibility-toggles label:last-of-type {
+		border-right: none;
+	}
 
 	/* move the logo to the left if the screen is less than 500px */
 	@media (max-width: 500px) {
