@@ -74,6 +74,7 @@ export const get: RequestHandler = async req => {
 			accounts: {
 				discord: discordUserData.id,
 			},
+			admin: false,
 		})
 		sessionId = await createSession({
 			userId: createUuid(repldexUserId),
