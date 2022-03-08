@@ -1,9 +1,6 @@
 import type { Entry } from './database/entries'
 import type { User } from './database/users'
 
-// Only mat can create/edit entries for now. This will be changed to check the
-// database once moderation (anti vandalism, banning, etc) is added.
-
 /**
  * Whether the user can create (or rename) entries. Renaming is included here
  * since it often has the same effect as creating a new entry.
