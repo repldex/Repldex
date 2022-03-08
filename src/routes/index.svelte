@@ -153,7 +153,7 @@
 		color: var(--bright-text-color);
 	}
 
-	.visible-toggle {
+	.visibility-toggles label {
 		border-right: 2px solid var(--background-color);
 	}
 
