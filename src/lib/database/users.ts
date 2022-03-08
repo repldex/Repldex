@@ -17,8 +17,9 @@ export interface BasicUser {
 }
 
 /** The information exposed about a user from the API */
-// export interface APIUser extends BasicUser {}
-export type APIUser = BasicUser
+export interface APIUser extends BasicUser {
+	admin: boolean
+}
 
 interface LinkedAccounts {
 	// linked accounts are always as ids
