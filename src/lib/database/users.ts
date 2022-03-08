@@ -110,13 +110,14 @@ function invalidateUserCache(userId: string) {
 /** Update the user's stats after they edited an entry */
 export async function updateUserEntryEdited(userId: string): Promise<void> {
 	const collection = await getCollection()
-	invalidateUserCache(userId)
 
 	await collection.updateOne(replaceIdWithUuid({ id: userId }), {
 		$inc: {
 			'stats.entriesEdited': 1,
 		},
 	})
+
+	invalidateUserCache(userId)
 }
 
 // clear the cache every 5 minutes, so it doesn't grow too large
