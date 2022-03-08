@@ -1,4 +1,4 @@
-import { Db, MongoClient } from 'mongodb'
+import { Collection, CreateCollectionOptions, Db, IndexDescription, MongoClient } from 'mongodb'
 import { Binary } from 'mongodb'
 import { v4 as uuidv4 } from '@lukeed/uuid/secure'
 
@@ -103,4 +103,34 @@ export function createSlug(text: string): string {
 		.toLowerCase()
 		.replace(/[^\w ]+/g, '')
 		.replace(/ +/g, '-')
+}
+
+const createdCollections: Set<string> = new Set()
+
+/**
+ * Try to get a collection, or create it with a set of defaults if it doesn't
+ * exist.
+ * @param name The name of the collection that we're getting/creating
+ * @param options The options provided to createCollection
+ * @param indexes The default indexes that are created for the collection
+ * @returns The existing or new collection
+ */
+export async function getOrCreateCollection<T>(
+	name: string,
+	options?: CreateCollectionOptions,
+	indexes?: IndexDescription[]
+): Promise<Collection<T>> {
+	const db = await getDatabase()
+
+	if (!createdCollections.has(name)) {
+		createdCollections.add(name)
+		try {
+			const coll = await db.createCollection<T>(name, options)
+			if (indexes) await coll.createIndexes(indexes)
+			return coll
+		} catch {
+			// ignore
+		}
+	}
+	return db.collection(name)
 }

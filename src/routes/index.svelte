@@ -23,6 +23,7 @@
 	import EntryPreview from '../lib/EntryPreview.svelte'
 	import Labelled from '../lib/Labelled.svelte'
 	import { browser } from '$app/env'
+	import SearchBar from '../lib/SearchBar.svelte'
 
 	export let entries: Entry[]
 	export let canShowUnlisted: boolean
@@ -32,13 +33,15 @@
 	let showUnlisted = false
 	let showHidden = false
 
+	let query = ''
+
 	let fetchIndex = 0
 
 	async function updateEntries() {
 		fetchIndex += 1
 		let thisFetchIndex = fetchIndex
 		const res = await fetch(
-			`/api/entries.json?visible=${showVisible}&unlisted=${showUnlisted}&hidden=${showHidden}`
+			`/api/entries.json?q=${query}&visible=${showVisible}&unlisted=${showUnlisted}&hidden=${showHidden}`
 		)
 		const newEntries = await res.json()
 
@@ -46,7 +49,7 @@
 	}
 
 	$: {
-		;[showVisible, showUnlisted, showHidden]
+		;[showVisible, showUnlisted, showHidden, query]
 		if (browser) {
 			updateEntries()
 		}
@@ -60,6 +63,8 @@
 
 	<span class="title-text">Repldex</span>
 </h1>
+
+<SearchBar bind:query />
 
 {#if canShowUnlisted}
 	<div class="visibility-toggles-container">

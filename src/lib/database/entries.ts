@@ -1,6 +1,5 @@
 import type { Collection } from 'mongodb'
-import { createUuid, getDatabase, ReplaceIdWithUuid, replaceUuidWithId } from '.'
-import { isAdmin } from '../perms'
+import { createUuid, getOrCreateCollection, ReplaceIdWithUuid, replaceUuidWithId } from '.'
 
 export type Visibility = 'visible' | 'unlisted' | 'hidden'
 
@@ -14,8 +13,7 @@ export interface Entry {
 }
 
 async function getCollection(): Promise<Collection<ReplaceIdWithUuid<Entry>>> {
-	const db = await getDatabase()
-	return db.collection('entries')
+	return await getOrCreateCollection('entries')
 }
 
 interface FetchEntriesOptions {

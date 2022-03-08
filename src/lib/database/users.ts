@@ -2,7 +2,7 @@ import type { Collection } from 'mongodb'
 import {
 	createUuid,
 	flattenMongoQuery,
-	getDatabase,
+	getOrCreateCollection,
 	ReplaceIdWithUuid,
 	replaceIdWithUuid,
 	replaceUuidWithId,
@@ -29,7 +29,7 @@ interface LinkedAccounts {
 interface UserStats {
 	/** The total number of entries edited or created by this user */
 	entriesEdited?: number
-	/** The total nubmer of edits that this user made that were later reverted */
+	// /** The total nubmer of edits that this user made that were later reverted */
 }
 
 /** All of the information about the user in the database */
@@ -41,8 +41,7 @@ export interface User extends APIUser {
 type FetchUserQuery = Partial<Omit<User, '_id'> & { id: string }>
 
 async function getCollection(): Promise<Collection<ReplaceIdWithUuid<User>>> {
-	const db = await getDatabase()
-	return db.collection('users')
+	return await getOrCreateCollection('users')
 }
 
 let userCache: Record<string, User> = {}
