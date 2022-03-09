@@ -4,9 +4,11 @@ import { createUser, fetchUser } from '../lib/database/users'
 import { createSession } from '../lib/database/sessions'
 import type { RequestHandler } from '@sveltejs/kit'
 import { createUuid } from '../lib/database/index'
-import config from '../lib/config'
 
-const clientSecret = process.env['DISCORD_CLIENT_SECRET']
+const clientId = process.env.DISCORD_CLIENT_ID
+if (!clientId) throw new Error('DISCORD_CLIENT_ID environment variable not set')
+
+const clientSecret = process.env.DISCORD_CLIENT_SECRET
 if (!clientSecret) throw new Error('DISCORD_CLIENT_SECRET environment variable not set')
 
 export const get: RequestHandler = async req => {
@@ -20,7 +22,7 @@ export const get: RequestHandler = async req => {
 			// redirect to discord login
 			status: 302,
 			headers: {
-				location: `https://discord.com/oauth2/authorize?client_id=${config.discord_client_id}&redirect_uri=${redirectUri}&response_type=code&scope=identify`,
+				location: `https://discord.com/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=identify`,
 			},
 		}
 	}
@@ -32,7 +34,7 @@ export const get: RequestHandler = async req => {
 			'Content-Type': 'application/x-www-form-urlencoded',
 		},
 		body: new URLSearchParams({
-			client_id: config.discord_client_id,
+			client_id: clientId,
 			client_secret: clientSecret,
 			grant_type: 'authorization_code',
 			code: discordOauthCode,
