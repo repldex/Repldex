@@ -3,7 +3,7 @@
 # Repldex
 \[Un\]official encyclopedia of user created entries for the Repl.it Community in general, but mainly the [Repl.it Discord Server](https://repl.it/discord). Contains the Discord bot source code and `aiohttp` web server (API and frontend).
 
-## Deprecation notice
+## Deprecation Notice
 Repldex v2 has been obsoleted in favor of [v3](https://github.com/repldex/Repldex/tree/v3). No new features will be added to v2.
 
 # Contributing
