@@ -9,7 +9,7 @@ import { verifyKey } from 'discord-interactions'
 import type { APIInteractionDataResolvedGuildMember, APIUser } from 'discord-api-types'
 
 export const APPLICATIONS_BASE_API_URL =
-	`https://discord.com/api/v9/applications/${process.env["DISCORD_CLIENT_ID"]}` as const
+	`https://discord.com/api/v9/applications/${process.env.DISCORD_CLIENT_ID}` as const
 
 export function verifyInteraction(
 	headers: Headers,
@@ -18,7 +18,7 @@ export function verifyInteraction(
 	const signature = headers.get('x-signature-ed25519')
 	const timestamp = headers.get('x-signature-timestamp')
 	if (!signature || !timestamp) return false
-	return verifyKey(rawBody ?? '', signature, timestamp, process.env.DISCORD_PUBLIC_KEY])
+	return verifyKey(rawBody ?? '', signature, timestamp, process.env.DISCORD_PUBLIC_KEY)
 }
 
 export async function handleInteraction(data: APIInteraction): Promise<APIInteractionResponse> {
