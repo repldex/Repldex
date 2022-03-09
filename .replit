@@ -1,12 +1,12 @@
 run = "npm run dev:host"
-onBoot = "npm i"
+onBoot = "npm install"
 
 [packager]
 language = "nodejs"
 
 [packager.features]
 packageSearch = true
-guessImports = true
+guessImports = false
 
 [languages.svelte]
 pattern = "**/*.svelte"
