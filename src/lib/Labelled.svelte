@@ -2,7 +2,7 @@
 	export let text: string
 </script>
 
-<label>
+<label for="menu item">
 	<span class="label-text">{text}</span>
 	<div aria-label={text}><slot /></div>
 </label>

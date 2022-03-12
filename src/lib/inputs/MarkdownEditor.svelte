@@ -10,7 +10,6 @@
 	} from '@codemirror/view'
 	import { closeBrackets, closeBracketsKeymap } from '@codemirror/closebrackets'
 	import { searchKeymap, highlightSelectionMatches } from '@codemirror/search'
-	import { autocompletion, completionKeymap } from '@codemirror/autocomplete'
 	import { rectangularSelection } from '@codemirror/rectangular-selection'
 	import { EditorState, Compartment, Extension } from '@codemirror/state'
 	import { defaultKeymap, indentWithTab } from '@codemirror/commands'
@@ -39,7 +38,6 @@
 		defaultHighlightStyle.fallback,
 		bracketMatching(),
 		closeBrackets(),
-		autocompletion(),
 		rectangularSelection(),
 		highlightActiveLine(),
 		highlightSelectionMatches(),
@@ -50,7 +48,6 @@
 			...historyKeymap,
 			...foldKeymap,
 			...commentKeymap,
-			...completionKeymap,
 			...lintKeymap,
 			indentWithTab,
 		]),
@@ -116,7 +113,7 @@
 </script>
 
 <noscript>
-	<p>The editor won't work properly without JavaScript, please enable it.</p>
+	<p>This page requires JavaScript to function properly!</p>
 	<style>
 		#editable-text-area {
 			display: none;
@@ -130,9 +127,7 @@
 	#editable-text-area {
 		border-radius: 0.25em;
 		width: calc(100% - 1em);
-
 		min-height: 20rem;
-
 		margin: 0;
 		padding: 0.5em;
 		background-color: var(--alternate-background-color);
