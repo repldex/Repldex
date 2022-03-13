@@ -123,6 +123,70 @@ new Command({
 			]
 		}
 	})
+	.handle_components(async args => {
+		let action = args[0]
+		let page = args[1]
+		let query = args[2]
+		let entries = await searchEntry(query)
+		if (action == "back") {
+			page--
+			if (page == 0) {
+				page = 1
+			}
+		} else if (action == "forward") {
+			let max_pages = Math.ceil(entries.length/10)
+			if (!(page+1 > max_pages)) {
+				page++
+			}
+		}
+		entries = entries.slice((page-1)*10, page*10)
+		let embed: APIEmbed = {
+			title: "Search Results for "+query,
+			fields: [],
+			footer: {
+				text: "Page "+String(page)
+			}
+		}
+		for (const entry of entries) {
+			embed.fields.push({
+				name: entry.title,
+				value: "[Link]("+config.base_url+'/entry/'+entry.slug+")"
+			})
+		}
+		return {
+			components: [
+				{
+					//buttons must be in an action row.... why? blame discord
+					type: 1,
+					components: {
+						//type 2 = button
+						type: 2,
+						style: 1,
+						label: "Back",
+						emoji: {
+							id: null,
+							name: "◀️"
+						},
+						//command-button-page-query
+						custom_id: "search-back-"+String(page)+"-"+query
+					},
+					{
+						type: 2,
+						style: 1,
+						label: "Forward",
+						emoji: {
+							id: null,
+							name: "▶️"
+						},
+						custom_id: "search-forward-"+String(page)+"-"+query
+					}
+				}
+			],
+			embeds: [
+				embed
+			]
+		}
+	})
 
 new Command({
 	name: 'source',
