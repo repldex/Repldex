@@ -1,6 +1,6 @@
 <script lang="ts">
-	export let title: string = 'Repldex'
-	export let description: string =
+	export let title = 'Repldex'
+	export let description =
 		'Repldex is the unofficial community-editable encyclopedia of user created entries for the Replit Discord Server'
 	export let imageUrl: string | undefined = undefined
 	export let noIndex = false
