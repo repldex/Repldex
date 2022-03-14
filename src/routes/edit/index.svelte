@@ -32,11 +32,11 @@
 
 	let visibility: Visibility = 'unlisted'
 
-	let entryTitle: string = ''
-	let entryContent: string = ''
+	let entryTitle = ''
+	let entryContent = ''
 
 	// automatically update the page title
-	let pageTitle: string = 'Create entry'
+	let pageTitle = 'Create entry'
 	$: {
 		pageTitle = entryTitle.length ? `New entry "${entryTitle}"` : 'New entry'
 	}

@@ -25,7 +25,7 @@
 
 	const dispatch = createEventDispatcher()
 	let tabSize = new Compartment()
-	export let value: string = ''
+	export let value = ''
 
 	// whether the editor has user focus
 	let focused = false
