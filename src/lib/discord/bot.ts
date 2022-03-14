@@ -93,28 +93,30 @@ new Command({
 				{
 					//buttons must be in an action row.... why? blame discord
 					type: 1,
-					components: {
-						//type 2 = button
-						type: 2,
-						style: 1,
-						label: "Back",
-						emoji: {
-							id: null,
-							name: "◀️"
+					components: [
+						{
+							//type 2 = button
+							type: 2,
+							style: 1,
+							label: "Back",
+							emoji: {
+								id: null,
+								name: "◀️"
+							},
+							//command-button-page-query
+							custom_id: "search-back-1-"+data.options.query
 						},
-						//command-button-page-query
-						custom_id: "search-back-1-"+data.options.query
-					},
-					{
-						type: 2,
-						style: 1,
-						label: "Forward",
-						emoji: {
-							id: null,
-							name: "▶️"
-						},
-						custom_id: "search-forward-1-"+data.options.query
-					}
+						{
+							type: 2,
+							style: 1,
+							label: "Forward",
+							emoji: {
+								id: null,
+								name: "▶️"
+							},
+							custom_id: "search-forward-1-"+data.options.query
+						}
+					]
 				}
 			],
 			embeds: [
@@ -157,28 +159,30 @@ new Command({
 				{
 					//buttons must be in an action row.... why? blame discord
 					type: 1,
-					components: {
-						//type 2 = button
-						type: 2,
-						style: 1,
-						label: "Back",
-						emoji: {
-							id: null,
-							name: "◀️"
+					components: [
+						{
+							//type 2 = button
+							type: 2,
+							style: 1,
+							label: "Back",
+							emoji: {
+								id: null,
+								name: "◀️"
+							},
+							//command-button-page-query
+							custom_id: "search-back-"+String(page)+"-"+query
 						},
-						//command-button-page-query
-						custom_id: "search-back-"+String(page)+"-"+query
-					},
-					{
-						type: 2,
-						style: 1,
-						label: "Forward",
-						emoji: {
-							id: null,
-							name: "▶️"
-						},
-						custom_id: "search-forward-"+String(page)+"-"+query
-					}
+						{
+							type: 2,
+							style: 1,
+							label: "Forward",
+							emoji: {
+								id: null,
+								name: "▶️"
+							},
+							custom_id: "search-forward-"+String(page)+"-"+query
+						}
+					]
 				}
 			],
 			embeds: [
