@@ -36,7 +36,7 @@ export class Command {
 		interaction: APIApplicationCommandInteraction
 	) => APIInteractionResponseCallbackData | Promise<APIInteractionResponseCallbackData>
 	component_handler: (
-		args: []
+		args: string[]
 	) => APIInteractionResponseCallbackData | Promise<APIInteractionResponseCallbackData>
 
 	constructor(options: CommandOptions) {
@@ -62,7 +62,7 @@ export class Command {
 	}
 
 	handle_components(
-		component_handler: (interaction: APIApplicationCommandInteraction) => {}
+		component_handler: (args: string[]) => {}
 	): this {
 		this.component_handler = component_handler
 		return this

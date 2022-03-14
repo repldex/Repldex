@@ -1,6 +1,6 @@
 import { fetchEntries } from '../../lib/database/entries'
 import type { RequestHandler } from '@sveltejs/kit'
-import type { JSONString } from '@sveltejs/kit/types/helper'
+import type { JSONValue } from '@sveltejs/kit/types/helper'
 
 // get an entry
 export const get: RequestHandler = async req => {
@@ -10,6 +10,6 @@ export const get: RequestHandler = async req => {
 	})
 	const entry = entries[Math.floor(Math.random() * entries.length)]
 	return {
-		body: entry as unknown as JSONString,
+		body: entry as unknown as JSONValue,
 	}
 }

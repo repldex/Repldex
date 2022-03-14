@@ -1,15 +1,18 @@
-import { searchEntry } from '../../lib/database/entries'
+import { fetchEntries } from '../../lib/database/entries'
 import type { RequestHandler } from '@sveltejs/kit'
-import type { JSONString } from '@sveltejs/kit/types/helper'
+import type { JSONValue } from '@sveltejs/kit/types/helper'
 
 export const get: RequestHandler = async req => {
-	const entries = await searchEntry(req.query.get('query'), {
-		limit: parseInt(req.query.get('limit') ?? '20'),
-		skip: parseInt(req.query.get('skip') ?? '0'),
+	let query = req.url.searchParams.get('query')
+	if (!query) return {body: 'No query'}
+	const entries = await fetchEntries({
+		limit: parseInt(req.url.searchParams.get('limit') ?? '20'),
+		skip: parseInt(req.url.searchParams.get('skip') ?? '0'),
+		query: query,
 	})
 
 	return {
 		// we have to do this because sveltekit's types are kinda bad :(
-		body: entries as unknown as JSONString,
+		body: entries as unknown as JSONValue,
 	}
 }

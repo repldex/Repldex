@@ -1,5 +1,5 @@
 import { verifyKey } from 'discord-interactions'
-import type { APIInteractionResponse, APIMessageInteraction } from 'discord-api-types/payloads/v9'
+import type { APIInteractionResponse, APIInteraction } from 'discord-api-types/payloads/v9'
 import { commands } from './commands'
 
 export const APPLICATIONS_BASE_API_URL =
@@ -18,7 +18,7 @@ export function verifyInteraction(
 }
 
 export async function handleInteraction(
-	data: APIMessageInteraction
+	data: APIInteraction
 ): Promise<APIInteractionResponse> {
 	console.log(data)
 	switch (data.type) {
