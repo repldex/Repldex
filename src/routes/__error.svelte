@@ -1,9 +1,11 @@
-<script context="module">
-	export function load({ error, status }) {
+<script lang="ts" context="module">
+	import type { ErrorLoad } from '@sveltejs/kit'
+
+	export const load: ErrorLoad = async ({ error, status }) => {
 		return {
 			props: {
 				status,
-				message: error.message,
+				message: error?.message,
 			},
 		}
 	}
@@ -21,7 +23,9 @@
 <div class="error-container-container">
 	<div class="error-container">
 		<h1>{status}</h1>
-		<h2>{message}</h2>
+		{#if message}
+			<h2>{message}</h2>
+		{/if}
 		<a href="/">Go back</a>
 	</div>
 </div>

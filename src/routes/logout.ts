@@ -5,7 +5,7 @@ import type { RequestHandler } from '@sveltejs/kit'
 const clientSecret = process.env['DISCORD_CLIENT_SECRET']
 if (!clientSecret) throw new Error('DISCORD_CLIENT_SECRET environment variable not set')
 
-export const get: RequestHandler = async req => {
+export const get: RequestHandler = async _req => {
 	return {
 		status: 302,
 		headers: {
