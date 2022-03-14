@@ -1,6 +1,5 @@
 import type { Collection } from 'mongodb'
 import { createUuid, getDatabase, ReplaceIdWithUuid, replaceUuidWithId } from '.'
-import { isAdmin } from '../perms'
 
 export type Visibility = 'visible' | 'unlisted' | 'hidden'
 

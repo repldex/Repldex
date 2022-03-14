@@ -1,12 +1,9 @@
-import type { Entry } from './database/entries'
 import {
-	fetchEntryHistory,
 	fetchEntryHistoryItemsAfter,
 	fetchEntryHistoryItemBefore,
 	HistoryItem,
 } from './database/history'
 import * as diff from 'fast-myers-diff'
-import { createUuid } from './database'
 
 /**
  * How the entry would look if this edit was reverted
