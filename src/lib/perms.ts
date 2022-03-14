@@ -15,7 +15,7 @@ export function canSeeEntry(user: User, entry: Entry): boolean {
 	return entry.visibility !== 'hidden'
 }
 
-export function canEditEntry(user: User, entry: Entry): boolean {
+export function canEditEntry(user: User, _entry: Entry): boolean {
 	return user.admin
 }
 

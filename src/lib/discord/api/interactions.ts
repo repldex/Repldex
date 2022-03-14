@@ -5,16 +5,17 @@ import { commands } from './commands'
 export const APPLICATIONS_BASE_API_URL =
 	`https://discord.com/api/v9/applications/${process.env.DISCORD_CLIENT_ID}` as const
 
-// const clientSecret = process.env['DISCORD_CLIENT_SECRET']
-// if (!clientSecret) throw new Error('DISCORD_CLIENT_SECRET environment variable not set')
+const DISCORD_PUBLIC_KEY = process.env.DISCORD_PUBLIC_KEY
+if (DISCORD_PUBLIC_KEY) throw new Error('DISCORD_PUBLIC_KEY environment variable not set')
 
 export function verifyInteraction(
 	headers: Record<string, string>,
 	rawBody: string | Uint8Array
 ): boolean {
-	const signature = headers['x-signature-ed25519']
-	const timestamp = headers['x-signature-timestamp']
-	return verifyKey(rawBody ?? '', signature, timestamp, process.env.DISCORD_PUBLIC_KEY)
+	const signature = headers.get('x-signature-ed25519')
+	const timestamp = headers.get('x-signature-timestamp')
+	if (!signature || !timestamp) return false
+	return verifyKey(rawBody ?? '', signature, timestamp, DISCORD_PUBLIC_KEY!)
 }
 
 export async function handleInteraction(
