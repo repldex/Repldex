@@ -7,7 +7,6 @@ import type {
 	APIEmbed
 } from 'discord-api-types/payloads/v9'
 import type { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/rest/v9'
-import config from '../../config'
 
 export const GLOBAL_COMMAND_API_URL = `${APPLICATIONS_BASE_API_URL}/commands` as const
 

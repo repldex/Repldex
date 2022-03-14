@@ -1,7 +1,6 @@
 import { Command, ApplicationCommandOptionType, APIEmbed } from './api/commands'
 import { Entry, fetchEntries, fetchEntry, searchEntry } from '../database/entries'
 import { createSlug } from '../database/index'
-import { config } from '../config'
 
 new Command({
 	name: 'entry',
@@ -31,7 +30,7 @@ new Command({
 			embeds: [
 				{
 					title: entry.title,
-					url: config.base_url+'/entry/'+entry.slug,
+					url: process.env.base_url+'/entry/'+entry.slug,
 					description: entry.content
 				}
 			]
@@ -53,7 +52,7 @@ new Command({
 			embeds: [
 				{
 					title: entry.title,
-					url: config.base_url+'/entry/'+entry.slug,
+					url: process.env.base_url+'/entry/'+entry.slug,
 					description: entry.content
 				}
 			]
@@ -85,7 +84,7 @@ new Command({
 		for (const entry of entries) {
 			embed.fields.push({
 				name: entry.title,
-				value: "[Link]("+config.base_url+'/entry/'+entry.slug+")"
+				value: "[Link]("+process.env.base_url+'/entry/'+entry.slug+")"
 			})
 		}
 		//note: as of now buttons just sit around. clicking on them does not do anything
@@ -150,7 +149,7 @@ new Command({
 		for (const entry of entries) {
 			embed.fields.push({
 				name: entry.title,
-				value: "[Link]("+config.base_url+'/entry/'+entry.slug+")"
+				value: "[Link]("+process.env.base_url+'/entry/'+entry.slug+")"
 			})
 		}
 		return {

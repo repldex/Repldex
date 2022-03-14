@@ -1,10 +1,9 @@
 import { verifyKey } from 'discord-interactions'
-import config from '../../config'
 import type { APIInteractionResponse, APIMessageInteraction } from 'discord-api-types/payloads/v9'
 import { commands } from './commands'
 
 export const APPLICATIONS_BASE_API_URL =
-	`https://discord.com/api/v9/applications/${config.discord_client_id}` as const
+	`https://discord.com/api/v9/applications/${process.env.discord_client_id}` as const
 
 // const clientSecret = process.env['DISCORD_CLIENT_SECRET']
 // if (!clientSecret) throw new Error('DISCORD_CLIENT_SECRET environment variable not set')
@@ -15,7 +14,7 @@ export function verifyInteraction(
 ): boolean {
 	const signature = headers['x-signature-ed25519']
 	const timestamp = headers['x-signature-timestamp']
-	return verifyKey(rawBody ?? '', signature, timestamp, config.discord_public_key)
+	return verifyKey(rawBody ?? '', signature, timestamp, process.env.discord_public_key)
 }
 
 export async function handleInteraction(
