@@ -30,17 +30,26 @@ export async function handleInteraction(
 			}
 		// ApplicationCommand
 		case 2:
+			if (!commands[data.data.name]) {
+				return {
+					type: 4,
+					data: { content: 'Unknown command' },
+				}
+			}
 			return {
 				type: 4,
 				data: commands[data.data.name].handler(data.data),
 			}
 		// MessageComponent
 		case 3:
-			const id_args = data.custom_id.split('-')
-			const command = id_args.shift()
+			//variable decs in case blocks not allowed, pparently
+			//const id_args = data.custom_id.split('-')
+			//const command = id_args.shift()
 			return {
 				type: 7,
-				data: commands[command].component_handler(id_args),
+				data: commands[data.custom_id.split('-')[0]].component_handler(
+					data.custom_id.split('-').slice(1)
+				),
 			}
 		default:
 			throw new Error('Unknown interaction type')
