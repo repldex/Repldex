@@ -102,9 +102,15 @@ export async function createEntry(entry: Omit<Entry, 'id' | 'createdAt'>): Promi
 /**
  * Search for an entry, limiting and skip can be handled separately
  */
-export async function searchEntry(query: string, options: FetchEntriesOptions = {limit: 0, skip: 0}): Promise<Entry[]> {
+export async function searchEntry(
+	query: string,
+	options: FetchEntriesOptions = { limit: 0, skip: 0 }
+): Promise<Entry[]> {
 	const collection = await getCollection()
-	collection.createIndex( { title: "text", content: "text" } )
-	const entries = await collection.find({$text:{$search: query}}).limit(options.limit).skip(options.skip)
+	collection.createIndex({ title: 'text', content: 'text' })
+	const entries = await collection
+		.find({ $text: { $search: query } })
+		.limit(options.limit)
+		.skip(options.skip)
 	return entries.toArray().map(replaceUuidWithId)
 }

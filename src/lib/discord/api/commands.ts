@@ -4,7 +4,7 @@ import type {
 	APIApplicationCommandOption,
 	APIInteractionResponseCallbackData,
 	APIMessage,
-	APIEmbed
+	APIEmbed,
 } from 'discord-api-types/payloads/v9'
 import type { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/rest/v9'
 
@@ -32,8 +32,12 @@ export class Command {
 	json: RESTPostAPIChatInputApplicationCommandsJSONBody
 	name: string
 	//
-	handler: (interaction: APIApplicationCommandInteraction) => APIInteractionResponseCallbackData | Promise<APIInteractionResponseCallbackData>
-	component_handler: (args: []) => APIInteractionResponseCallbackData | Promise<APIInteractionResponseCallbackData>
+	handler: (
+		interaction: APIApplicationCommandInteraction
+	) => APIInteractionResponseCallbackData | Promise<APIInteractionResponseCallbackData>
+	component_handler: (
+		args: []
+	) => APIInteractionResponseCallbackData | Promise<APIInteractionResponseCallbackData>
 
 	constructor(options: CommandOptions) {
 		this.name = options.name
@@ -57,8 +61,10 @@ export class Command {
 		return this
 	}
 
-	handle_components(component_handler: (interaction: APIApplicationCommandInteraction) => {}): this {
-		this.component_handler = component_handler;
+	handle_components(
+		component_handler: (interaction: APIApplicationCommandInteraction) => {}
+	): this {
+		this.component_handler = component_handler
 		return this
 	}
 }

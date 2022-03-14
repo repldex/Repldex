@@ -36,11 +36,11 @@ export async function handleInteraction(
 			}
 		// MessageComponent
 		case 3:
-			let id_args = data.custom_id.split('-');
-			let command = id_args.shift();
-		 	return {
+			const id_args = data.custom_id.split('-')
+			const command = id_args.shift()
+			return {
 				type: 7,
-				data: commands[command].component_handler(id_args)
+				data: commands[command].component_handler(id_args),
 			}
 		default:
 			throw new Error('Unknown interaction type')

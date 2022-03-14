@@ -6,9 +6,9 @@ import type { JSONString } from '@sveltejs/kit/types/helper'
 export const get: RequestHandler = async req => {
 	const entries = await fetchEntries({
 		limit: 0,
-		skip: 0
+		skip: 0,
 	})
-	let entry = entries[Math.floor(Math.random() * entries.length)];
+	const entry = entries[Math.floor(Math.random() * entries.length)]
 	return {
 		body: entry as unknown as JSONString,
 	}

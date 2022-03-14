@@ -14,50 +14,49 @@ new Command({
 	})
 	.handle(async data => {
 		console.log(data)
-		let name: string = data.options.name
-		let entry: Entry | null = await fetchEntry(createSlug(name))
+		const name: string = data.options.name
+		const entry: Entry | null = await fetchEntry(createSlug(name))
 		if (!entry) {
 			return {
 				embeds: [
 					{
-						title: "This entry does not exist"
+						title: 'This entry does not exist',
 						//description: "[Click here to write it!](there is no ?title= yet, so we will not implement this)"
-					}
-				]
+					},
+				],
 			}
 		}
 		return {
 			embeds: [
 				{
 					title: entry.title,
-					url: process.env.BASE_URL+'/entry/'+entry.slug,
-					description: entry.content
-				}
-			]
+					url: process.env.BASE_URL + '/entry/' + entry.slug,
+					description: entry.content,
+				},
+			],
 		}
 	})
 
 new Command({
 	name: 'random',
 	description: 'View a random Repldex entry',
-})
-	.handle(async data => {
-		console.log(data)
-		let entries = await fetchEntries({
-			limit: 0,
-			skip: 0
-		})
-		let entry = entries[Math.floor(Math.random() * entries.length)]
-		return {
-			embeds: [
-				{
-					title: entry.title,
-					url: process.env.BASE_URL+'/entry/'+entry.slug,
-					description: entry.content
-				}
-			]
-		}
+}).handle(async data => {
+	console.log(data)
+	const entries = await fetchEntries({
+		limit: 0,
+		skip: 0,
 	})
+	const entry = entries[Math.floor(Math.random() * entries.length)]
+	return {
+		embeds: [
+			{
+				title: entry.title,
+				url: process.env.BASE_URL + '/entry/' + entry.slug,
+				description: entry.content,
+			},
+		],
+	}
+})
 
 //buttons for pagination here, probably?
 new Command({
@@ -74,17 +73,17 @@ new Command({
 		console.log(data)
 		let entries = await searchEntry(data.options.query)
 		entries = entries.slice(0, 10)
-		let embed: APIEmbed = {
-			title: "Search Results for "+data.options.query,
+		const embed: APIEmbed = {
+			title: 'Search Results for ' + data.options.query,
 			fields: [],
 			footer: {
-				text: "Page 1"
-			}
+				text: 'Page 1',
+			},
 		}
 		for (const entry of entries) {
 			embed.fields.push({
 				name: entry.title,
-				value: "[Link]("+process.env.BASE_URL+'/entry/'+entry.slug+")"
+				value: '[Link](' + process.env.BASE_URL + '/entry/' + entry.slug + ')',
 			})
 		}
 		//note: as of now buttons just sit around. clicking on them does not do anything
@@ -98,60 +97,58 @@ new Command({
 							//type 2 = button
 							type: 2,
 							style: 1,
-							label: "Back",
+							label: 'Back',
 							emoji: {
 								id: null,
-								name: "◀️"
+								name: '◀️',
 							},
 							//command-button-page-query
-							custom_id: "search-back-1-"+data.options.query
+							custom_id: 'search-back-1-' + data.options.query,
 						},
 						{
 							type: 2,
 							style: 1,
-							label: "Forward",
+							label: 'Forward',
 							emoji: {
 								id: null,
-								name: "▶️"
+								name: '▶️',
 							},
-							custom_id: "search-forward-1-"+data.options.query
-						}
-					]
-				}
+							custom_id: 'search-forward-1-' + data.options.query,
+						},
+					],
+				},
 			],
-			embeds: [
-				embed
-			]
+			embeds: [embed],
 		}
 	})
 	.handle_components(async args => {
-		let action = args[0]
+		const action = args[0]
 		let page = args[1]
-		let query = args[2]
+		const query = args[2]
 		let entries = await searchEntry(query)
-		if (action == "back") {
+		if (action == 'back') {
 			page--
 			if (page == 0) {
 				page = 1
 			}
-		} else if (action == "forward") {
-			let max_pages = Math.ceil(entries.length/10)
-			if (!(page+1 > max_pages)) {
+		} else if (action == 'forward') {
+			const max_pages = Math.ceil(entries.length / 10)
+			if (!(page + 1 > max_pages)) {
 				page++
 			}
 		}
-		entries = entries.slice((page-1)*10, page*10)
-		let embed: APIEmbed = {
-			title: "Search Results for "+query,
+		entries = entries.slice((page - 1) * 10, page * 10)
+		const embed: APIEmbed = {
+			title: 'Search Results for ' + query,
 			fields: [],
 			footer: {
-				text: "Page "+String(page)
-			}
+				text: 'Page ' + String(page),
+			},
 		}
 		for (const entry of entries) {
 			embed.fields.push({
 				name: entry.title,
-				value: "[Link]("+process.env.BASE_URL+'/entry/'+entry.slug+")"
+				value: '[Link](' + process.env.BASE_URL + '/entry/' + entry.slug + ')',
 			})
 		}
 		return {
@@ -164,83 +161,80 @@ new Command({
 							//type 2 = button
 							type: 2,
 							style: 1,
-							label: "Back",
+							label: 'Back',
 							emoji: {
 								id: null,
-								name: "◀️"
+								name: '◀️',
 							},
 							//command-button-page-query
-							custom_id: "search-back-"+String(page)+"-"+query
+							custom_id: 'search-back-' + String(page) + '-' + query,
 						},
 						{
 							type: 2,
 							style: 1,
-							label: "Forward",
+							label: 'Forward',
 							emoji: {
 								id: null,
-								name: "▶️"
+								name: '▶️',
 							},
-							custom_id: "search-forward-"+String(page)+"-"+query
-						}
-					]
-				}
+							custom_id: 'search-forward-' + String(page) + '-' + query,
+						},
+					],
+				},
 			],
-			embeds: [
-				embed
-			]
+			embeds: [embed],
 		}
 	})
 
 new Command({
 	name: 'source',
 	description: 'Get a link to the source code of Repldex',
+}).handle(data => {
+	console.log(data)
+	return {
+		embeds: [
+			{
+				title: 'Source',
+				description: 'My source code is on [Github](https://github.com/mat-1/ReplDex)',
+				color: '#650ac9',
+				fields: [
+					{
+						name: 'Mat1',
+						value: 'Project Head',
+						inline: true,
+					},
+					{
+						name: 'Coderman51',
+						value: 'Core Contributor',
+						inline: true,
+					},
+					{
+						name: 'Prussia',
+						value: 'Discord Bot Developer',
+						inline: true,
+					},
+					{
+						name: 'Nayoar',
+						value: 'Site Administrator',
+						inline: true,
+					},
+					{
+						name: 'Kognise',
+						value: 'Owns the domain',
+						inline: true,
+					},
+					{
+						name: 'Selectthemat',
+						value: 'Major contributor',
+						inline: true,
+					},
+				],
+				footer: {
+					text: 'Also big thanks to all the editors and other contributors',
+				},
+			},
+		],
+	}
 })
-	.handle(data => {
-		console.log(data)
-		return {
-			embeds: [
-				{
-					title: "Source",
-					description: "My source code is on [Github](https://github.com/mat-1/ReplDex)",
-					color: "#650ac9",
-					fields: [
-						{
-							name: "Mat1",
-							value: "Project Head",
-							inline: true
-						},
-						{
-							name: "Coderman51",
-							value: "Core Contributor",
-							inline: true
-						},
-						{
-							name: "Prussia",
-							value: "Discord Bot Developer",
-							inline: true
-						},
-						{
-							name: "Nayoar",
-							value: "Site Administrator",
-							inline: true
-						},
-						{
-							name: "Kognise",
-							value: "Owns the domain",
-							inline: true
-						},
-						{
-							name: "Selectthemat",
-							value: "Major contributor",
-							inline: true
-						}
-					],
-					footer: {
-						text: "Also big thanks to all the editors and other contributors"
-					}
-				}
-			]
-		}
-	})
 
 console.log('bot')
