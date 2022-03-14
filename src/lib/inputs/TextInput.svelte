@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let placeholder: string = ''
+	export let placeholder = ''
 	export let value: string
 </script>
 
