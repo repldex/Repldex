@@ -33,7 +33,7 @@ export async function handleInteraction(
 		case 2:
 			return {
 				type: 4,
-				data: commands[data.data.name].handler(data),
+				data: commands[data.data.name].handler(data.data),
 			}
 		// MessageComponent
 		case 3:
