@@ -4,8 +4,8 @@ import type { JSONValue } from '@sveltejs/kit/types/helper'
 
 // returns all matching entries
 export const get: RequestHandler = async req => {
-	let query = req.url.searchParams.get('query')
-	if (!query) return {body: 'No query'}
+	const query = req.url.searchParams.get('query')
+	if (!query) return { body: 'No query' }
 	const entries = await fetchEntries({
 		limit: parseInt(req.url.searchParams.get('limit') ?? '20'),
 		skip: parseInt(req.url.searchParams.get('skip') ?? '0'),
