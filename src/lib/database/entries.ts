@@ -17,13 +17,16 @@ async function getCollection(): Promise<Collection<ReplaceIdWithUuid<Entry>>> {
 	return db.collection('entries')
 }
 
-interface FetchEntriesOptions {
-	limit: number
-	skip: number
+interface FilterEntriesOptions {
 	visible?: boolean
 	unlisted?: boolean
 	hidden?: boolean
 	query?: string
+}
+
+interface FetchEntriesOptions extends FilterEntriesOptions {
+	limit: number
+	skip: number
 }
 
 /**
@@ -96,4 +99,18 @@ export async function createEntry(entry: Omit<Entry, 'id' | 'createdAt'>): Promi
 	await collection.insertOne(newEntry)
 
 	return replaceUuidWithId(newEntry)
+}
+
+export async function countEntries(options?: FilterEntriesOptions): Promise<number> {
+	const collection = await getCollection()
+	const count = await collection.countDocuments({
+		visibility: {
+			$in: [
+				options?.visible ?? true ? 'visible' : undefined,
+				options?.unlisted ?? false ? 'unlisted' : undefined,
+				options?.hidden ?? false ? 'hidden' : undefined,
+			].filter(Boolean) as Visibility[],
+		},
+	})
+	return count
 }
