@@ -6,7 +6,7 @@ export const APPLICATIONS_BASE_API_URL =
 	`https://discord.com/api/v9/applications/${process.env.DISCORD_CLIENT_ID}` as const
 
 const DISCORD_PUBLIC_KEY = process.env.DISCORD_PUBLIC_KEY
-if (DISCORD_PUBLIC_KEY) throw new Error('DISCORD_PUBLIC_KEY environment variable not set')
+if (!DISCORD_PUBLIC_KEY) throw new Error('DISCORD_PUBLIC_KEY environment variable not set')
 
 export function verifyInteraction(
 	headers: Record<string, string>,
