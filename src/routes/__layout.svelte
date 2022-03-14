@@ -1,5 +1,7 @@
-<script context="module">
-	export async function load({ session }) {
+<script lang="ts" context="module">
+	import type { Load } from '@sveltejs/kit'
+
+	export const load: Load = async ({ session }) => {
 		return {
 			props: {
 				user: session.user,

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation'
-
 	export let id: string
 
 	async function revert() {

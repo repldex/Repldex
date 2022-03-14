@@ -5,11 +5,11 @@ import { createSession } from '../lib/database/sessions'
 import type { RequestHandler } from '@sveltejs/kit'
 import { createUuid } from '../lib/database/index'
 
-const clientId = process.env.DISCORD_CLIENT_ID
-if (!clientId) throw new Error('DISCORD_CLIENT_ID environment variable not set')
+const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID
+if (!DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID environment variable not set')
 
-const clientSecret = process.env.DISCORD_CLIENT_SECRET
-if (!clientSecret) throw new Error('DISCORD_CLIENT_SECRET environment variable not set')
+const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET
+if (!DISCORD_CLIENT_SECRET) throw new Error('DISCORD_CLIENT_SECRET environment variable not set')
 
 export const get: RequestHandler = async req => {
 	const discordOauthCode = req.url.searchParams.get('code')
@@ -22,7 +22,7 @@ export const get: RequestHandler = async req => {
 			// redirect to discord login
 			status: 302,
 			headers: {
-				location: `https://discord.com/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=identify`,
+				location: `https://discord.com/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=identify`,
 			},
 		}
 	}
@@ -34,8 +34,8 @@ export const get: RequestHandler = async req => {
 			'Content-Type': 'application/x-www-form-urlencoded',
 		},
 		body: new URLSearchParams({
-			client_id: clientId,
-			client_secret: clientSecret,
+			client_id: DISCORD_CLIENT_ID,
+			client_secret: DISCORD_CLIENT_SECRET,
 			grant_type: 'authorization_code',
 			code: discordOauthCode,
 			redirect_uri: redirectUri,
