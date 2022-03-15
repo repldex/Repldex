@@ -91,8 +91,7 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 		case 3: {
 			return {
 				type: 7,
-				data: commands.commands.find(c => c.name === data.custom_id.split('-')[0]).componentHandler(data.custom_id.split('-').slice(1))
-				),
+				data: commands.commands.find(c => c.name === data.custom_id.split('-')[0]).componentHandler(data.custom_id.split('-').slice(1)),
 			}
 		}
 
