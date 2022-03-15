@@ -90,8 +90,8 @@ new Command({
 			embed.fields.push({
 				name: entry.title,
 				value: `[Link](${process.env.BASE_URL}/entry/${entry.slug})`,
-			}),
-		}
+			})
+		},
 		//note: as of now buttons just sit around. clicking on them does not do anything
 		return {
 			components: [
