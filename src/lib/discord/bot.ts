@@ -15,8 +15,8 @@ new Command({
 		type: ApplicationCommandOptionType.String,
 		required: true,
 	} as const)
-	.handle(async (i) => {
-		let name: string = i.options.name
+	.handle(async i => {
+		const name: string = i.options.name
 		const entry: Entry | null = await fetchEntry(createSlug(name))
 		if (!entry) {
 			return {
@@ -24,8 +24,8 @@ new Command({
 				color: 16711680,
 			}
 		}
-		
-		let content: string;
+
+		let content: string
 		if (entry.content.length > 985) {
 			content = `${entry.content.slice(0, 985)}...`
 		} else {
@@ -103,7 +103,7 @@ new Command({
 						inline: true,
 					},
 					{
-						name: 'Selectthemat',
+						name: 'selectthegang',
 						value: 'Major contributor',
 						inline: true,
 					},

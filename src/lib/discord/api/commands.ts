@@ -88,7 +88,7 @@ export class Command<T extends APIApplicationCommandOption[] = []> {
 		this.json.options!.push(option)
 		return this as unknown as Command<[...T, O]>
 	}
-	
+
 	// have it return the command so these can be chained eg .handle().handle_components()
 	handle(handler: typeof this.handler): Command<[...T, O]> {
 		this.handler = handler

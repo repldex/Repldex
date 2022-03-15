@@ -8,6 +8,9 @@ language = "nodejs"
 packageSearch = true
 guessImports = false
 
+[unitTest]
+language = "nodejs"
+
 [languages.svelte]
 pattern = "**/*.svelte"
 syntax = "svelte"

@@ -30,10 +30,10 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 		// Ping
 		case 1:
 			return {
-				// pong
+				// Pong!
 				type: 1,
 			}
-		// ApplicationCommand
+		// Application Command
 		case 2: {
 			const matchingCommand = commands.commands.find(c => c.name === data.data.name)
 			if (!matchingCommand)
@@ -58,25 +58,27 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 			}
 
 			// we have to do "as any" because the typings are wrong
-			for (const option of (data.data as any).options) {
-				let resolved = option.value
-				switch (option.type) {
-					case ApplicationCommandOptionType.Channel:
-						// the typings do not include channels, they are wrong
-						resolved = getChannel(option.value)
-						break
-					case ApplicationCommandOptionType.Mentionable:
-						// the typings do not include channels, they are wrong
-						resolved = getRole(option.value) ?? getChannel(option.value)
-						break
-					case ApplicationCommandOptionType.Role:
-						resolved = getRole(option.value)
-						break
-					case ApplicationCommandOptionType.User:
-						resolved = getMember(option.value)
-						break
+			if (data.data.options) {
+				for (const option of (data.data as any).options) {
+					let resolved = option.value
+					switch (option.type) {
+						case ApplicationCommandOptionType.Channel:
+							// the typings do not include channels, they are wrong
+							resolved = getChannel(option.value)
+							break
+						case ApplicationCommandOptionType.Mentionable:
+							// the typings do not include channels, they are wrong
+							resolved = getRole(option.value) ?? getChannel(option.value)
+							break
+						case ApplicationCommandOptionType.Role:
+							resolved = getRole(option.value)
+							break
+						case ApplicationCommandOptionType.User:
+							resolved = getMember(option.value)
+							break
+					}
+					interactionData.options[option.name] = resolved
 				}
-				interactionData.options[option.name] = resolved
 			}
 
 			return {
@@ -85,7 +87,7 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 			}
 		}
 		// MessageComponent
-		/*brb
+		/* brb
 		case 3:
 			//get custom id
 		 	return {}
