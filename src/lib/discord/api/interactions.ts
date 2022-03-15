@@ -92,8 +92,8 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 			return {
 				type: 7,
 				data: commands.commands
-					.find(c => c.name === data.custom_id.split('-')[0])
-					.componentHandler(data.custom_id.split('-').slice(1)),
+					.find(c => c.name === data.data.custom_id!.split('-')[0])
+					.componentHandler(data.data.custom_id!.split('-').slice(1)),
 			}
 		}
 

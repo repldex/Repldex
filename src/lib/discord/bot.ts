@@ -1,5 +1,5 @@
 import { Command, ApplicationCommandOptionType } from './api/commands'
-import { Entry, fetchEntries, fetchEntry, countEntries, searchEntry } from '../database/entries'
+import { Entry, fetchEntries, fetchEntry, countEntries } from '../database/entries'
 import { createSlug } from '../database/index'
 
 const BASE_URL = process.env.BASE_URL
@@ -18,14 +18,16 @@ new Command({
 	.handle(async i => {
 		const name: string = i.options.name
 		const entry: Entry | null = await fetchEntry(createSlug(name))
+		
 		if (!entry) {
 			return {
-				content: `Requested entry "${name}" does not exist, or is unavailable`,
+				content: `Requested entry "${name}" does not exist, or is unavailable.`,
 				color: 16711680,
 			}
 		}
 
 		let content: string
+
 		if (entry.content.length > 985) {
 			content = `${entry.content.slice(0, 985)}...`
 		} else {
@@ -47,16 +49,18 @@ new Command({
 	name: 'random',
 	description: 'View a random Repldex entry',
 }).handle(async data => {
+	const entryCount: number = await countEntries()
 	const entries = await fetchEntries({
 		limit: 1,
-		skip: Math.floor(Math.random() * (await countEntries())),
+		skip: Math.floor(Math.random() * entryCount),
 	})
 	const entry = entries[Math.floor(Math.random() * entries.length)]
+	
 	return {
 		embeds: [
 			{
 				title: entry.title,
-				url: process.env.BASE_URL + '/entry/' + entry.slug,
+				url: `${process.env.BASE_URL}/entry/${entry.slug}`,
 				description: entry.content,
 				color: 16711680,
 			},
@@ -64,7 +68,9 @@ new Command({
 	}
 })
 
-new Command({
+// This command has like 2 million issues, so i have temporaily removed it!
+
+/*new Command({
 	name: 'search',
 	description: 'Search Repldex entries',
 })
@@ -76,9 +82,12 @@ new Command({
 	})
 	.handle(async data => {
 		console.log(data)
-		const query: string = i.options.query
-		let entries = await searchEntry(query)
-		entries = entries.slice(0, 10)
+		const query: string = data.options.query
+		let entries = await fetchEntries({
+			query: query,
+			limit: 10,
+			skip: 0,
+		})
 		const embed: APIEmbed = {
 			title: `Search Results for ${query}`,
 			fields: [],
@@ -132,7 +141,6 @@ new Command({
 		//`+` is unary operator that converts to int
 		let page: number = +args[1]
 		const query = args[2]
-		let entries = await searchEntry(query)
 		if (action == 'back') {
 			page--
 			if (page == 0) {
@@ -144,7 +152,11 @@ new Command({
 				page++
 			}
 		}
-		entries = entries.slice((page - 1) * 10, page * 10)
+		let entries = await fetchEntries({
+			query: query,
+			limit: 10,
+			skip: (page - 1) * 10,
+		})
 		const embed: APIEmbed = {
 			title: `Search Results for ${query}`,
 			fields: [],
@@ -191,7 +203,7 @@ new Command({
 			],
 			embeds: [embed],
 		}
-	})
+	})*/
 
 new Command({
 	name: 'source',
