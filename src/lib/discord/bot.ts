@@ -47,7 +47,6 @@ new Command({
 	name: 'random',
 	description: 'View a random Repldex entry',
 }).handle(async data => {
-	console.log(data)
 	const entries = await fetchEntries({
 		limit: 1,
 		skip: Math.floor(Math.random() * (await countEntries())),
@@ -69,7 +68,6 @@ new Command({
 	name: 'source',
 	description: 'Get a link to the source code of Repldex',
 }).handle(data => {
-	console.log(data)
 	return {
 		embeds: [
 			{
