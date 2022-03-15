@@ -1,4 +1,4 @@
-name: Lint
+name: Code Analysis
 
 on:
   push:
@@ -7,16 +7,6 @@ on:
   pull_request:
 
 jobs:
-  Install Latest Packages:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 14.x
-        uses: actions/setup-node@v1.4.4
-        with:
-          node-version: 14.x
-        - run: npm i
   Lint:
     runs-on: ubuntu-latest
 
@@ -25,5 +15,5 @@ jobs:
       - name: Use Node.js 14.x
         uses: actions/setup-node@v1.4.4
         with:
-          node-version: 14.x 
-      - run: npm run lint
+          node-version: 14.x
+      - run: npm i && npm run lint
