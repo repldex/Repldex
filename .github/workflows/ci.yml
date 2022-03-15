@@ -1,4 +1,4 @@
-name: CI
+name: Lint
 
 on:
   push:
@@ -16,4 +16,4 @@ jobs:
         uses: actions/setup-node@v1.4.4
         with:
           node-version: 14.x
-      - run: npm i && npm run lint
+      - run: npm i && npm run format && npm run lint
