@@ -85,8 +85,11 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 			}
 		}
 		// MessageComponent
-		// case 3:
-		// 	return {}
+		/*brb
+		case 3:
+			//get custom id
+		 	return {}
+		*/
 		default:
 			throw new Error('Unknown interaction type')
 	}
