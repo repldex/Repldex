@@ -43,7 +43,7 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 				}
 
 			const interactionData: InteractionData<any> = {
-				options: {},
+				options: Array = {},
 			}
 
 			const getChannel = (id: string): APIInteractionDataResolvedChannel | null =>
@@ -58,7 +58,7 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 			}
 
 			// we have to do "as any" because the typings are wrong
-			if (data.data?.options) {
+			if ('options' in data.data) {
 				for (const option of (data.data as any).options) {
 					let resolved = option.value
 					switch (option.type) {

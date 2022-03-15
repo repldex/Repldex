@@ -97,8 +97,8 @@ export class Command<T extends APIApplicationCommandOption[] = []> {
 		return this as unknown as Command<[...T]>
 	}
 
-	handleComponents(componentHandler: typeof this.componentHandler): Command<[...T]> {
-		componentHandler.componentHandler = componentHandler
+	handleComponents(componentHandler: typeof this.comHandler): Command<[...T]> {
+		comHandler.componentHandler = componentHandler
 		console.log('added component handler')
 		return this as unknown as Command<[...T]>
 	}
