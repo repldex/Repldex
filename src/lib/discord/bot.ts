@@ -74,11 +74,11 @@ new Command({
 		embeds: [
 			{
 				title: 'Source',
-				description: 'My source code is on [GitHub](https://github.com/mat-1/ReplDex)',
+				description: 'My source code is on [GitHub](https://github.com/repldex/Repldex)',
 				color: 6621897,
 				fields: [
 					{
-						name: 'Mat',
+						name: 'mat',
 						value: 'Repldex Developer',
 						inline: true,
 					},
