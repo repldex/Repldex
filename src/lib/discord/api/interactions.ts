@@ -43,7 +43,7 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 				}
 
 			const interactionData: InteractionData<any> = {
-				options: Array = {},
+				options: (Array = {}),
 			}
 
 			const getChannel = (id: string): APIInteractionDataResolvedChannel | null =>
