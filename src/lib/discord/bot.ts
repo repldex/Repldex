@@ -74,27 +74,32 @@ new Command({
 		embeds: [
 			{
 				title: 'Source',
-				description: 'My source code is on [Github](https://github.com/mat-1/ReplDex)',
+				description: 'My source code is on [GitHub](https://github.com/mat-1/ReplDex)',
 				color: 6621897,
 				fields: [
 					{
-						name: 'Mat1',
-						value: 'Project Head',
+						name: 'Mat',
+						value: 'Repldex Developer',
+						inline: true,
+					},
+					{
+						name: 'timchen',
+						value: 'An Inspiration to All',
 						inline: true,
 					},
 					{
 						name: 'Coderman51',
-						value: 'Core Contributor',
+						value: 'Repldex Developer',
 						inline: true,
 					},
 					{
 						name: 'Prussia',
-						value: 'Discord Bot Developer',
+						value: 'Repldex Developer',
 						inline: true,
 					},
 					{
 						name: 'Nayoar',
-						value: 'Site Administrator',
+						value: 'Repldex Admin',
 						inline: true,
 					},
 					{
@@ -104,12 +109,17 @@ new Command({
 					},
 					{
 						name: 'selectthegang',
-						value: 'Major contributor',
+						value: 'Repldex Developer',
+						inline: true,
+					},
+					{
+						name: 'spotandjake',
+						value: 'Repldex Developer (ish)',
 						inline: true,
 					},
 					{
 						name: 'Leon',
-						value: 'just some random person',
+						value: 'undefined',
 						inline: true,
 					},
 				],
