@@ -1,5 +1,5 @@
 import { Command, ApplicationCommandOptionType } from './api/commands'
-import { Entry, fetchEntries, fetchEntry, countEntries } from '../database/entries'
+import { Entry, fetchEntries, fetchEntry, countEntries, searchEntry } from '../database/entries'
 import { createSlug } from '../database/index'
 
 const BASE_URL = process.env.BASE_URL
