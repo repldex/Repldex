@@ -107,6 +107,11 @@ new Command({
 						value: 'Major contributor',
 						inline: true,
 					},
+					{
+						name: 'Leon',
+						value: 'just some random person',
+						inline: true,
+					},
 				],
 				footer: {
 					text: 'Also big thanks to all the editors and other contributors',
