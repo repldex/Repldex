@@ -23,7 +23,7 @@ new Command({
 		if (!entry) {
 			return {
 				content: `Requested entry "${name}" does not exist, or is unavailable.`,
-				color: 16711680,
+				color: 0x650ac9,
 			}
 		}
 
@@ -37,10 +37,10 @@ new Command({
 		return {
 			embeds: [
 				{
-					title: `${name}`,
+					title: name,
 					url: `${BASE_URL}/entry/${entry.slug}`,
 					description: content,
-					color: 16711680,
+					color: 0x650ac9,
 				},
 			],
 		}
@@ -63,7 +63,7 @@ new Command({
 				title: entry.title,
 				url: `${process.env.BASE_URL}/entry/${entry.slug}`,
 				description: entry.content,
-				color: 16711680,
+				color: 0x650ac9,
 			},
 		],
 	}
@@ -217,8 +217,8 @@ new Command({
 		embeds: [
 			{
 				title: 'Source',
-				description: 'My source code is on [GitHub](https://github.com/repldex/Repldex)',
-				color: 6621897,
+				description: 'My source code is on [GitHub](https://github.com/repldex/Repldex).',
+				color: 0x650ac9,
 				fields: [
 					{
 						name: 'mat',
@@ -267,7 +267,7 @@ new Command({
 					},
 				],
 				footer: {
-					text: 'Also big thanks to all the editors and other contributors',
+					text: 'Also, big thanks to all the editors and other contributors.',
 				},
 			},
 		],
