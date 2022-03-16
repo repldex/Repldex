@@ -33,12 +33,13 @@ interface FetchEntriesOptions extends FilterEntriesOptions {
  * Fetch a number of entries
  */
 export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[]> {
-	const collection = await getCollection();
-	const searchQuery: String = options.query
+	const collection = await getCollection()
+	const searchQuery = options.query
 	const skip = options.skip
-	const limit: Number = options.limit
-	
-	collection.createIndex( { title: "text", content: "text" } )
+	const limit = options.limit
+
+	collection.createIndex({ title: 'text', content: 'text' })
+
 	const find_q = {
 		visibility: {
 			$in: [
@@ -48,17 +49,12 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
 			].filter(Boolean) as Visibility[],
 		},
 	}
-	
-	if (searchQuery) {
-		find_q['$text'] = { "$search": searchQuery }
-	}
-	
-	const all_entries = await collection
-		.find(find_q)
-		.skip(skip)
-		.limit(limit)
-		.toArray()
 
+	if (searchQuery) {
+		find_q['$text'] = { $search: searchQuery }
+	}
+
+	const all_entries = await collection.find(find_q).skip(skip).limit(limit).toArray()
 	return all_entries.map(replaceUuidWithId)
 }
 
