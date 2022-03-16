@@ -1,6 +1,9 @@
 import { Command, ApplicationCommandOptionType } from './api/commands'
 import { Entry, fetchEntries, fetchEntry, countEntries } from '../database/entries'
 import { createSlug } from '../database/index'
+import type {
+	APIEmbed,
+} from 'discord-api-types/payloads/v9'
 
 const BASE_URL = process.env.BASE_URL
 if (!BASE_URL) throw new Error('BASE_URL environment variable not set')
@@ -70,7 +73,7 @@ new Command({
 
 // This command has like 2 million issues, so i have temporaily removed it!
 
-/*new Command({
+new Command({
 	name: 'search',
 	description: 'Search Repldex entries',
 })
@@ -82,6 +85,8 @@ new Command({
 	})
 	.handle(async data => {
 		console.log(data)
+		//query should always be a string. probably a better way to do this
+		if (typeof data.options.query !== "string") throw new Error('Custom ID is invalid')
 		const query: string = data.options.query
 		let entries = await fetchEntries({
 			query: query,
@@ -96,7 +101,7 @@ new Command({
 			},
 		}
 		for (const entry of entries) {
-			embed.fields.push({
+			embed.fields!.push({
 				name: entry.title,
 				value: `[Link](${process.env.BASE_URL}/entry/${entry.slug})`,
 			})
@@ -141,6 +146,12 @@ new Command({
 		//`+` is unary operator that converts to int
 		let page: number = +args[1]
 		const query = args[2]
+		let entries = await fetchEntries({
+			query: query,
+			limit: 0,
+			skip: (page - 1) * 10,
+		})
+		entries = entries.slice(0, 10)
 		if (action == 'back') {
 			page--
 			if (page == 0) {
@@ -152,11 +163,6 @@ new Command({
 				page++
 			}
 		}
-		let entries = await fetchEntries({
-			query: query,
-			limit: 10,
-			skip: (page - 1) * 10,
-		})
 		const embed: APIEmbed = {
 			title: `Search Results for ${query}`,
 			fields: [],
@@ -165,7 +171,7 @@ new Command({
 			},
 		}
 		for (const entry of entries) {
-			embed.fields.push({
+			embed.fields!.push({
 				name: entry.title,
 				value: `[Link](${process.env.BASE_URL}/entry/${entry.slug})`,
 			})
@@ -203,7 +209,7 @@ new Command({
 			],
 			embeds: [embed],
 		}
-	})*/
+	})
 
 new Command({
 	name: 'source',

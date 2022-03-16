@@ -43,7 +43,7 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 				}
 
 			const interactionData: InteractionData<any> = {
-				options: (Array = {}),
+				options: {},
 			}
 
 			const getChannel = (id: string): APIInteractionDataResolvedChannel | null =>
@@ -89,11 +89,16 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 
 		// MessageComponent
 		case 3: {
+			if (!data.data.custom_id) {
+				throw new Error('No custom id for component')
+			}
+			const command = commands.commands.find(c => c.name === data.data.custom_id.split('-')[0]);
+			if (!command) {
+				throw new Error('Command not found - message component')
+			}
 			return {
 				type: 7,
-				data: commands.commands
-					.find(c => c.name === data.data.custom_id!.split('-')[0])
-					.componentHandler(data.data.custom_id!.split('-').slice(1)),
+				data: await command.comHandler(data.data.custom_id.split('-').slice(1)),
 			}
 		}
 

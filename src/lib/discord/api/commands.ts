@@ -68,7 +68,8 @@ export class Command<T extends APIApplicationCommandOption[] = []> {
 	handler: (
 		interaction: InteractionData<T>
 	) => APIInteractionResponseCallbackData | Promise<APIInteractionResponseCallbackData>
-	componentHandler: (
+	//comHandler = componentHandler
+	comHandler: (
 		args: string[]
 	) => APIInteractionResponseCallbackData | Promise<APIInteractionResponseCallbackData>
 
@@ -97,12 +98,11 @@ export class Command<T extends APIApplicationCommandOption[] = []> {
 		return this as unknown as Command<[...T]>
 	}
 
-	handleComponents(componentHandler: typeof this.comHandler): Command<[...T]> {
-		comHandler.componentHandler = componentHandler
+	handleComponents(comHandler: typeof this.comHandler): Command<[...T]> {
+		this.comHandler = comHandler
 		console.log('added component handler')
 		return this as unknown as Command<[...T]>
 	}
 }
 
-//???
 import '../bot'
