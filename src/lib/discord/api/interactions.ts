@@ -92,7 +92,7 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 			if (!data.data.custom_id) {
 				throw new Error('No custom id for component')
 			}
-			const command = commands.commands.find(c => c.name === data.data.custom_id.split('-')[0]);
+			const command = commands.commands.find(c => c.name === data.data.custom_id.split('-')[0])
 			if (!command) {
 				throw new Error('Command not found - message component')
 			}

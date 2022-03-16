@@ -1,9 +1,7 @@
 import { Command, ApplicationCommandOptionType } from './api/commands'
 import { Entry, fetchEntries, fetchEntry, countEntries } from '../database/entries'
 import { createSlug } from '../database/index'
-import type {
-	APIEmbed,
-} from 'discord-api-types/payloads/v9'
+import type { APIEmbed } from 'discord-api-types/payloads/v9'
 
 const BASE_URL = process.env.BASE_URL
 if (!BASE_URL) throw new Error('BASE_URL environment variable not set')
@@ -21,7 +19,7 @@ new Command({
 	.handle(async i => {
 		const name: string = i.options.name
 		const entry: Entry | null = await fetchEntry(createSlug(name))
-		
+
 		if (!entry) {
 			return {
 				content: `Requested entry "${name}" does not exist, or is unavailable.`,
@@ -58,7 +56,7 @@ new Command({
 		skip: Math.floor(Math.random() * entryCount),
 	})
 	const entry = entries[Math.floor(Math.random() * entries.length)]
-	
+
 	return {
 		embeds: [
 			{
@@ -86,9 +84,9 @@ new Command({
 	.handle(async data => {
 		console.log(data)
 		//query should always be a string. probably a better way to do this
-		if (typeof data.options.query !== "string") throw new Error('Custom ID is invalid')
+		if (typeof data.options.query !== 'string') throw new Error('Custom ID is invalid')
 		const query: string = data.options.query
-		let entries = await fetchEntries({
+		const entries = await fetchEntries({
 			query: query,
 			limit: 10,
 			skip: 0,

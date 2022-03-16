@@ -33,21 +33,33 @@ interface FetchEntriesOptions extends FilterEntriesOptions {
  * Fetch a number of entries
  */
 export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[]> {
-	const collection = await getCollection()
-	const entries = await collection
-		.find({
-			visibility: {
-				$in: [
-					options.visible ?? true ? 'visible' : undefined,
-					options.unlisted ?? false ? 'unlisted' : undefined,
-					options.hidden ?? false ? 'hidden' : undefined,
-				].filter(Boolean) as Visibility[],
-			},
-		})
-		.skip(options.skip)
-		.limit(options.limit)
+	const collection = await getCollection();
+	const searchQuery: String = options.query
+	const skip = options.skip
+	const limit: Number = options.limit
+	
+	collection.createIndex( { title: "text", content: "text" } )
+	const find_q = {
+		visibility: {
+			$in: [
+				options.visible ?? true ? 'visible' : undefined,
+				options.unlisted ?? false ? 'unlisted' : undefined,
+				options.hidden ?? false ? 'hidden' : undefined,
+			].filter(Boolean) as Visibility[],
+		},
+	}
+	
+	if (searchQuery) {
+		find_q['$text'] = { "$search": searchQuery }
+	}
+	
+	const all_entries = await collection
+		.find(find_q)
+		.skip(skip)
+		.limit(limit)
 		.toArray()
-	return entries.map(replaceUuidWithId)
+
+	return all_entries.map(replaceUuidWithId)
 }
 
 /**
