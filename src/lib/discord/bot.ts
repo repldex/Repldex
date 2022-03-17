@@ -146,10 +146,9 @@ new Command({
 		const query = args[2]
 		let entries = await fetchEntries({
 			query: query,
-			limit: 0,
+			limit: 10,
 			skip: (page - 1) * 10,
 		})
-		entries = entries.slice(0, 10)
 		if (action == 'back') {
 			page--
 			if (page == 0) {
@@ -165,7 +164,7 @@ new Command({
 			title: `Search Results for ${query}`,
 			fields: [],
 			footer: {
-				text: `Page ${String(page)}`,
+				text: `Page ${page}`,
 			},
 		}
 		for (const entry of entries) {

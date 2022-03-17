@@ -40,7 +40,7 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
 
 	collection.createIndex({ title: 'text', content: 'text' })
 
-	const find_q = {
+	const searchFilter = {
 		visibility: {
 			$in: [
 				options.visible ?? true ? 'visible' : undefined,
@@ -51,11 +51,11 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
 	}
 
 	if (searchQuery) {
-		find_q['$text'] = { $search: searchQuery }
+		searchFilter['$text'] = { $search: searchQuery }
 	}
 
-	const all_entries = await collection.find(find_q).skip(skip).limit(limit).toArray()
-	return all_entries.map(replaceUuidWithId)
+	const foundEntries = await collection.find(searchFilter).skip(skip).limit(limit).toArray()
+	return foundEntries.map(replaceUuidWithId)
 }
 
 /**
