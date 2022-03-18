@@ -6,6 +6,7 @@ import {
 	ApplicationCommandOptionType,
 	APIInteractionDataResolvedGuildMember,
 	APIUser,
+	InteractionResponseType,
 } from 'discord-api-types/payloads/v9'
 import type { InteractionData } from './commands'
 import { verifyKey } from 'discord-interactions'
@@ -99,7 +100,7 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 				throw new Error('Command not found - message component')
 			}
 			return {
-				type: 7,
+				type: InteractionResponseType.UpdateMessage,
 				data: await command.componentHandler(data.data.custom_id.split('-').slice(1)),
 			}
 		}

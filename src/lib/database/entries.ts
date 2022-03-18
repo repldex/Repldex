@@ -52,8 +52,8 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
 				options.hidden ?? false ? 'hidden' : undefined,
 			].filter(Boolean) as Visibility[],
 		},
-		$text: searchQuery ? { $search: searchQuery } : undefined,
 	}
+	if (searchQuery) searchFilter.$text = { $search: searchQuery }
 
 	const foundEntries = await collection.find(searchFilter).skip(skip).limit(limit).toArray()
 	return foundEntries.map(replaceUuidWithId)
