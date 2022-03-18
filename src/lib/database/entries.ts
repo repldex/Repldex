@@ -86,7 +86,9 @@ export async function editEntry(
 /**
  * Create an entry
  */
-export async function createEntry(entry: Omit<Entry, 'id' | 'createdAt'>): Promise<Entry | null> {
+export async function createEntry(
+	entry: Omit<Entry, 'id' | 'createdAt' | 'editedAt'>
+): Promise<Entry | null> {
 	const collection = await getCollection()
 	const entryId = createUuid()
 
@@ -95,6 +97,7 @@ export async function createEntry(entry: Omit<Entry, 'id' | 'createdAt'>): Promi
 		...entry,
 		_id: entryId,
 		createdAt: new Date(),
+		editedAt: new Date(),
 	}
 
 	// insert the entry into the database
