@@ -1,5 +1,5 @@
-import type { Collection } from 'mongodb'
 import { createUuid, getDatabase, ReplaceIdWithUuid, replaceUuidWithId } from '.'
+import type { Collection, Filter } from 'mongodb'
 
 export type Visibility = 'visible' | 'unlisted' | 'hidden'
 
@@ -44,7 +44,7 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
 	const skip = options.skip
 	const limit = options.limit
 
-	const searchFilter = {
+	const searchFilter: Filter<ReplaceIdWithUuid<Entry>> = {
 		visibility: {
 			$in: [
 				options.visible ?? true ? 'visible' : undefined,
@@ -52,10 +52,7 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
 				options.hidden ?? false ? 'hidden' : undefined,
 			].filter(Boolean) as Visibility[],
 		},
-	}
-
-	if (searchQuery) {
-		searchFilter['$text'] = { $search: searchQuery }
+		$text: searchQuery ? { $search: searchQuery } : undefined,
 	}
 
 	const foundEntries = await collection.find(searchFilter).skip(skip).limit(limit).toArray()

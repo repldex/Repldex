@@ -2,32 +2,18 @@ import { APPLICATIONS_BASE_API_URL } from './interactions'
 import type {
 	APIApplicationCommandOption,
 	APIInteractionResponseCallbackData,
-} from 'discord-api-types/payloads/v9'
-import type { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/rest/v9'
-import type {
+	ApplicationCommandOptionType,
 	APIInteractionDataResolvedChannel,
 	APIInteractionDataResolvedGuildMember,
 	APIRole,
-} from 'discord-api-types'
+} from 'discord-api-types/payloads/v9'
+import type { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/rest/v9'
 
 // TODO: add subcommand groups https://discord.com/developers/docs/interactions/application-commands#subcommands-and-subcommand-groups
 
 export const commands: Command<any>[] = []
 
 export const GLOBAL_COMMAND_API_URL = `${APPLICATIONS_BASE_API_URL}/commands` as const
-
-export const enum ApplicationCommandOptionType {
-	Subcommand = 1,
-	SubcommandGroup = 2,
-	String = 3,
-	Integer = 4,
-	Boolean = 5,
-	User = 6,
-	Channel = 7,
-	Role = 8,
-	Mentionable = 9,
-	Number = 10,
-}
 
 // we don't want the user to have to specify the type here
 type CommandOptions = Omit<RESTPostAPIChatInputApplicationCommandsJSONBody, 'type'>
@@ -68,7 +54,6 @@ export class Command<T extends APIApplicationCommandOption[] = []> {
 	handler: (
 		interaction: InteractionData<T>
 	) => APIInteractionResponseCallbackData | Promise<APIInteractionResponseCallbackData>
-	//comHandler = componentHandler
 	componentHandler: (
 		args: string[]
 	) => APIInteractionResponseCallbackData | Promise<APIInteractionResponseCallbackData>
@@ -95,7 +80,7 @@ export class Command<T extends APIApplicationCommandOption[] = []> {
 		this.handler = handler
 		commands.push(this)
 		console.log('added command')
-		return this as unknown as Command<T>
+		return this
 	}
 
 	handleComponents(componentHandler: typeof this.componentHandler): Command<T> {

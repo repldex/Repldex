@@ -1,12 +1,14 @@
-import type {
+import {
 	APIInteraction,
 	APIInteractionDataResolvedChannel,
 	APIInteractionResponse,
 	APIRole,
+	ApplicationCommandOptionType,
+	APIInteractionDataResolvedGuildMember,
+	APIUser,
 } from 'discord-api-types/payloads/v9'
-import { ApplicationCommandOptionType, InteractionData } from './commands'
+import type { InteractionData } from './commands'
 import { verifyKey } from 'discord-interactions'
-import type { APIInteractionDataResolvedGuildMember, APIUser } from 'discord-api-types'
 
 export const APPLICATIONS_BASE_API_URL =
 	`https://discord.com/api/v9/applications/${process.env.DISCORD_CLIENT_ID}` as const
@@ -42,7 +44,7 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 					data: { content: 'Unknown command' },
 				}
 
-			const interactionData: InteractionData<any> = {
+			const interactionData: InteractionData<[]> = {
 				options: {},
 			}
 

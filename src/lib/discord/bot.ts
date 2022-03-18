@@ -1,7 +1,13 @@
-import { Command, ApplicationCommandOptionType } from './api/commands'
+import { Command } from './api/commands'
 import { Entry, fetchEntries, fetchEntry, countEntries } from '../database/entries'
 import { createSlug } from '../database/index'
-import type { APIEmbed } from 'discord-api-types/payloads/v9'
+import {
+	APIEmbed,
+	APIInteractionResponseCallbackData,
+	ApplicationCommandOptionType,
+	ButtonStyle,
+	ComponentType,
+} from 'discord-api-types/payloads/v9'
 
 const BASE_URL = process.env.BASE_URL
 if (!BASE_URL) throw new Error('BASE_URL environment variable not set')
@@ -61,13 +67,71 @@ new Command({
 		embeds: [
 			{
 				title: entry.title,
-				url: `${process.env.BASE_URL}/entry/${entry.slug}`,
+				url: `${BASE_URL}/entry/${entry.slug}`,
 				description: entry.content,
 				color: 0x650ac9,
 			},
 		],
 	}
 })
+
+async function createSearchResult(
+	query: string,
+	page: number
+): Promise<APIInteractionResponseCallbackData> {
+	const entryCount = await countEntries()
+
+	const entries = await fetchEntries({
+		query: query,
+		limit: 10,
+		skip: (page - 1) * 10,
+	})
+	let description = ''
+	let entryNum = 0
+	for (const entry of entries) {
+		entryNum = entryNum + 1
+		description += `${entryNum}) [${entry.title}](${BASE_URL}/entry/${entry.slug})\n`
+	}
+	const embed: APIEmbed = {
+		title: `Search Results for ${query}`,
+		description: entries.length > 0 ? description : 'No results found.',
+		footer: {
+			text: `Page ${page}`,
+		},
+	}
+	return {
+		components: [
+			{
+				// buttons must be in an action row.... why? blame discord
+				type: ComponentType.ActionRow,
+				components: [
+					{
+						type: ComponentType.Button,
+						style: ButtonStyle.Primary,
+						label: 'Back',
+						emoji: {
+							name: '◀️',
+						},
+						// command-button-page-query
+						custom_id: `search-back-${page}-${query}`,
+						disabled: page === 1,
+					},
+					{
+						type: ComponentType.Button,
+						style: ButtonStyle.Primary,
+						label: 'Forward',
+						emoji: {
+							name: '▶️',
+						},
+						custom_id: `search-format-${page}-${query}`,
+						disabled: page === Math.ceil(entryCount / 10),
+					},
+				],
+			},
+		],
+		embeds: [embed],
+	}
+}
 
 new Command({
 	name: 'search',
@@ -83,135 +147,27 @@ new Command({
 		// query should always be a string. probably a better way to do this
 		if (typeof data.options.query !== 'string') throw new Error('Custom ID is invalid')
 		const query: string = data.options.query
-		const entries = await fetchEntries({
-			query: query,
-			limit: 10,
-			skip: 0,
-		})
 
-		let description = ''
-		let entryNum = 0
-		for (const entry of entries) {
-			entryNum = entryNum + 1
-			description =
-				description + `${entryNum}) [${entry.title}](${process.env.BASE_URL}/entry/${entry.slug})\n`
-		}
-		const embed: APIEmbed = {
-			title: `Search Results for ${query}`,
-			description: description,
-			footer: {
-				text: 'Page 1',
-			},
-		}
-		// note: as of now buttons just sit around. clicking on them does not do anything
-		return {
-			components: [
-				{
-					// buttons must be in an action row.... why? blame discord
-					type: 1,
-					components: [
-						{
-							//type 2 = button
-							type: 2,
-							style: 1,
-							label: 'Back',
-							emoji: {
-								//id: null,
-								name: '◀️',
-							},
-							//command-button-page-query
-							custom_id: `search-back-1-${query}`,
-						},
-						{
-							type: 2,
-							style: 1,
-							label: 'Forward',
-							emoji: {
-								//id: null,
-								name: '▶️',
-							},
-							custom_id: `search-forward-1-${query}`,
-						},
-					],
-				},
-			],
-			embeds: [embed],
-		}
+		return await createSearchResult(query, 1)
 	})
 	.handleComponents(async args => {
 		const action = args[0]
-		//`+` is unary operator that converts to int
-		let page: number = +args[1]
+		let page = parseInt(args[1])
 		const query = args[2]
-		const entries = await fetchEntries({
-			query: query,
-			limit: 10,
-			skip: (page - 1) * 10,
-		})
+
 		if (action == 'back') {
 			page--
-			if (page == 0) {
-				page = 1
-			}
 		} else if (action == 'forward') {
-			const max_pages = Math.ceil(entries.length / 10)
-			if (!(page + 1 > max_pages)) {
-				page++
-			}
+			page++
 		}
-		let description = ''
-		let entryNum = 0
-		for (const entry of entries) {
-			entryNum = entryNum + 1
-			description =
-				description + `${entryNum}) [${entry.title}](${process.env.BASE_URL}/entry/${entry.slug})\n`
-		}
-		const embed: APIEmbed = {
-			title: `Search Results for ${query}`,
-			description: description,
-			footer: {
-				text: `Page ${page}`,
-			},
-		}
-		return {
-			components: [
-				{
-					//buttons must be in an action row.... why? blame discord
-					type: 1,
-					components: [
-						{
-							//type 2 = button
-							type: 2,
-							style: 1,
-							label: 'Back',
-							emoji: {
-								id: null,
-								name: '◀️',
-							},
-							//command-button-page-query
-							custom_id: `search-back-${String(page)}-${query}`,
-						},
-						{
-							type: 2,
-							style: 1,
-							label: 'Forward',
-							emoji: {
-								id: null,
-								name: '▶️',
-							},
-							custom_id: `search-format-${String(page)}-${query}`,
-						},
-					],
-				},
-			],
-			embeds: [embed],
-		}
+
+		return await createSearchResult(query, page)
 	})
 
 new Command({
 	name: 'source',
 	description: 'Get a link to the source code of Repldex',
-}).handle(data => {
+}).handle(_data => {
 	return {
 		embeds: [
 			{
