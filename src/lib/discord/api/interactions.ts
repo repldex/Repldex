@@ -1,12 +1,15 @@
-import type {
+import {
 	APIInteraction,
 	APIInteractionDataResolvedChannel,
 	APIInteractionResponse,
 	APIRole,
+	ApplicationCommandOptionType,
+	APIInteractionDataResolvedGuildMember,
+	APIUser,
+	InteractionResponseType,
 } from 'discord-api-types/payloads/v9'
-import { ApplicationCommandOptionType, InteractionData } from './commands'
+import type { InteractionData } from './commands'
 import { verifyKey } from 'discord-interactions'
-import type { APIInteractionDataResolvedGuildMember, APIUser } from 'discord-api-types'
 
 export const APPLICATIONS_BASE_API_URL =
 	`https://discord.com/api/v9/applications/${process.env.DISCORD_CLIENT_ID}` as const
@@ -30,10 +33,10 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 		// Ping
 		case 1:
 			return {
-				// pong
+				// Pong!
 				type: 1,
 			}
-		// ApplicationCommand
+		// Application Command
 		case 2: {
 			const matchingCommand = commands.commands.find(c => c.name === data.data.name)
 			if (!matchingCommand)
@@ -42,7 +45,7 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 					data: { content: 'Unknown command' },
 				}
 
-			const interactionData: InteractionData<any> = {
+			const interactionData: InteractionData<[]> = {
 				options: {},
 			}
 
@@ -58,25 +61,27 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 			}
 
 			// we have to do "as any" because the typings are wrong
-			for (const option of (data.data as any).options) {
-				let resolved = option.value
-				switch (option.type) {
-					case ApplicationCommandOptionType.Channel:
-						// the typings do not include channels, they are wrong
-						resolved = getChannel(option.value)
-						break
-					case ApplicationCommandOptionType.Mentionable:
-						// the typings do not include channels, they are wrong
-						resolved = getRole(option.value) ?? getChannel(option.value)
-						break
-					case ApplicationCommandOptionType.Role:
-						resolved = getRole(option.value)
-						break
-					case ApplicationCommandOptionType.User:
-						resolved = getMember(option.value)
-						break
+			if ('options' in data.data) {
+				for (const option of (data.data as any).options) {
+					let resolved = option.value
+					switch (option.type) {
+						case ApplicationCommandOptionType.Channel:
+							// the typings do not include channels, they are wrong
+							resolved = getChannel(option.value)
+							break
+						case ApplicationCommandOptionType.Mentionable:
+							// the typings do not include channels, they are wrong
+							resolved = getRole(option.value) ?? getChannel(option.value)
+							break
+						case ApplicationCommandOptionType.Role:
+							resolved = getRole(option.value)
+							break
+						case ApplicationCommandOptionType.User:
+							resolved = getMember(option.value)
+							break
+					}
+					interactionData.options[option.name] = resolved
 				}
-				interactionData.options[option.name] = resolved
 			}
 
 			return {
@@ -84,9 +89,22 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 				data: await matchingCommand.handler(interactionData),
 			}
 		}
+
 		// MessageComponent
-		// case 3:
-		// 	return {}
+		case 3: {
+			if (!data.data.custom_id) {
+				throw new Error('No custom id for component')
+			}
+			const command = commands.commands.find(c => c.name === data.data.custom_id.split('-')[0])
+			if (!command) {
+				throw new Error('Command not found - message component')
+			}
+			return {
+				type: InteractionResponseType.UpdateMessage,
+				data: await command.componentHandler(data.data.custom_id.split('-').slice(1)),
+			}
+		}
+
 		default:
 			throw new Error('Unknown interaction type')
 	}

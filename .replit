@@ -7,6 +7,10 @@ language = "nodejs"
 [packager.features]
 packageSearch = true
 guessImports = false
+enabledForHosting = true
+
+[unitTest]
+language = "nodejs"
 
 [languages.svelte]
 pattern = "**/*.svelte"

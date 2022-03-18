@@ -1,7 +1,6 @@
 import adapter from '@sveltejs/adapter-auto'
 import preprocess from 'svelte-preprocess'
 import dotenv from 'dotenv'
-
 dotenv.config()
 
 /** @type {import('@sveltejs/kit').Config} */
