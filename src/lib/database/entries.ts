@@ -10,6 +10,7 @@ export interface Entry {
 	slug: string
 	visibility: Visibility
 	createdAt: Date
+	editedAt: Date
 }
 
 async function getCollection(): Promise<Collection<ReplaceIdWithUuid<Entry>>> {
@@ -44,6 +45,7 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
 				].filter(Boolean) as Visibility[],
 			},
 		})
+		.sort({ editedAt: -1 })
 		.skip(options.skip)
 		.limit(options.limit)
 		.toArray()
@@ -74,7 +76,7 @@ export async function editEntry(
 	const collection = await getCollection()
 	const result = await collection.findOneAndUpdate(
 		{ _id: createUuid(entryId) },
-		{ $set: entry },
+		{ $set: { ...entry, editedAt: new Date() } },
 		{ returnDocument: 'after' }
 	)
 
