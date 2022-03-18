@@ -12,9 +12,15 @@ export interface Entry {
 	createdAt: Date
 }
 
+let triedCreatingSearchIndex = false
 async function getCollection(): Promise<Collection<ReplaceIdWithUuid<Entry>>> {
 	const db = await getDatabase()
-	return db.collection('entries')
+	const coll: Collection<ReplaceIdWithUuid<Entry>> = db.collection('entries')
+	if (!triedCreatingSearchIndex) {
+		triedCreatingSearchIndex = true
+		await coll.createIndex({ title: 'text', content: 'text' })
+	}
+	return coll
 }
 
 interface FilterEntriesOptions {
@@ -37,8 +43,6 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
 	const searchQuery = options.query
 	const skip = options.skip
 	const limit = options.limit
-
-	collection.createIndex({ title: 'text', content: 'text' })
 
 	const searchFilter = {
 		visibility: {
