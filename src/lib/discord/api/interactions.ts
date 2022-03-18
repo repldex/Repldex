@@ -98,7 +98,7 @@ export async function handleInteraction(data: APIInteraction): Promise<APIIntera
 			}
 			return {
 				type: 7,
-				data: await command.comHandler(data.data.custom_id.split('-').slice(1)),
+				data: await command.componentHandler(data.data.custom_id.split('-').slice(1)),
 			}
 		}
 
