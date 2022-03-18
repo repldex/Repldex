@@ -6,6 +6,7 @@ import type { APIEmbed } from 'discord-api-types/payloads/v9'
 const BASE_URL = process.env.BASE_URL
 if (!BASE_URL) throw new Error('BASE_URL environment variable not set')
 
+// NOTE: run `npm run register-commands` in shell, everytime you make a change a commands metadata such as name, description and choices
 new Command({
 	name: 'entry',
 	description: 'View a Repldex entry',
@@ -79,7 +80,7 @@ new Command({
 		required: true,
 	} as const)
 	.handle(async data => {
-		//query should always be a string. probably a better way to do this
+		// query should always be a string. probably a better way to do this
 		if (typeof data.options.query !== 'string') throw new Error('Custom ID is invalid')
 		const query: string = data.options.query
 		const entries = await fetchEntries({
@@ -100,11 +101,11 @@ new Command({
 				value: `[Link](${process.env.BASE_URL}/entry/${entry.slug})`,
 			})
 		}
-		//note: as of now buttons just sit around. clicking on them does not do anything
+		// note: as of now buttons just sit around. clicking on them does not do anything
 		return {
 			components: [
 				{
-					//buttons must be in an action row.... why? blame discord
+					// buttons must be in an action row.... why? blame discord
 					type: 1,
 					components: [
 						{
