@@ -16,8 +16,8 @@ new Command({
 		type: ApplicationCommandOptionType.String,
 		required: true,
 	} as const)
-	.handle(async i => {
-		const name: string = i.options.name
+	.handle(async data => {
+		const name: string = data.options.name
 		const entry: Entry | null = await fetchEntry(createSlug(name))
 		if (!entry) {
 			return {
@@ -48,7 +48,7 @@ new Command({
 new Command({
 	name: 'random',
 	description: 'View a random Repldex entry',
-}).handle(async data => {
+}).handle(async _data => {
 	const entryCount: number = await countEntries()
 	const entries = await fetchEntries({
 		limit: 1,
@@ -78,7 +78,7 @@ new Command({
 		type: ApplicationCommandOptionType.String,
 		required: true,
 	} as const)
-	.handle(async _data => {
+	.handle(async data => {
 		//query should always be a string. probably a better way to do this
 		if (typeof data.options.query !== 'string') throw new Error('Custom ID is invalid')
 		const query: string = data.options.query
