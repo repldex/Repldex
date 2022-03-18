@@ -88,18 +88,20 @@ new Command({
 			limit: 10,
 			skip: 0,
 		})
+
+		let description = ''
+		let entryNum = 0
+		for (const entry of entries) {
+			entryNum = entryNum + 1
+			description =
+				description + `[${entryNum}. ${entry.title}](${process.env.BASE_URL}/entry/${entry.slug})\n`
+		}
 		const embed: APIEmbed = {
 			title: `Search Results for ${query}`,
-			fields: [],
+			description: description,
 			footer: {
 				text: 'Page 1',
 			},
-		}
-		for (const entry of entries) {
-			embed.fields!.push({
-				name: entry.title,
-				value: `[Link](${process.env.BASE_URL}/entry/${entry.slug})`,
-			})
 		}
 		// note: as of now buttons just sit around. clicking on them does not do anything
 		return {
@@ -157,18 +159,19 @@ new Command({
 				page++
 			}
 		}
+		let description = ''
+		let entryNum = 0
+		for (const entry of entries) {
+			entryNum = entryNum + 1
+			description =
+				description + `[${entryNum}. ${entry.title}](${process.env.BASE_URL}/entry/${entry.slug})\n`
+		}
 		const embed: APIEmbed = {
 			title: `Search Results for ${query}`,
-			fields: [],
+			description: description,
 			footer: {
 				text: `Page ${page}`,
 			},
-		}
-		for (const entry of entries) {
-			embed.fields!.push({
-				name: entry.title,
-				value: `[Link](${process.env.BASE_URL}/entry/${entry.slug})`,
-			})
 		}
 		return {
 			components: [
