@@ -1,4 +1,4 @@
-name: Code Analysis
+name: CI
 
 on:
   push:

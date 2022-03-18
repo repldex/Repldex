@@ -19,7 +19,6 @@ new Command({
 	.handle(async i => {
 		const name: string = i.options.name
 		const entry: Entry | null = await fetchEntry(createSlug(name))
-
 		if (!entry) {
 			return {
 				content: `Requested entry "${name}" does not exist, or is unavailable.`,
@@ -69,8 +68,6 @@ new Command({
 	}
 })
 
-// This command has like 2 million issues, so i have temporaily removed it!
-
 new Command({
 	name: 'search',
 	description: 'Search Repldex entries',
@@ -80,9 +77,8 @@ new Command({
 		description: 'Query to search for',
 		type: ApplicationCommandOptionType.String,
 		required: true,
-	})
-	.handle(async data => {
-		console.log(data)
+	} as const)
+	.handle(async _data => {
 		//query should always be a string. probably a better way to do this
 		if (typeof data.options.query !== 'string') throw new Error('Custom ID is invalid')
 		const query: string = data.options.query
@@ -117,7 +113,7 @@ new Command({
 							style: 1,
 							label: 'Back',
 							emoji: {
-								id: null,
+								//id: null,
 								name: '◀️',
 							},
 							//command-button-page-query
@@ -128,7 +124,7 @@ new Command({
 							style: 1,
 							label: 'Forward',
 							emoji: {
-								id: null,
+								//id: null,
 								name: '▶️',
 							},
 							custom_id: `search-forward-1-${query}`,
@@ -144,7 +140,7 @@ new Command({
 		//`+` is unary operator that converts to int
 		let page: number = +args[1]
 		const query = args[2]
-		let entries = await fetchEntries({
+		const entries = await fetchEntries({
 			query: query,
 			limit: 10,
 			skip: (page - 1) * 10,
