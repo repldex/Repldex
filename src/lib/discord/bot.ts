@@ -94,7 +94,10 @@ new Command({
 		for (const entry of entries) {
 			entryNum = entryNum + 1
 			description =
-				description + `${entryNum}) [${entry.title.replaceAll('[', '[[').replaceAll(']', ']]')}](${process.env.BASE_URL}/entry/${entry.slug})\n`
+				description +
+				`${entryNum}) [${entry.title.replaceAll('[', '[[').replaceAll(']', ']]')}](${
+					process.env.BASE_URL
+				}/entry/${entry.slug})\n`
 		}
 		const embed: APIEmbed = {
 			title: `Search Results for ${query}`,
@@ -164,7 +167,10 @@ new Command({
 		for (const entry of entries) {
 			entryNum = entryNum + 1
 			description =
-				description + `${entryNum}) [${entry.title.replaceAll('[', '[[').replaceAll(']', ']]')}](${process.env.BASE_URL}/entry/${entry.slug})\n`
+				description +
+				`${entryNum}) [${entry.title.replaceAll('[', '[[').replaceAll(']', ']]')}](${
+					process.env.BASE_URL
+				}/entry/${entry.slug})\n`
 		}
 		const embed: APIEmbed = {
 			title: `Search Results for ${query}`,
