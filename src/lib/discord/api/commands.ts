@@ -11,7 +11,7 @@ import type { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-ap
 
 // TODO: add subcommand groups https://discord.com/developers/docs/interactions/application-commands#subcommands-and-subcommand-groups
 
-export const commands: Command<any>[] = []
+export const commands: Command[] = []
 
 export const GLOBAL_COMMAND_API_URL = `${APPLICATIONS_BASE_API_URL}/commands` as const
 
@@ -86,7 +86,7 @@ export class Command<T extends APIApplicationCommandOption[] = []> {
 	handleComponents(componentHandler: typeof this.componentHandler): Command<T> {
 		this.componentHandler = componentHandler
 		console.log('added component handler')
-		return this as unknown as Command<T>
+		return this
 	}
 }
 

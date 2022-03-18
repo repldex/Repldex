@@ -15,7 +15,7 @@ export interface Entry {
 let triedCreatingSearchIndex = false
 async function getCollection(): Promise<Collection<ReplaceIdWithUuid<Entry>>> {
 	const db = await getDatabase()
-	const coll: Collection<ReplaceIdWithUuid<Entry>> = db.collection('entries')
+	const coll = db.collection<ReplaceIdWithUuid<Entry>>('entries')
 	if (!triedCreatingSearchIndex) {
 		triedCreatingSearchIndex = true
 		await coll.createIndex({ title: 'text', content: 'text' })

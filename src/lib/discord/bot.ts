@@ -12,7 +12,7 @@ import {
 const BASE_URL = process.env.BASE_URL
 if (!BASE_URL) throw new Error('BASE_URL environment variable not set')
 
-// NOTE: run `npm run register-commands` in shell, everytime you make a change a commands metadata such as name, description and choices
+// NOTE: run `npm run register-commands` any time you make a change a command's metadata such as name, description, or choices
 new Command({
 	name: 'entry',
 	description: 'View a Repldex entry',
@@ -135,7 +135,7 @@ async function createSearchResult(
 
 new Command({
 	name: 'search',
-	description: 'Search Repldex entries',
+	description: 'Search for Repldex entries',
 })
 	.addOption({
 		name: 'query',
