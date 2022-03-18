@@ -54,7 +54,7 @@ new Command({
 		limit: 1,
 		skip: Math.floor(Math.random() * entryCount),
 	})
-	const entry = entries[Math.floor(Math.random() * entries.length)]
+	const entry = entries[0]
 
 	return {
 		embeds: [

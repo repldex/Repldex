@@ -69,7 +69,7 @@ export class Command<T extends APIApplicationCommandOption[] = []> {
 		interaction: InteractionData<T>
 	) => APIInteractionResponseCallbackData | Promise<APIInteractionResponseCallbackData>
 	//comHandler = componentHandler
-	comHandler: (
+	componentHandler: (
 		args: string[]
 	) => APIInteractionResponseCallbackData | Promise<APIInteractionResponseCallbackData>
 
@@ -91,17 +91,17 @@ export class Command<T extends APIApplicationCommandOption[] = []> {
 	}
 
 	// have it return the command so these can be chained eg .handle().handleComponents()
-	handle(handler: typeof this.handler): Command<[...T]> {
+	handle(handler: typeof this.handler): Command<[T]> {
 		this.handler = handler
 		commands.push(this)
 		console.log('added command')
-		return this as unknown as Command<[...T]>
+		return this as unknown as Command<[T]>
 	}
 
-	handleComponents(comHandler: typeof this.comHandler): Command<[...T]> {
-		this.comHandler = comHandler
+	handleComponents(componentHandler: typeof this.componentHandler): Command<[T]> {
+		this.componentHandler = componentHandler
 		console.log('added component handler')
-		return this as unknown as Command<[...T]>
+		return this as unknown as Command<[T]>
 	}
 }
 
