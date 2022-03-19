@@ -10,6 +10,7 @@ export const get: RequestHandler = async req => {
 	const showVisible = req.url.searchParams.get('visible') !== 'false'
 	const showUnlisted = req.url.searchParams.get('unlisted') === 'true'
 	const showHidden = req.url.searchParams.get('hidden') === 'true'
+	const tags = req.url.searchParams.get('tags')?.split(',')
 
 	const user = req.locals.user ? await fetchUser({ id: req.locals.user.id }) : null
 
@@ -29,6 +30,7 @@ export const get: RequestHandler = async req => {
 		visible: showVisible,
 		unlisted: showUnlisted,
 		hidden: showHidden,
+		tags: tags,
 	})
 
 	return {
