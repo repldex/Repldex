@@ -35,7 +35,7 @@
 	let entryTitle = ''
 	let entryContent = ''
 	let entryTags = []
-	
+
 	// automatically update the page title
 	let pageTitle = 'Create entry'
 	$: {
@@ -91,7 +91,7 @@
 				<TextInput bind:value={entryTitle} />
 			</Labelled>
 		</div>
-			
+
 		<Labelled text="Content">
 			<MarkdownEditor bind:value={entryContent} />
 		</Labelled>
@@ -101,7 +101,7 @@
 				<TextInput bind:value={entryTags} />
 			</Labelled>
 		</div>
-			
+
 		<button on:click={submitEntry}>Submit</button>
 	</div>
 </div>
@@ -121,7 +121,7 @@
 		margin-top: 1rem;
 		margin-bottom: 1rem;
 	}
-	
+
 	/* vertically align */
 	#editor-container {
 		display: grid;

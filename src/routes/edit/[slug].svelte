@@ -104,7 +104,7 @@
 				<TextInput bind:value={entryTags} />
 			</Labelled>
 		</div>
-			
+
 		<button on:click={submitEntry}>Save</button>
 	</div>
 </div>
@@ -124,7 +124,7 @@
 		margin-top: 1rem;
 		margin-bottom: 1rem;
 	}
-	
+
 	/* vertically align */
 	#editor-container {
 		display: grid;

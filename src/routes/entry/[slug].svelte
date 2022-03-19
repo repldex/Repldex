@@ -53,7 +53,7 @@
 		<p class="tag">{tag}</p>
 	{/each}
 {/if}
-	
+
 <h1>{entry.title}</h1>
 <article>{@html markdown.render(entry.content)}</article>
 
@@ -109,11 +109,11 @@
 		h1 {
 			padding-top: 2rem;
 		}
-		
+
 		.entry-nav-links {
 			margin-top: 2rem;
 		}
-		
+
 		.entry-nav-links {
 			left: 1em;
 			margin-right: 0;

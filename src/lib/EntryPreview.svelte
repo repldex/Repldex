@@ -19,7 +19,7 @@
 			<p class="tag">{tag}</p>
 		{/each}
 	{/if}
-	
+
 	<h2 class="entry-preview-title">{entry.title}</h2>
 	<p class="entry-preview-content">{@html markdown.render(entry.content)}</p>
 </a>
@@ -33,7 +33,7 @@
 		color: inherit;
 		text-decoration: none;
 	}
-	
+
 	.entry-preview-content {
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
