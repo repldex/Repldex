@@ -38,6 +38,7 @@
 
 	let entryTitle: string = entry.title
 	let entryContent: string = entry.content
+	let entryTags: string[] = entry.tags
 	let visibility: Visibility = entry.visibility
 
 	// automatically update the page title
@@ -56,6 +57,7 @@
 				id: entry.id,
 				title: entryTitle,
 				content: entryContent,
+				tags: entryTags,
 				visibility: visibility,
 			}),
 		}).then(response => response.json())
@@ -97,6 +99,12 @@
 			<MarkdownEditor bind:value={entryContent} />
 		</Labelled>
 
+		<div class="tags">
+			<Labelled text="Tags (seperated with commas)">
+				<TextInput bind:value={entryTags} />
+			</Labelled>
+		</div>
+			
 		<button on:click={submitEntry}>Save</button>
 	</div>
 </div>
@@ -112,6 +120,11 @@
 		margin-bottom: 1rem;
 	}
 
+	.tags {
+		margin-top: 1rem;
+		margin-bottom: 1rem;
+	}
+	
 	/* vertically align */
 	#editor-container {
 		display: grid;

@@ -47,6 +47,13 @@
 {:else if entry.visibility === 'hidden'}
 	<p class="visibility-warning">Hidden</p>
 {/if}
+
+{#if entry.tags}
+	{#each entry.tags as tag}
+		<p class="tag">{tag}</p>
+	{/each}
+{/if}
+	
 <h1>{entry.title}</h1>
 <article>{@html markdown.render(entry.content)}</article>
 
@@ -77,6 +84,16 @@
 		box-shadow: 0 0 0.5em #0004;
 	}
 
+	.tag {
+		float: right;
+		border: 2px solid var(--alternate-background-color);
+		padding: 0.2rem;
+		border-radius: 0.2rem;
+		margin: 0;
+		margin-top: 3rem;
+		box-shadow: 0 0 0.5em #0004;
+	}
+
 	h1 {
 		margin-top: 3rem;
 	}
@@ -92,9 +109,11 @@
 		h1 {
 			padding-top: 2rem;
 		}
+		
 		.entry-nav-links {
 			margin-top: 2rem;
 		}
+		
 		.entry-nav-links {
 			left: 1em;
 			margin-right: 0;

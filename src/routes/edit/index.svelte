@@ -34,7 +34,8 @@
 
 	let entryTitle = ''
 	let entryContent = ''
-
+	let entryTags = []
+	
 	// automatically update the page title
 	let pageTitle = 'Create entry'
 	$: {
@@ -53,6 +54,7 @@
 			body: JSON.stringify({
 				title: entryTitle,
 				content: entryContent,
+				tags: entryTags,
 				visibility,
 			}),
 		}).then(response => response.json())
@@ -89,10 +91,17 @@
 				<TextInput bind:value={entryTitle} />
 			</Labelled>
 		</div>
+			
 		<Labelled text="Content">
 			<MarkdownEditor bind:value={entryContent} />
 		</Labelled>
 
+		<div class="tags">
+			<Labelled text="Tags (seperated with commas)">
+				<TextInput bind:value={entryTags} />
+			</Labelled>
+		</div>
+			
 		<button on:click={submitEntry}>Submit</button>
 	</div>
 </div>
@@ -108,6 +117,11 @@
 		margin-bottom: 1rem;
 	}
 
+	.tags {
+		margin-top: 1rem;
+		margin-bottom: 1rem;
+	}
+	
 	/* vertically align */
 	#editor-container {
 		display: grid;

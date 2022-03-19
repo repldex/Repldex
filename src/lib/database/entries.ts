@@ -10,6 +10,7 @@ export interface Entry {
 	slug: string
 	visibility: Visibility
 	createdAt: Date
+	tags: string[]
 }
 
 let triedCreatingSearchIndex = false
@@ -33,6 +34,7 @@ interface FilterEntriesOptions {
 interface FetchEntriesOptions extends FilterEntriesOptions {
 	limit: number
 	skip: number
+	tags?: string[]
 }
 
 /**
@@ -43,7 +45,8 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
 	const searchQuery = options.query
 	const skip = options.skip
 	const limit = options.limit
-
+	const tags = options.tags
+	
 	const searchFilter: Filter<ReplaceIdWithUuid<Entry>> = {
 		visibility: {
 			$in: [
@@ -53,8 +56,13 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
 			].filter(Boolean) as Visibility[],
 		},
 	}
+	
 	if (searchQuery) searchFilter.$text = { $search: searchQuery }
 
+	if (tags) {
+		
+	}
+	
 	const foundEntries = await collection.find(searchFilter).skip(skip).limit(limit).toArray()
 	return foundEntries.map(replaceUuidWithId)
 }
@@ -101,7 +109,7 @@ export async function createEntry(entry: Omit<Entry, 'id' | 'createdAt'>): Promi
 	const newEntry: ReplaceIdWithUuid<Entry> = {
 		...entry,
 		_id: entryId,
-		createdAt: new Date(),
+		createdAt: new Date()
 	}
 
 	// insert the entry into the database
