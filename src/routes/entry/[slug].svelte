@@ -81,6 +81,7 @@
 		border-radius: 0.2rem;
 		margin: 0;
 		margin-top: 3rem;
+		margin-left: 5px;
 		box-shadow: 0 0 0.5em #0004;
 	}
 
@@ -91,6 +92,7 @@
 		border-radius: 0.2rem;
 		margin: 0;
 		margin-top: 3rem;
+		margin-left: 5px;
 		box-shadow: 0 0 0.5em #0004;
 	}
 

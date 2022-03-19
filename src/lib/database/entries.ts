@@ -59,9 +59,6 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
 
 	if (searchQuery) searchFilter.$text = { $search: searchQuery }
 
-	if (tags) {
-	}
-
 	const foundEntries = await collection.find(searchFilter).skip(skip).limit(limit).toArray()
 	return foundEntries.map(replaceUuidWithId)
 }

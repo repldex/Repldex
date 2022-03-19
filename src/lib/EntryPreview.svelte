@@ -56,6 +56,7 @@
 		position: relative;
 		top: -0.5em;
 		right: -0.5em;
+		margin-left: 5px;
 		box-shadow: 0 0 0.5em #0004;
 		letter-spacing: 0.05ch;
 	}
@@ -68,7 +69,7 @@
 		margin: 0;
 		position: relative;
 		top: -0.5em;
-		margin-right: 3px;
+		margin-left: 5px;
 		right: -0.5em;
 		box-shadow: 0 0 0.5em #0004;
 		letter-spacing: 0.05ch;
