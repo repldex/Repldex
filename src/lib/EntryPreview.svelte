@@ -13,15 +13,15 @@
 	{:else if entry.visibility === 'hidden'}
 		<p class="visibility-warning">Hidden</p>
 	{/if}
+	
+	<h2 class="entry-preview-title">{entry.title}</h2>
+	<p class="entry-preview-content">{@html markdown.render(entry.content)}</p>
 
 	{#if entry.tags}
 		{#each entry.tags as tag}
 			<p class="tag">{tag}</p>
 		{/each}
 	{/if}
-
-	<h2 class="entry-preview-title">{entry.title}</h2>
-	<p class="entry-preview-content">{@html markdown.render(entry.content)}</p>
 </a>
 
 <style>
@@ -44,7 +44,7 @@
 
 	.entry-preview-title {
 		margin-top: 0;
-		margin-bottom: 0.25em;
+		margin-bottom: 0.15em;
 	}
 
 	.visibility-warning {
@@ -68,7 +68,7 @@
 		border-radius: 0.2rem;
 		margin: 0;
 		position: relative;
-		top: -0.5em;
+		bottom: -0.5em;
 		margin-left: 5px;
 		right: -0.5em;
 		box-shadow: 0 0 0.5em #0004;

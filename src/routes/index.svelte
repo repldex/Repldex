@@ -35,11 +35,27 @@
 	let fetchIndex = 0
 
 	async function updateEntries() {
+		// example search with tags: "selectthegang tag:projects,mobile app"
 		fetchIndex += 1
 		let thisFetchIndex = fetchIndex
-		const res = await fetch(
-			`/api/entries.json?visible=${showVisible}&unlisted=${showUnlisted}&hidden=${showHidden}`
-		)
+		let search_value = (document.getElementById('search') as HTMLInputElement).value || null
+		let tags: string
+
+		if (!search_value) return
+
+		let all = search_value.split(' ');
+		if (search_value.includes('tags:')) {
+			let tags_raw = all.filter(word => word.startsWith('tags:'))[0];
+			// users must use underscores instead of spaces when it comes to tag searches
+			tags = tags_raw.slice(5).replaceAll('_', '%20');
+		}
+
+		const query: string = all.filter(word => !word.startsWith('tags:')).join(' ') //|| ""
+		let url = `/api/entries.json?visible=${showVisible}&unlisted=${showUnlisted}&hidden=${showHidden}&query=${query}`
+		if (tags) {
+			url += `&tags=${tags}`
+		}
+		const res = await fetch(url)
 		const newEntries = await res.json()
 
 		if (thisFetchIndex === fetchIndex) entries = newEntries
@@ -60,7 +76,7 @@
 
 	<span class="title-text">Repldex</span>
 </h1>
-
+	
 {#if canShowUnlisted}
 	<div class="visibility-toggles-container">
 		<Labelled text="Filter">
@@ -84,12 +100,16 @@
 	</div>
 {/if}
 
+<div class="searchbar-container">
+	<input type="text" id="search" class="search" placeholder="Search" on:input={updateEntries}>
+</div>
+
 <div class="entry-list">
 	{#each entries as entry}
 		<EntryPreview {entry} />
 	{/each}
 </div>
-
+	
 <style>
 	.entry-list {
 		display: grid;
@@ -118,6 +138,7 @@
 		top: 0.15em;
 	}
 
+	/* Visibility */
 	.visibility-toggles-container {
 		width: 100%;
 		display: block;
@@ -125,6 +146,7 @@
 		display: flex;
 		justify-content: flex-end;
 	}
+	
 	.visibility-toggles {
 		border-radius: 0.5em;
 		white-space: normal;
@@ -136,9 +158,11 @@
 		box-shadow: 0 0 0.5em #0004;
 		letter-spacing: 0.05ch;
 	}
+	
 	.visibility-toggles input[type='checkbox'] {
 		display: none;
 	}
+	
 	.visibility-toggles > label > span {
 		background-color: var(--background-color);
 		padding: 0.5rem;
@@ -148,6 +172,7 @@
 		display: inline-block;
 		transition: background-color 100ms;
 	}
+	
 	.visibility-toggles input[type='checkbox']:checked ~ span {
 		background-color: var(--alternate-background-color);
 		color: var(--bright-text-color);
@@ -156,10 +181,29 @@
 	.visibility-toggles label {
 		border-right: 2px solid var(--background-color);
 	}
+	
 	.visibility-toggles label:last-of-type {
 		border-right: none;
 	}
 
+	/* Search */
+	.searchbar-container {
+		width: 100%;
+		display: block;
+		height: fit-content;
+		display: flex;
+		justify-content: flex-end;
+		margin-bottom: 25px;
+	}
+
+	.search {
+		outline: none;
+		border-radius: 5px;
+		padding: 10px;
+		font-family: var(--font);
+		font-weight: bold;
+	}
+	
 	/* move the logo to the left if the screen is less than 500px */
 	@media (max-width: 500px) {
 		h1 {
@@ -171,9 +215,15 @@
 
 		.entry-list {
 			padding-top: 5em;
+			justify-content: center;
 		}
 
 		.visibility-toggles-container {
+			position: relative;
+			top: 5em;
+		}
+
+		.searchbar-container {
 			position: relative;
 			top: 5em;
 		}
@@ -183,6 +233,18 @@
 	@media (max-width: 340px) {
 		.title-text {
 			display: none;
+		}
+
+		.visibility-toggles-container {
+			justify-content: center;
+		}
+
+		.searchbar-container {
+			justify-content: center;
+		}
+
+		.search {
+			width: 80%;
 		}
 	}
 </style>
