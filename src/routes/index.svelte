@@ -42,7 +42,7 @@
 		let tags: string
 		let query: string
 		if (!search_value) {
-			query = null
+			query = undefined
 		} else {
 			let all = search_value.split(' ')
 			query = all.filter(word => !word.startsWith('tags:')).join(' ')
