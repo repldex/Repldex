@@ -38,17 +38,18 @@
 		fetchIndex += 1
 		let thisFetchIndex = fetchIndex
 		let search_value = (document.getElementById('search') as HTMLInputElement).value || null
+
 		let tags: string
 		let query: string
-
 		if (!search_value) {
 			query = null
 		} else {
+			let all = search_value.split(' ')
+			query = all.filter(word => !word.startsWith('tags:')).join(' ')
 			if (search_value.includes('tags:')) {
-				let all = search_value.split(' ')
 				let tags_raw = all.filter(word => word.startsWith('tags:'))[0]
 				tags = tags_raw.slice(5).replaceAll('_', '%20')
-				query = all.filter(word => !word.startsWith('tags:')).join(' ')
+				console.log(query)
 			}
 		}
 
@@ -60,12 +61,23 @@
 			url += `&tags=${tags}`
 		}
 
-		// i think i broke the TS compiler, whoops
-		
 		const res = await fetch(url)
 		const newEntries = await res.json()
 
-		if (thisFetchIndex === fetchIndex) entries = newEntries
+		if (newEntries.length === 0) {
+			entries = [
+				{
+					title: 'No Results Found',
+					content: 'Sorry, there are no results found with that query!',
+					slug: 'entry_does_not_exist',
+					id: '0',
+					tags: ['Error'],
+					visibility: 'visible',
+				},
+			]
+		} else {
+			if (thisFetchIndex === fetchIndex) entries = newEntries
+		}
 	}
 
 	$: {

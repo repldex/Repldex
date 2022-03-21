@@ -1,6 +1,6 @@
 # Contributing
 
-If the change you'd like to make is simple enough such as fixing a tpyo, you can simply fork the repo, edit the file using GitHub's online editor, and make a pull request. 
+If the change you'd like to make is simple enough such as fixing a tpyo, you can simply fork the repo, edit the file using GitHub's online editor, and make a pull request.
 Otherwise, use the following instructions:
 
 1. Fork the repository and clone it with Git.
