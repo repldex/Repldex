@@ -11,7 +11,11 @@ export const get: RequestHandler = async req => {
 	const showUnlisted = req.url.searchParams.get('unlisted') === 'true'
 	const showHidden = req.url.searchParams.get('hidden') === 'true'
 	const tags = req.url.searchParams.get('tags')?.split(',')
-	const query = req.url.searchParams.get('query')
+	let query = req.url.searchParams.get('query')
+
+	if (query == null) {
+		query = undefined
+	}
 
 	const user = req.locals.user ? await fetchUser({ id: req.locals.user.id }) : null
 
