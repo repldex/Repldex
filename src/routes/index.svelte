@@ -35,26 +35,33 @@
 	let fetchIndex = 0
 
 	async function updateEntries() {
-		// example search with tags: "selectthegang tag:projects,mobile app"
 		fetchIndex += 1
 		let thisFetchIndex = fetchIndex
 		let search_value = (document.getElementById('search') as HTMLInputElement).value || null
 		let tags: string
+		let query: string
 
-		if (!search_value) return
-
-		let all = search_value.split(' ');
-		if (search_value.includes('tags:')) {
-			let tags_raw = all.filter(word => word.startsWith('tags:'))[0];
-			// users must use underscores instead of spaces when it comes to tag searches
-			tags = tags_raw.slice(5).replaceAll('_', '%20');
+		if (!search_value) {
+			query = null
+		} else {
+			if (search_value.includes('tags:')) {
+				let all = search_value.split(' ')
+				let tags_raw = all.filter(word => word.startsWith('tags:'))[0]
+				tags = tags_raw.slice(5).replaceAll('_', '%20')
+				query = all.filter(word => !word.startsWith('tags:')).join(' ')
+			}
 		}
 
-		const query: string = all.filter(word => !word.startsWith('tags:')).join(' ') //|| ""
-		let url = `/api/entries.json?visible=${showVisible}&unlisted=${showUnlisted}&hidden=${showHidden}&query=${query}`
-		if (tags) {
+		let url = `/api/entries.json?visible=${showVisible}&unlisted=${showUnlisted}&hidden=${showHidden}`
+
+		if (query) {
+			url += `&query=${query}`
+		} else if (tags) {
 			url += `&tags=${tags}`
 		}
+
+		// i think i broke the TS compiler, whoops
+		
 		const res = await fetch(url)
 		const newEntries = await res.json()
 
@@ -76,7 +83,7 @@
 
 	<span class="title-text">Repldex</span>
 </h1>
-	
+
 {#if canShowUnlisted}
 	<div class="visibility-toggles-container">
 		<Labelled text="Filter">
@@ -101,7 +108,7 @@
 {/if}
 
 <div class="searchbar-container">
-	<input type="text" id="search" class="search" placeholder="Search" on:input={updateEntries}>
+	<input type="text" id="search" class="search" placeholder="Search" on:input={updateEntries} />
 </div>
 
 <div class="entry-list">
@@ -109,7 +116,7 @@
 		<EntryPreview {entry} />
 	{/each}
 </div>
-	
+
 <style>
 	.entry-list {
 		display: grid;
@@ -146,7 +153,7 @@
 		display: flex;
 		justify-content: flex-end;
 	}
-	
+
 	.visibility-toggles {
 		border-radius: 0.5em;
 		white-space: normal;
@@ -158,11 +165,11 @@
 		box-shadow: 0 0 0.5em #0004;
 		letter-spacing: 0.05ch;
 	}
-	
+
 	.visibility-toggles input[type='checkbox'] {
 		display: none;
 	}
-	
+
 	.visibility-toggles > label > span {
 		background-color: var(--background-color);
 		padding: 0.5rem;
@@ -172,7 +179,7 @@
 		display: inline-block;
 		transition: background-color 100ms;
 	}
-	
+
 	.visibility-toggles input[type='checkbox']:checked ~ span {
 		background-color: var(--alternate-background-color);
 		color: var(--bright-text-color);
@@ -181,7 +188,7 @@
 	.visibility-toggles label {
 		border-right: 2px solid var(--background-color);
 	}
-	
+
 	.visibility-toggles label:last-of-type {
 		border-right: none;
 	}
@@ -203,7 +210,7 @@
 		font-family: var(--font);
 		font-weight: bold;
 	}
-	
+
 	/* move the logo to the left if the screen is less than 500px */
 	@media (max-width: 500px) {
 		h1 {

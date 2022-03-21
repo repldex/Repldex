@@ -13,7 +13,7 @@
 	{:else if entry.visibility === 'hidden'}
 		<p class="visibility-warning">Hidden</p>
 	{/if}
-	
+
 	<h2 class="entry-preview-title">{entry.title}</h2>
 	<p class="entry-preview-content">{@html markdown.render(entry.content)}</p>
 
