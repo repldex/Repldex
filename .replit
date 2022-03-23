@@ -1,4 +1,4 @@
-run = "npm run dev:host"
+run = "npm run format && npm run dev:host"
 onBoot = "npm install"
 
 [packager]

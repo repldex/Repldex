@@ -1,9 +1,11 @@
 # API Documentation
 
 ## GET /api/entries.json
+
 Search for entries
 
 ### Params
+
 All parameters should of course be encoded in the request url as URL query string parameters.
 
 Note: If there are no parameters, it will fetch all entries.
@@ -17,7 +19,9 @@ Note: If there are no parameters, it will fetch all entries.
 - **`skip`**: Integer of how many entries should be skipped (useful for pagination). Defaults to 0 (skip none).
 
 ## POST /api/entries.json
+
 Creates entry. Probably should not try and do this programatically.
 
 ## GET /api/random.json
+
 Get random entry.
