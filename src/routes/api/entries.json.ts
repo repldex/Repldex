@@ -70,6 +70,7 @@ export const post: RequestHandler = async req => {
 	// the typings for req.body are wrong, so we have to do `as any`
 	const entryContent = body.content
 	const entryTitle = body.title
+	const tags = body.tags
 
 	const slug = createSlug(entryTitle)
 
@@ -109,7 +110,7 @@ export const post: RequestHandler = async req => {
 		title: entryTitle,
 		slug,
 		visibility,
-		tags: [],
+		tags,
 	})
 
 	if (entry) {

@@ -38,7 +38,7 @@
 
 	let entryTitle: string = entry.title
 	let entryContent: string = entry.content
-	let entryTags: string[] = entry.tags
+	let entryTags: string = entry.tags.join(',')
 	let visibility: Visibility = entry.visibility
 
 	// automatically update the page title
@@ -47,7 +47,10 @@
 	async function submitEntry() {
 		// make a put request to /api/entry/<id>.json
 		// if successful, redirect to /entry/<slug>
-
+		entryTags = entryTags.split(',')
+		if (entryTags.length == 1 && entryTags[0] == '') {
+			entryTags = []
+		}
 		const response: Entry | { error: string } = await fetch(`/api/entry/${entry.id}.json`, {
 			method: 'PUT',
 			headers: {

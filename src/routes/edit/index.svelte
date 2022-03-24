@@ -34,7 +34,7 @@
 
 	let entryTitle = ''
 	let entryContent = ''
-	let entryTags = []
+	let entryTags = ''
 
 	// automatically update the page title
 	let pageTitle = 'Create entry'
@@ -45,7 +45,10 @@
 	async function submitEntry() {
 		// make a post/put request to /api/entries.json
 		// if successful, redirect to /entry/<slug>
-
+		entryTags = entryTags.split(',')
+		if (entryTags.length == 1 && entryTags[0] == '') {
+			entryTags = []
+		}
 		const response: Entry | { error: string } = await fetch('/api/entries.json', {
 			method: 'POST',
 			headers: {
@@ -96,11 +99,13 @@
 			<MarkdownEditor bind:value={entryContent} />
 		</Labelled>
 
-		<div class="tags">
-			<Labelled text="Tags (seperated with commas)">
-				<TextInput bind:value={entryTags} />
-			</Labelled>
-		</div>
+		{#if isAdmin(user)}
+			<div class="tags">
+				<Labelled text="Tags (seperated with commas)">
+					<TextInput bind:value={entryTags} />
+				</Labelled>
+			</div>
+		{/if}
 
 		<button on:click={submitEntry}>Submit</button>
 	</div>
