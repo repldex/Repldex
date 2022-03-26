@@ -19,7 +19,7 @@
 
 	{#if entry.tags}
 		{#each entry.tags as tag}
-			<p class="tag">{tag}</p>
+			<p class="tag" on:click={() => }>{tag}</p>
 		{/each}
 	{/if}
 </a>
