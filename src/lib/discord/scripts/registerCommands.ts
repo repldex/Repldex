@@ -23,7 +23,9 @@ async function registerCommands() {
 		body: JSON.stringify(bulkUpdate),
 	}).then(res => res.json())
 
-	console.log('Registered commands, Please note that you only have to run this whenever the syntax of a command is changed, i.e. not on every code change. :)');
+	console.log(
+		'Registered commands, Please note that you only have to run this whenever the syntax of a command is changed, i.e. not on every code change. :)'
+	)
 	process.exit(0)
 }
 

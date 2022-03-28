@@ -5,6 +5,11 @@
 
 	import * as markdown from './markdown'
 	import { getEntryViewUrl } from './utils'
+
+	function setTagSearch(tag) {
+		let search_bar = document.getElementById('search') as HTMLInputElement
+		search_bar.value = 'tags:' + tag.tag.replaceAll(' ', '_')
+	}
 </script>
 
 <a class="entry-preview-container" href={getEntryViewUrl(entry)}>
@@ -19,7 +24,7 @@
 
 	{#if entry.tags}
 		{#each entry.tags as tag}
-			<p class="tag" on:click={() => }>{tag}</p>
+			<p class="tag" on:click|stopPropagation={() => setTagSearch({ tag })}>{tag}</p>
 		{/each}
 	{/if}
 </a>
