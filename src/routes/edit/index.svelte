@@ -99,15 +99,13 @@
 			<MarkdownEditor bind:value={entryContent} />
 		</Labelled>
 
-		{#if isAdmin(user)}
-			<div class="tags">
-				<Labelled text="Tags (seperated with commas)">
-					<TextInput bind:value={entryTags} />
-				</Labelled>
-			</div>
-		{/if}
+		<div class="tags">
+			<Labelled text="Tags (seperated with commas)">
+				<TextInput bind:value={entryTags} />
+			</Labelled>
+		</div>
 
-		<button on:click={submitEntry}>Submit</button>
+		<button on:click={submitEntry}>Save</button>
 	</div>
 </div>
 
@@ -132,6 +130,7 @@
 		display: grid;
 		align-items: center;
 		height: 100vh;
+		margin-top: 1.5rem;
 	}
 
 	button {

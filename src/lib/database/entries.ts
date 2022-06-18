@@ -58,7 +58,16 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
 	}
 
 	if (searchQuery) searchFilter.$text = { $search: searchQuery }
-	if (tags) searchFilter.tags = tags
+	if (tags) {
+		if (tags.length === 1) {
+			searchFilter.tags = tags[0]
+		} else {
+			//may result in unexpected behavior (I think this looks for an exact match, in order?)
+			searchFilter.tags = {
+				$all: tags,
+			}
+		}
+	}
 
 	const foundEntries = await collection.find(searchFilter).skip(skip).limit(limit).toArray()
 	return foundEntries.map(replaceUuidWithId)

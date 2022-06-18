@@ -1,18 +1,27 @@
 <script lang="ts">
 	import type { Entry } from './database/entries'
-
+	import { browser } from '$app/env'
 	export let entry: Entry
 
 	import * as markdown from './markdown'
 	import { getEntryViewUrl } from './utils'
 
-	function setTagSearch(tag) {
-		let search_bar = document.getElementById('search') as HTMLInputElement
-		search_bar.value = 'tags:' + tag.tag.replaceAll(' ', '_')
+	const setTagSearch = tag => {
+		if (browser) {
+			let search_bar = document.getElementById('search') as HTMLInputElement
+			search_bar.value = 'tags:' + tag.tag.replaceAll(' ', '_')
+			//search_bar.oninput()
+			search_bar.dispatchEvent(new InputEvent('input'))
+		}
 	}
 </script>
 
-<a class="entry-preview-container" href={getEntryViewUrl(entry)}>
+<div
+	class="entry-preview-container"
+	on:click={() => {
+		window.location.href = getEntryViewUrl(entry)
+	}}
+>
 	{#if entry.visibility === 'unlisted'}
 		<p class="visibility-warning">Unlisted</p>
 	{:else if entry.visibility === 'hidden'}
@@ -24,10 +33,18 @@
 
 	{#if entry.tags}
 		{#each entry.tags as tag}
-			<p class="tag" on:click|stopPropagation={() => setTagSearch({ tag })}>{tag}</p>
+			<p
+				class="tag"
+				on:click={event => {
+					setTagSearch({ tag })
+					event.cancelBubble = true
+				}}
+			>
+				{tag}
+			</p>
 		{/each}
 	{/if}
-</a>
+</div>
 
 <style>
 	.entry-preview-container {
@@ -37,6 +54,7 @@
 		display: block;
 		color: inherit;
 		text-decoration: none;
+		cursor: pointer;
 	}
 
 	.entry-preview-content {
