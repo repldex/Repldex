@@ -14,7 +14,7 @@ import fetch from 'node-fetch'
 async function registerCommands() {
 	const bulkUpdate: RESTPutAPIApplicationCommandsJSONBody = commands.map(c => c.json)
 
-	fetch(GLOBAL_COMMAND_API_URL, {
+	await fetch(GLOBAL_COMMAND_API_URL, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json',
