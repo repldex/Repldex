@@ -1,5 +1,5 @@
-import type { Collection } from 'mongodb'
 import { createUuid, getDatabase, ReplaceIdWithUuid, replaceUuidWithId } from '.'
+import type { Collection, Filter } from 'mongodb'
 
 export type Visibility = 'visible' | 'unlisted' | 'hidden'
 
@@ -13,9 +13,15 @@ export interface Entry {
 	editedAt: Date
 }
 
+let triedCreatingSearchIndex = false
 async function getCollection(): Promise<Collection<ReplaceIdWithUuid<Entry>>> {
 	const db = await getDatabase()
-	return db.collection('entries')
+	const coll = db.collection<ReplaceIdWithUuid<Entry>>('entries')
+	if (!triedCreatingSearchIndex) {
+		triedCreatingSearchIndex = true
+		await coll.createIndex({ title: 'text', content: 'text' })
+	}
+	return coll
 }
 
 interface FilterEntriesOptions {
@@ -35,21 +41,29 @@ interface FetchEntriesOptions extends FilterEntriesOptions {
  */
 export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[]> {
 	const collection = await getCollection()
-	const entries = await collection
-		.find({
-			visibility: {
-				$in: [
-					options.visible ?? true ? 'visible' : undefined,
-					options.unlisted ?? false ? 'unlisted' : undefined,
-					options.hidden ?? false ? 'hidden' : undefined,
-				].filter(Boolean) as Visibility[],
-			},
-		})
+	const searchQuery = options.query
+	const skip = options.skip
+	const limit = options.limit
+
+	const searchFilter: Filter<ReplaceIdWithUuid<Entry>> = {
+		visibility: {
+			$in: [
+				options.visible ?? true ? 'visible' : undefined,
+				options.unlisted ?? false ? 'unlisted' : undefined,
+				options.hidden ?? false ? 'hidden' : undefined,
+			].filter(Boolean) as Visibility[],
+		},
+	}
+	if (searchQuery) searchFilter.$text = { $search: searchQuery }
+
+	const foundEntries = await collection
+		.find(searchFilter)
 		.sort({ editedAt: -1 })
-		.skip(options.skip)
-		.limit(options.limit)
+		.skip(skip)
+		.limit(limit)
 		.toArray()
-	return entries.map(replaceUuidWithId)
+
+	return foundEntries.map(replaceUuidWithId)
 }
 
 /**
