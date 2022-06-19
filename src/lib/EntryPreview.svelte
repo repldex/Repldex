@@ -6,7 +6,7 @@
 	import * as markdown from './markdown'
 	import { getEntryViewUrl } from './utils'
 
-	const setTagSearch = tag => {
+	const setTagSearch = (tag: string) => {
 		if (browser) {
 			let search_bar = document.getElementById('search') as HTMLInputElement
 			search_bar.value = 'tags:' + tag.tag.replaceAll(' ', '_')
