@@ -57,7 +57,8 @@
 
 		if (query) {
 			url += `&query=${query}`
-		} else if (tags) {
+		}
+		if (tags) {
 			url += `&tags=${tags}`
 		}
 
