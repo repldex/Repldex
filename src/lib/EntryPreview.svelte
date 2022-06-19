@@ -35,7 +35,7 @@
 
 	{#if entry.tags}
 		{#each entry.tags as tag}
-			<p
+			<span
 				class="tag"
 				on:click={event => {
 					setTagSearch({ tag })
@@ -43,7 +43,7 @@
 				}}
 			>
 				{tag}
-			</p>
+			</span>
 		{/each}
 	{/if}
 </div>

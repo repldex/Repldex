@@ -31,22 +31,22 @@
 	let showVisible = true
 	let showUnlisted = false
 	let showHidden = false
+	let searchValue = ''
 
 	let fetchIndex = 0
 
 	async function updateEntries() {
 		fetchIndex += 1
 		let thisFetchIndex = fetchIndex
-		let search_value = (document.getElementById('search') as HTMLInputElement).value || null
 
 		let tags: string
 		let query: string
-		if (!search_value) {
+		if (!searchValue) {
 			query = undefined
 		} else {
-			let all = search_value.split(' ')
+			let all = searchValue.split(' ')
 			query = all.filter(word => !word.startsWith('tags:')).join(' ')
-			if (search_value.includes('tags:')) {
+			if (searchValue.includes('tags:')) {
 				let tags_raw = all.filter(word => word.startsWith('tags:'))[0]
 				tags = tags_raw.slice(5).replaceAll('_', '%20')
 				console.log(query)
@@ -65,20 +65,7 @@
 		const res = await fetch(url)
 		const newEntries = await res.json()
 
-		if (newEntries.length === 0) {
-			entries = [
-				{
-					title: 'No Results Found',
-					content: 'Sorry, there are no results found with that query!',
-					slug: 'entry_does_not_exist',
-					id: '0',
-					tags: ['Error'],
-					visibility: 'visible',
-				},
-			]
-		} else {
-			if (thisFetchIndex === fetchIndex) entries = newEntries
-		}
+		if (thisFetchIndex === fetchIndex) entries = newEntries
 	}
 
 	$: {
@@ -121,13 +108,24 @@
 {/if}
 
 <div class="searchbar-container">
-	<input type="text" id="search" class="search" placeholder="Search" on:input={updateEntries} />
+	<input
+		type="text"
+		id="search"
+		class="search"
+		placeholder="Search"
+		bind:value={searchValue}
+		on:input={updateEntries}
+	/>
 </div>
 
 <div class="entry-list">
-	{#each entries as entry}
-		<EntryPreview {entry} />
-	{/each}
+	{#if entries.length !== 0}
+		{#each entries as entry}
+			<EntryPreview {entry} />
+		{/each}
+	{:else}
+		<p>No entries with query found</p>
+	{/if}
 </div>
 
 <style>
