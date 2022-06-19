@@ -53,7 +53,7 @@
 
 {#if entry.tags}
 	{#each entry.tags as tag}
-		<p class="tag">{tag}</p>
+		<span class="tag">{tag}</span>
 	{/each}
 {/if}
 
