@@ -16,11 +16,9 @@
 	}
 </script>
 
-<div
+<a
 	class="entry-preview-container"
-	on:click={() => {
-		window.location.href = getEntryViewUrl(entry)
-	}}
+	href={ getEntryViewUrl(entry) }
 >
 	{#if entry.visibility === 'unlisted'}
 		<p class="visibility-warning">Unlisted</p>
@@ -44,7 +42,7 @@
 			</p>
 		{/each}
 	{/if}
-</div>
+</a>
 
 <style>
 	.entry-preview-container {
