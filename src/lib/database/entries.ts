@@ -11,6 +11,7 @@ export interface Entry {
 	visibility: Visibility
 	createdAt: Date
 	tags: string[]
+	editedAt: Date
 }
 
 let triedCreatingSearchIndex = false

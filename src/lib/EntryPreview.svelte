@@ -16,9 +16,11 @@
 	}
 </script>
 
-<a
+<div
 	class="entry-preview-container"
-	href={ getEntryViewUrl(entry) }
+	on:click={() => {
+		window.location.href = getEntryViewUrl(entry)
+	}}
 >
 	{#if entry.visibility === 'unlisted'}
 		<p class="visibility-warning">Unlisted</p>
@@ -26,7 +28,9 @@
 		<p class="visibility-warning">Hidden</p>
 	{/if}
 
-	<h2 class="entry-preview-title">{entry.title}</h2>
+	<a href={getEntryViewUrl(entry)} class="entry-preview-title-link"
+		><h2 class="entry-preview-title">{entry.title}</h2></a
+	>
 	<p class="entry-preview-content">{@html markdown.render(entry.content)}</p>
 
 	{#if entry.tags}
@@ -42,7 +46,7 @@
 			</p>
 		{/each}
 	{/if}
-</a>
+</div>
 
 <style>
 	.entry-preview-container {
@@ -61,6 +65,11 @@
 		-webkit-line-clamp: 5;
 		overflow: hidden;
 		margin: 0;
+	}
+
+	.entry-preview-title-link {
+		text-decoration: inherit;
+		color: inherit;
 	}
 
 	.entry-preview-title {
