@@ -26,11 +26,11 @@ const config = {
 			server:
 				process.env.REPL_ID || process.env.GITPOD_WORKSPACE_ID
 					? {
-						hmr: {
-							protocol: 'wss',
-							port: 443,
-						},
-					}
+							hmr: {
+								protocol: 'wss',
+								port: 443,
+							},
+					  }
 					: {},
 		},
 	},
