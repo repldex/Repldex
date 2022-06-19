@@ -38,7 +38,7 @@
 
 	let entryTitle: string = entry.title
 	let entryContent: string = entry.content
-	let entryTags: string = entry.tags.join(',')
+	let entryTags: string = (entry.tags ?? []).join(',')
 	let visibility: Visibility = entry.visibility
 
 	// automatically update the page title
