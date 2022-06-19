@@ -10,6 +10,7 @@ export interface Entry {
 	slug: string
 	visibility: Visibility
 	createdAt: Date
+	editedAt: Date
 }
 
 let triedCreatingSearchIndex = false
@@ -55,7 +56,13 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
 	}
 	if (searchQuery) searchFilter.$text = { $search: searchQuery }
 
-	const foundEntries = await collection.find(searchFilter).skip(skip).limit(limit).toArray()
+	const foundEntries = await collection
+		.find(searchFilter)
+		.sort({ editedAt: -1 })
+		.skip(skip)
+		.limit(limit)
+		.toArray()
+
 	return foundEntries.map(replaceUuidWithId)
 }
 
@@ -83,7 +90,7 @@ export async function editEntry(
 	const collection = await getCollection()
 	const result = await collection.findOneAndUpdate(
 		{ _id: createUuid(entryId) },
-		{ $set: entry },
+		{ $set: { ...entry, editedAt: new Date() } },
 		{ returnDocument: 'after' }
 	)
 
@@ -93,7 +100,9 @@ export async function editEntry(
 /**
  * Create an entry
  */
-export async function createEntry(entry: Omit<Entry, 'id' | 'createdAt'>): Promise<Entry | null> {
+export async function createEntry(
+	entry: Omit<Entry, 'id' | 'createdAt' | 'editedAt'>
+): Promise<Entry | null> {
 	const collection = await getCollection()
 	const entryId = createUuid()
 
@@ -102,6 +111,7 @@ export async function createEntry(entry: Omit<Entry, 'id' | 'createdAt'>): Promi
 		...entry,
 		_id: entryId,
 		createdAt: new Date(),
+		editedAt: new Date(),
 	}
 
 	// insert the entry into the database
