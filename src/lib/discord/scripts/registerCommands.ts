@@ -21,7 +21,7 @@ async function registerCommands() {
 			'Authorization': `Bot ${process.env.DISCORD_TOKEN}`,
 		},
 		body: JSON.stringify(bulkUpdate),
-	}).then(res => res.json())
+	})
 
 	console.log(
 		'Registered commands, Please note that you only have to run this whenever the syntax of a command is changed, i.e. not on every code change. :)'
