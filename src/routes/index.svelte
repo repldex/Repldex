@@ -35,21 +35,22 @@
 
 	let fetchIndex = 0
 
-	async function updateEntries() {
+	const updateEntries = async () => {
 		fetchIndex += 1
 		let thisFetchIndex = fetchIndex
 
 		let tags: string
 		let query: string
+
 		if (!searchValue) {
 			query = undefined
 		} else {
 			let all = searchValue.split(' ')
 			query = all.filter(word => !word.startsWith('tags:')).join(' ')
+
 			if (searchValue.includes('tags:')) {
 				let tags_raw = all.filter(word => word.startsWith('tags:'))[0]
 				tags = tags_raw.slice(5).replaceAll('_', '%20')
-				console.log(query)
 			}
 		}
 
@@ -70,6 +71,7 @@
 
 	$: {
 		;[showVisible, showUnlisted, showHidden]
+
 		if (browser) {
 			updateEntries()
 		}

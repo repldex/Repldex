@@ -52,7 +52,6 @@ export const get: RequestHandler = async req => {
 	}).then(res => res.json())
 
 	if (!discordUserData.id) {
-		console.log(discordUserData)
 		throw new Error('Failed to get user data from Discord')
 	}
 
@@ -64,6 +63,7 @@ export const get: RequestHandler = async req => {
 	})
 
 	let sessionId: string
+
 	if (existingRepldexUser) {
 		// the user has a repldex account, create a new session for them
 		sessionId = await createSession({

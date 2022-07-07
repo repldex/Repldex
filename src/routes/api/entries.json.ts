@@ -10,7 +10,11 @@ export const get: RequestHandler = async req => {
 	const showVisible = req.url.searchParams.get('visible') !== 'false'
 	const showUnlisted = req.url.searchParams.get('unlisted') === 'true'
 	const showHidden = req.url.searchParams.get('hidden') === 'true'
-	const tags = req.url.searchParams.get('tags')?.split(',')?.map(tag => tag.trim())?.filter(tag => tag.length > 0)
+	const tags = req.url.searchParams
+		.get('tags')
+		?.split(',')
+		?.map(tag => tag.trim())
+		?.filter(tag => tag.length > 0)
 	const query = req.url.searchParams.get('query')
 
 	const user = req.locals.user ? await fetchUser({ id: req.locals.user.id }) : null

@@ -42,13 +42,12 @@
 		pageTitle = entryTitle.length ? `New entry "${entryTitle}"` : 'New entry'
 	}
 
-	async function submitEntry() {
+	const submitEntry = async () => {
 		// make a post/put request to /api/entries.json
 		// if successful, redirect to /entry/<slug>
 		entryTags = entryTags.split(',')
-		if (entryTags.length == 1 && entryTags[0] == '') {
-			entryTags = []
-		}
+		if (entryTags.length == 1 && entryTags[0] == '') entryTags = []
+
 		const response: Entry | { error: string } = await fetch('/api/entries.json', {
 			method: 'POST',
 			headers: {
