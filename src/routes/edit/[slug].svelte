@@ -47,10 +47,7 @@
 	async function submitEntry() {
 		// make a put request to /api/entry/<id>.json
 		// if successful, redirect to /entry/<slug>
-		entryTags = entryTags.split(',')
-		if (entryTags.length == 1 && entryTags[0] == '') {
-			entryTags = []
-		}
+		entryTags = entryTags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
 		const response: Entry | { error: string } = await fetch(`/api/entry/${entry.id}.json`, {
 			method: 'PUT',
 			headers: {
