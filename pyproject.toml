@@ -15,7 +15,7 @@ timeago = "^1.0.14"
 aiohttp = "^3.6.2"
 aiodns = "^2.0.0"
 cchardet = "^2.1.7"
-pymongo = {version = ">=3.11<4", extras = ["srv"]}
+pymongo = {version = ">=3.11", extras = ["srv"]}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.1.1"
