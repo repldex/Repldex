@@ -47,8 +47,15 @@
 {:else if entry.visibility === 'hidden'}
 	<p class="visibility-warning">Hidden</p>
 {/if}
+
 <h1>{entry.title}</h1>
 <article>{@html markdown.render(entry.content)}</article>
+
+{#if entry.tags}
+	{#each entry.tags as tag}
+		<span class="tag">{tag}</span>
+	{/each}
+{/if}
 
 <style>
 	.back-button {
@@ -74,6 +81,18 @@
 		border-radius: 0.2rem;
 		margin: 0;
 		margin-top: 3rem;
+		margin-left: 5px;
+		box-shadow: 0 0 0.5em #0004;
+	}
+
+	.tag {
+		float: left;
+		border: 2px solid var(--alternate-background-color);
+		padding: 0.2rem;
+		border-radius: 0.2rem;
+		margin: 0;
+		margin-top: 3rem;
+		margin-right: 5px;
 		box-shadow: 0 0 0.5em #0004;
 	}
 
@@ -92,9 +111,11 @@
 		h1 {
 			padding-top: 2rem;
 		}
+
 		.entry-nav-links {
 			margin-top: 2rem;
 		}
+
 		.entry-nav-links {
 			left: 1em;
 			margin-right: 0;
