@@ -38,6 +38,7 @@
 
 	let entryTitle: string = entry.title
 	let entryContent: string = entry.content
+	let entryTags: string = (entry.tags ?? []).join(',')
 	let visibility: Visibility = entry.visibility
 
 	// automatically update the page title
@@ -46,7 +47,10 @@
 	async function submitEntry() {
 		// make a put request to /api/entry/<id>.json
 		// if successful, redirect to /entry/<slug>
-
+		entryTags = entryTags
+			.split(',')
+			.map(tag => tag.trim())
+			.filter(tag => tag.length > 0)
 		const response: Entry | { error: string } = await fetch(`/api/entry/${entry.id}.json`, {
 			method: 'PUT',
 			headers: {
@@ -56,6 +60,7 @@
 				id: entry.id,
 				title: entryTitle,
 				content: entryContent,
+				tags: entryTags,
 				visibility: visibility,
 			}),
 		}).then(response => response.json())
@@ -97,6 +102,12 @@
 			<MarkdownEditor bind:value={entryContent} />
 		</Labelled>
 
+		<div class="tags">
+			<Labelled text="Tags (seperated with commas)">
+				<TextInput bind:value={entryTags} />
+			</Labelled>
+		</div>
+
 		<button on:click={submitEntry}>Save</button>
 	</div>
 </div>
@@ -109,6 +120,11 @@
 	}
 
 	.text-editor {
+		margin-bottom: 1rem;
+	}
+
+	.tags {
+		margin-top: 1rem;
 		margin-bottom: 1rem;
 	}
 

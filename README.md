@@ -10,3 +10,7 @@ Repldex is the unofficial community-editable encyclopedia of user created entrie
 # Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md)
+
+# API Docs
+
+Looking for the Repldex api documentation? Go to [DOCUMENTATION.md](DOCUMENTATION.md)
