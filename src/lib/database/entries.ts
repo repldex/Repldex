@@ -11,6 +11,7 @@ export interface Entry {
 	visibility: Visibility
 	createdAt: Date
 	editedAt: Date
+	tags: string[]
 }
 
 let triedCreatingSearchIndex = false
@@ -34,6 +35,7 @@ interface FilterEntriesOptions {
 interface FetchEntriesOptions extends FilterEntriesOptions {
 	limit: number
 	skip: number
+	tags?: string[]
 }
 
 /**
@@ -44,6 +46,7 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
 	const searchQuery = options.query
 	const skip = options.skip
 	const limit = options.limit
+	const tags = options.tags
 
 	const searchFilter: Filter<ReplaceIdWithUuid<Entry>> = {
 		visibility: {
@@ -54,7 +57,13 @@ export async function fetchEntries(options: FetchEntriesOptions): Promise<Entry[
 			].filter(Boolean) as Visibility[],
 		},
 	}
+
 	if (searchQuery) searchFilter.$text = { $search: searchQuery }
+	if (tags) {
+		searchFilter.tags = {
+			$all: tags,
+		}
+	}
 
 	const foundEntries = await collection
 		.find(searchFilter)
