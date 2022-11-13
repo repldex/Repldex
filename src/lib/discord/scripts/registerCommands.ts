@@ -14,22 +14,19 @@ import fetch from 'node-fetch'
 async function registerCommands() {
 	const bulkUpdate: RESTPutAPIApplicationCommandsJSONBody = commands.map(c => c.json)
 
-	console.log(JSON.stringify(bulkUpdate, null, 2))
-
-	const json = await fetch(GLOBAL_COMMAND_API_URL, {
+	await fetch(GLOBAL_COMMAND_API_URL, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json',
 			'Authorization': `Bot ${process.env.DISCORD_TOKEN}`,
 		},
 		body: JSON.stringify(bulkUpdate),
-	}).then(res => res.json())
+	})
 
-	console.log(JSON.stringify(json, null, 2))
-	console.log('Registered commands :)')
 	console.log(
-		'Please note that you only have to run this whenever the syntax of a command is changed, i.e. not on every code change.'
+		'Registered commands, Please note that you only have to run this whenever the syntax of a command is changed, i.e. not on every code change. :)'
 	)
+	process.exit(0)
 }
 
 registerCommands()

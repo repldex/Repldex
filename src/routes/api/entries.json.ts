@@ -10,6 +10,12 @@ export const get: RequestHandler = async req => {
 	const showVisible = req.url.searchParams.get('visible') !== 'false'
 	const showUnlisted = req.url.searchParams.get('unlisted') === 'true'
 	const showHidden = req.url.searchParams.get('hidden') === 'true'
+	const tags = req.url.searchParams
+		.get('tags')
+		?.split(',')
+		?.map(tag => tag.trim())
+		?.filter(tag => tag.length > 0)
+	const query = req.url.searchParams.get('query')
 
 	const user = req.locals.user ? await fetchUser({ id: req.locals.user.id }) : null
 
@@ -29,6 +35,8 @@ export const get: RequestHandler = async req => {
 		visible: showVisible,
 		unlisted: showUnlisted,
 		hidden: showHidden,
+		tags: tags,
+		query: query ? query : undefined,
 	})
 
 	return {
@@ -66,6 +74,7 @@ export const post: RequestHandler = async req => {
 	// the typings for req.body are wrong, so we have to do `as any`
 	const entryContent = body.content
 	const entryTitle = body.title
+	const tags = body.tags
 
 	const slug = createSlug(entryTitle)
 
@@ -105,6 +114,7 @@ export const post: RequestHandler = async req => {
 		title: entryTitle,
 		slug,
 		visibility,
+		tags,
 	})
 
 	if (entry) {
