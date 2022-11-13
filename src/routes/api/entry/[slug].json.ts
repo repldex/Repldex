@@ -32,6 +32,7 @@ export const put: RequestHandler = async req => {
 	const title = (body.title as string) ?? null
 	const entryId = (body.id as string) ?? null
 	const visibility = (body.visibility as Visibility) ?? null
+	const tags = (body.tags as string[]) ?? null
 
 	const basicUser = req.locals.user
 
@@ -111,6 +112,7 @@ export const put: RequestHandler = async req => {
 		slug,
 		title,
 		visibility,
+		tags,
 	})
 	await createHistoryItem({
 		entryId: createUuid(entry.id),

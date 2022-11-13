@@ -34,6 +34,7 @@
 
 	let entryTitle = ''
 	let entryContent = ''
+	let entryTags = ''
 
 	// automatically update the page title
 	let pageTitle = 'Create entry'
@@ -41,9 +42,11 @@
 		pageTitle = entryTitle.length ? `New entry "${entryTitle}"` : 'New entry'
 	}
 
-	async function submitEntry() {
+	const submitEntry = async () => {
 		// make a post/put request to /api/entries.json
 		// if successful, redirect to /entry/<slug>
+		entryTags = entryTags.split(',')
+		if (entryTags.length == 1 && entryTags[0] == '') entryTags = []
 
 		const response: Entry | { error: string } = await fetch('/api/entries.json', {
 			method: 'POST',
@@ -53,6 +56,7 @@
 			body: JSON.stringify({
 				title: entryTitle,
 				content: entryContent,
+				tags: entryTags,
 				visibility,
 			}),
 		}).then(response => response.json())
@@ -89,11 +93,18 @@
 				<TextInput bind:value={entryTitle} />
 			</Labelled>
 		</div>
+
 		<Labelled text="Content">
 			<MarkdownEditor bind:value={entryContent} />
 		</Labelled>
 
-		<button on:click={submitEntry}>Submit</button>
+		<div class="tags">
+			<Labelled text="Tags (seperated with commas)">
+				<TextInput bind:value={entryTags} />
+			</Labelled>
+		</div>
+
+		<button on:click={submitEntry}>Save</button>
 	</div>
 </div>
 
@@ -108,11 +119,17 @@
 		margin-bottom: 1rem;
 	}
 
+	.tags {
+		margin-top: 1rem;
+		margin-bottom: 1rem;
+	}
+
 	/* vertically align */
 	#editor-container {
 		display: grid;
 		align-items: center;
 		height: 100vh;
+		margin-top: 1.5rem;
 	}
 
 	button {
